@@ -121,15 +121,29 @@ boolean canBeOccupied(LevelElement levelElement) {
 
 }
 
-boolean inCellXY(int16_t x, int16_t y) {
+// boolean inCellXY(int16_t x, int16_t y) {
 
-  return (x % gridSize == 0) && (y % gridSize == 0);
+//   return (x % gridSize == 0) && (y % gridSize == 0);
+
+// }
+
+
+// boolean inCell(int16_t z) {
+
+//   return (z % gridSize == 0);
+
+// }
+
+
+boolean inCellX() {
+
+  return ((player.x - level.xOffset) % gridSize == 0);
 
 }
 
 
-boolean inCell(int16_t z) {
+boolean inCellY() {
 
-  return (z % gridSize == 0);
+  return ((player.y - level.yOffset) % gridSize == 0);
 
 }

@@ -11,7 +11,14 @@ enum class LevelElement : uint8_t {
   Ladder,      // 3
   Rail,        // 4
   LadderLevel, // 5
-
+  Gold,        // 6
+  Brick_1,     // 7
+  Brick_2,     // 8
+  Brick_3,     // 9
+  Brick_4,     // 10
+  Brick_5,     // 11
+  Brick_6,     // 12
+  
 };
 
 enum class PlayerStance : int8_t {
