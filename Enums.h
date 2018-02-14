@@ -3,6 +3,7 @@
 #include "src/utils/Arduboy2Ext.h"
 
 #define HEIGHT_LESS_TOOLBAR 56
+
 enum class LevelElement : uint8_t {
 
   Blank,       // 0
@@ -16,13 +17,17 @@ enum class LevelElement : uint8_t {
   Brick_2,     // 8
   Brick_3,     // 9
   Brick_4,     // 10
-  Brick_5,     // 11
-  Brick_6,     // 12
+  Brick_Transition,  // 11
+  Brick_Close_1,  // 12
+  Brick_Close_2,  // 13
+  Brick_Close_3,  // 14
+  Brick_Close_4,  // 15
   
 };
 
 enum class PlayerStance : int8_t {
 
+  Burn_Left = -12,
   Swinging_Left4 = -10,
   Swinging_Left3,
   Swinging_Left2,
@@ -44,9 +49,46 @@ enum class PlayerStance : int8_t {
   Swinging_Right2,
   Swinging_Right3,
   Swinging_Right4,
-  Falling = 11
+  Falling = 11,
+  Burn_Right = 12,
 
 };
+
+
+// Level elements ..
+
+inline LevelElement operator++( LevelElement & c ) {
+
+  c = static_cast<LevelElement>( static_cast<int8_t>(c) + 1 );
+  return c;
+
+}
+
+inline LevelElement operator++( LevelElement & c, int ) {
+
+  LevelElement result = c;
+  ++c;
+  return result;
+
+}
+
+inline LevelElement operator--( LevelElement & c ) {
+ 
+  c = static_cast<LevelElement>( static_cast<int8_t>(c) - 1 );
+  return c;
+
+}
+
+inline LevelElement operator--( LevelElement & c, int ) {
+
+  LevelElement result = c;
+  --c;
+  return result;
+
+}
+
+
+// Player stances ..
 
 inline PlayerStance operator++( PlayerStance & c ) {
 
@@ -77,3 +119,23 @@ inline PlayerStance operator--( PlayerStance & c, int ) {
   return result;
 
 }
+
+
+struct Player {
+
+  uint8_t x;
+  uint8_t y;
+  PlayerStance stance;
+  int8_t xDelta;
+  int8_t yDelta;
+
+};
+
+struct Level {
+
+  int16_t xOffset;
+  int16_t yOffset;
+  int8_t xOffsetDelta;
+  int8_t yOffsetDelta;
+
+};

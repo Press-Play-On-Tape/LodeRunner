@@ -121,6 +121,23 @@ boolean canBeOccupied(LevelElement levelElement) {
 
 }
 
+
+boolean canBeFallenInto(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Blank:
+    case LevelElement::Brick_4:
+    case LevelElement::Brick_Transition:
+    case LevelElement::Brick_Close_1:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
 // boolean inCellXY(int16_t x, int16_t y) {
 
 //   return (x % gridSize == 0) && (y % gridSize == 0);
@@ -141,9 +158,23 @@ boolean inCellX() {
 
 }
 
+boolean inCellX(uint8_t margin) {
+
+  uint8_t rem = (player.x - level.xOffset) % gridSize;
+  return (rem > (gridSize / 2) ? gridSize - rem : rem) <= margin;
+
+}
 
 boolean inCellY() {
 
   return ((player.y - level.yOffset) % gridSize == 0);
+
+}
+
+boolean inCellY(uint8_t margin) {
+
+  uint8_t rem = (player.y - level.yOffset) % gridSize;
+
+  return (rem > (gridSize / 2) ? gridSize - rem : rem) <= margin;
 
 }
