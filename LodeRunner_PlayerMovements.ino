@@ -1,10 +1,9 @@
 #include "src/utils/Arduboy2Ext.h"
-#include "src/utils/Stack.h"
 #include <ArduboyTones.h>
 #include "Enums.h"
 #include "Images.h"
 
-void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest, uint8_t currPressed) {
+void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
   if (arduboy.justPressed(A_BUTTON) && !arduboy.justPressed(B_BUTTON)) {
 

@@ -131,6 +131,16 @@ struct Player {
 
 };
 
+struct Enemy {
+
+  uint8_t x;
+  uint8_t y;
+  PlayerStance stance;
+  int8_t xDelta;
+  int8_t yDelta;
+
+};
+
 struct Level {
 
   int16_t xOffset;

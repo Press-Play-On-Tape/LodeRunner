@@ -11,7 +11,7 @@ ArduboyTones sound(arduboy.audio.enabled);
 //Player player = {60, 35};
 //Level level = {-60, -55};
 Player player = {20, 35};
-Player enemies[10];
+Enemy enemies[10];
 
 Level level = {0, -55};
 
@@ -120,8 +120,6 @@ void setup()
 
 
 
-
-
 // --------------------------------------------------------------------------------------
 //  Main Loop ..
 //
@@ -136,12 +134,8 @@ void loop() {
   uint8_t nearestY = getNearestY();
   LevelElement nearest = getLevelData(nearestX, nearestY);
 
-
-  uint8_t currPressed = arduboy.curButtonState();
-
-
-  playerMovements(nearestX, nearestY, nearest, currPressed);
-
+  playerMovements(nearestX, nearestY, nearest);
+  enemyMovements(&enemies[0]);
 
   if (arduboy.everyXFrames(2) && (player.xDelta != 0 || player.yDelta != 0 || level.xOffsetDelta != 0 || level.yOffsetDelta != 0)) {
 

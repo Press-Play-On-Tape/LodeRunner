@@ -2,12 +2,6 @@
 
 Arduboy2Ext::Arduboy2Ext() : Arduboy2/*Base*/() { }
 
-uint8_t Arduboy2Ext::curButtonState() const {
-
-  return currentButtonState;
-
-}
-
 struct BitStreamReader {
 
   const uint8_t *source;
