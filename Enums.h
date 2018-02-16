@@ -1,8 +1,11 @@
 #pragma once
 
 #include "src/utils/Arduboy2Ext.h"
+#include "Utils.h"
 
 #define HEIGHT_LESS_TOOLBAR 56
+#define NUMBER_OF_ENEMIES 10
+#define GRID_SIZE 10
 
 enum class LevelElement : uint8_t {
 
@@ -53,6 +56,27 @@ enum class PlayerStance : int8_t {
   Burn_Right = 12,
 
 };
+
+enum class Direction : uint8_t {
+  Up,
+  RightUp1,
+  RightUp,
+  RightUp2,
+  Right,
+  RightDown1,
+  RightDown,
+  RightDown2,
+  Down,
+  LeftDown1,
+  LeftDown,
+  LeftDown2,
+  Left,
+  LeftUp1,
+  LeftUp,
+  LeftUp2,
+  None,
+};
+
 
 
 // Level elements ..
@@ -121,6 +145,133 @@ inline PlayerStance operator--( PlayerStance & c, int ) {
 }
 
 
+// Direction ..   
+
+inline Direction operator++( Direction & c ) {
+
+  c = ( c == Direction::LeftUp2 )
+  ? Direction::Up
+  : static_cast<Direction>( static_cast<uint8_t>(c) + 1 );
+  return c;
+
+}
+
+inline Direction operator++( Direction & c, int ) {
+
+  Direction result = c;
+  ++c;
+  return result;
+
+}
+
+inline Direction operator--( Direction & c ) {
+
+  c = ( c == Direction::Up )
+  ? Direction::LeftUp2
+  : static_cast<Direction>( static_cast<uint8_t>(c) - 1 );
+  return c;
+
+}
+
+inline Direction operator--( Direction & c, int ) {
+
+  Direction result = c;
+  ++c;
+  return result;
+
+}
+
+
+inline bool operator<(const Direction  lhs, const Direction  rhs)  { 
+
+  return (abs((uint8_t)lhs - (uint8_t)rhs) < 8 ? (uint8_t)lhs - (uint8_t)rhs : (uint8_t)lhs - (16 + (uint8_t)rhs)) < 0; 
+  
+} 
+
+inline bool operator>(const Direction  lhs, const Direction  rhs)  { 
+    
+  return (abs((uint8_t)lhs - (uint8_t)rhs) < 8 ? (uint8_t)lhs - (uint8_t)rhs : (16 + (uint8_t)lhs) - (uint8_t)rhs) > 0;
+ 
+} 
+
+inline bool operator==(const Direction lhs, const Direction rhs)   { return (uint8_t)lhs == (uint8_t)rhs; }
+inline bool operator!=(const Direction lhs, const Direction rhs)   { return !operator == (lhs,rhs); }
+inline bool operator<=(const Direction lhs, const Direction rhs)   { return !operator >  (lhs,rhs); }
+inline bool operator>=(const Direction lhs, const Direction rhs)   { return !operator <  (lhs,rhs); }
+
+
+Direction getDirection(int16_t xDiff, int16_t yDiff) {
+
+  if (xDiff > 0) {
+  
+    if (yDiff > 0) {
+    
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightUp; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp2; }
+      
+    }
+    else if (yDiff < 0) {
+    
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightDown; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown2; }
+    
+    }
+    else {
+    
+      return Direction::Right;
+      
+    }
+  
+  } 
+  else if (xDiff < 0) {
+  
+    if (yDiff > 0) {
+    
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftUp; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp2; }
+      
+    }
+    else if (yDiff < 0) {
+    
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftDown; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown2; }
+    
+    }
+    else {
+    
+      return Direction::Left;
+      
+    }
+  
+  }
+  else {  
+  
+    if (yDiff > 0) {
+    
+      return Direction::Down;
+      
+    }
+    else if (yDiff < 0) {
+    
+      return Direction::Up;
+      
+    }
+    else {
+    
+      return Direction::Up;   // Player should be dead !
+      
+    }
+  
+  }
+
+  return Direction::Up;       // Default, should never get here!
+
+}
+
 struct Player {
 
   uint8_t x;
@@ -138,6 +289,7 @@ struct Enemy {
   PlayerStance stance;
   int8_t xDelta;
   int8_t yDelta;
+  bool enabled;
 
 };
 

@@ -1,7 +1,9 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
+#include "Utils.h"
 #include "Enums.h"
 #include "Images.h"
+#include "levels.h"
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
@@ -11,14 +13,13 @@ ArduboyTones sound(arduboy.audio.enabled);
 //Player player = {60, 35};
 //Level level = {-60, -55};
 Player player = {20, 35};
-Enemy enemies[10];
+Enemy enemies[NUMBER_OF_ENEMIES];
 
 Level level = {0, -55};
 
 
 const uint8_t width = 14;
 const uint8_t height = 11;
-const uint8_t gridSize = 10;
 
 const uint8_t PROGMEM Level1[] = {
     // 14 x 7
@@ -27,7 +28,7 @@ const uint8_t PROGMEM Level1[] = {
     0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x43, 0x00, 0x00, 0x00, 0x00, //2
     0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x04, 0x40, 0x03, 0x00, 0x00, 0x00, 0x00, //3
     0x00, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, //4
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x11, 0x11, 0x11, 0x1114, //5
+    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x11, 0x11, 0x11, 0x11, //5
     0x00, 0x44, 0x00, 0x00, 0x03, 0x00, 0x00, 0x44, 0x44, 0x43, 0x00, 0x00, 0x00, 0x00, //6
     0x04, 0x00, 0x31, 0x11, 0x11, 0x10, 0x44, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, //7
     0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x44, 0x00, 0x01, 0x11, 0x11, 0x11, 0x13, //8
@@ -39,50 +40,8 @@ const uint8_t PROGMEM Level1[] = {
 uint8_t levelData[width][height];
 
 
-
-uint8_t getNearestX(int8_t margin = 5) {
-
-  return (player.x - level.xOffset + margin) / gridSize;
-  
-}
-
-uint8_t getNearestY(int8_t margin = 5) {
-
-  return (player.y - level.yOffset + margin) / gridSize;
-  
-}
-
-LevelElement getLevelData(uint8_t x, uint8_t y) {
-
-  if ((x / 2) >= width || y >= height) return LevelElement::Brick;
-
-  if (x % 2 == 0) {
-
-    return static_cast<LevelElement>(levelData[x / 2][y] >> 4); 
-
-  }
-  else {
-
-    return static_cast<LevelElement>(levelData[x / 2][y] & 0x0F); 
-
-  }
-      
-}
-
-LevelElement setLevelData(uint8_t x, uint8_t y, LevelElement levelElement) {
-
-  if (x % 2 == 0) {
-
-    levelData[x / 2][y] = (levelData[x / 2][y] & 0x0f) | ((uint8_t)levelElement << 4); 
-
-  }
-  else {
-
-    levelData[x / 2][y] = (levelData[x / 2][y] & 0xf0) | (uint8_t)levelElement; 
-    
-  }
-      
-}
+uint8_t getNearestX(int8_t margin = 5);
+uint8_t getNearestY(int8_t margin = 5);
 
 
 // --------------------------------------------------------------------------------------
@@ -109,7 +68,7 @@ void setup()
 
   }
 
-  for (uint8_t x = 0; x < 6; x++) {
+  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
     enemies[x].x = 0;
 
@@ -135,7 +94,18 @@ void loop() {
   LevelElement nearest = getLevelData(nearestX, nearestY);
 
   playerMovements(nearestX, nearestY, nearest);
-  enemyMovements(&enemies[0]);
+
+  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+    Enemy *enemy = &enemies[x];
+
+    if (enemy->enabled) {
+
+      enemyMovements(enemy);
+
+    }
+
+  }
 
   if (arduboy.everyXFrames(2) && (player.xDelta != 0 || player.yDelta != 0 || level.xOffsetDelta != 0 || level.yOffsetDelta != 0)) {
 
@@ -189,6 +159,8 @@ void loop() {
         player.stance = PlayerStance::Swinging_Right1;
         break;
 
+      default: break;
+
     }
 
   }
@@ -199,18 +171,18 @@ void loop() {
 
     for (uint8_t x = 0; x < width * 2; x++) {
 
-      if (level.xOffset + (x * gridSize) > -gridSize && level.xOffset + (x * gridSize) < 128 && level.yOffset + (y * gridSize) > -gridSize && level.yOffset + (y * gridSize) < 64) {
+      if (level.xOffset + (x * GRID_SIZE) > -GRID_SIZE && level.xOffset + (x * GRID_SIZE) < 128 && level.yOffset + (y * GRID_SIZE) > -GRID_SIZE && level.yOffset + (y * GRID_SIZE) < 64) {
 
         LevelElement element = (LevelElement)getLevelData(x, y);
         
         switch (element) {
 
           case LevelElement::Brick ... LevelElement::Gold:
-            arduboy.drawCompressedMirror(level.xOffset + (x * gridSize), level.yOffset + (y * gridSize), levelElements[(uint8_t)element - 1], WHITE, false);
+            arduboy.drawCompressedMirror(level.xOffset + (x * GRID_SIZE), level.yOffset + (y * GRID_SIZE), levelElements[(uint8_t)element - 1], WHITE, false);
             break;
 
           case LevelElement::Brick_1 ... LevelElement::Brick_4:
-            arduboy.drawCompressedMirror(level.xOffset + (x * gridSize), level.yOffset + (y * gridSize) - gridSize, levelElements[(uint8_t)element - 1], WHITE, false);
+            arduboy.drawCompressedMirror(level.xOffset + (x * GRID_SIZE), level.yOffset + (y * GRID_SIZE) - GRID_SIZE, levelElements[(uint8_t)element - 1], WHITE, false);
             break;
 
           default:
@@ -238,7 +210,7 @@ void loop() {
   // Draw foot and side bars ..
 
   arduboy.fillRect(0, 55, 128, 64, BLACK);
-  drawHorizontalDottedLine(0, 128, 56);
+  drawHorizontalDottedLine(&arduboy, 0, 128, 56);
 
 
   // Draw scoreboard ..

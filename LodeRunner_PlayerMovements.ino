@@ -1,7 +1,6 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
-#include "Enums.h"
-#include "Images.h"
+
 
 void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
@@ -14,7 +13,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (leftDown == LevelElement::Brick) {
  
-        player.x = (nearestX * gridSize) + level.xOffset;
+        player.x = (nearestX * GRID_SIZE) + level.xOffset;
         player.stance = PlayerStance::Burn_Left;
         player.xDelta = 0;
         level.xOffsetDelta = 0;
@@ -39,7 +38,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (rightDown == LevelElement::Brick) {
  
-        player.x = (nearestX * gridSize) + level.xOffset;
+        player.x = (nearestX * GRID_SIZE) + level.xOffset;
         player.stance = PlayerStance::Burn_Right;
         player.xDelta = 0;
         level.xOffsetDelta = 0;
@@ -366,7 +365,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         if (nearest == LevelElement::Ladder) {
 
-          player.x = (nearestX * gridSize) + level.xOffset;
+          player.x = (nearestX * GRID_SIZE) + level.xOffset;
           player.stance = PlayerStance::Climbing_Up1;
           moveUp = true;
           moveDown = false;
@@ -538,7 +537,7 @@ void movePlayerRight() {
   }
   else {
 
-    if (level.xOffset > -((width * 2 * gridSize) - WIDTH)) {
+    if (level.xOffset > -((width * 2 * GRID_SIZE) - WIDTH)) {
 
       player.xDelta = 0;
       level.xOffsetDelta = -2;
@@ -581,7 +580,7 @@ void movePlayerDown() {
   }
   else {
 
-    if (level.yOffset > -((height * gridSize) - HEIGHT_LESS_TOOLBAR)) {
+    if (level.yOffset > -((height * GRID_SIZE) - HEIGHT_LESS_TOOLBAR)) {
 
       player.yDelta = 0;
       level.yOffsetDelta = -2;
