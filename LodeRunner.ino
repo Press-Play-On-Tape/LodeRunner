@@ -41,7 +41,7 @@ uint8_t getNearestX(int8_t margin = 5);
 uint8_t getNearestY(int8_t margin = 5);
 
 GameState gameState = GameState::Intro;
-int8_t bannerStripe = -20;
+int8_t bannerStripe = -30;
 
 QueueArray<Hole> holes;
 
@@ -121,14 +121,14 @@ void Intro() {
   arduboy.pollButtons();
   arduboy.clear();
 
-  arduboy.drawCompressedMirror(0, 0, banner, WHITE, false);
-  arduboy.fillRect(0, bannerStripe, WIDTH, 2, BLACK);
-  arduboy.fillRect(0, bannerStripe + 4, WIDTH, 2, BLACK);
-  arduboy.fillRect(0, bannerStripe + 8, WIDTH, 2, BLACK);
-  // arduboy.fillRect(0, bannerStripe, WIDTH, 3, BLACK);
-  // arduboy.fillRect(0, bannerStripe + 5, WIDTH, 3, BLACK);
-  // arduboy.fillRect(0, bannerStripe + 10, WIDTH, 3, BLACK);
-  bannerStripe = bannerStripe + 2;
+  arduboy.drawCompressedMirror(0, 4, banner2, WHITE, false);
+  // if (bannerStripe < 52) arduboy.fillRect(0, bannerStripe, WIDTH, 2, BLACK);
+  // if (bannerStripe < 48) arduboy.fillRect(0, bannerStripe + 4, WIDTH, 2, BLACK);
+  // if (bannerStripe < 44) arduboy.fillRect(0, bannerStripe + 8, WIDTH, 2, BLACK);
+  // if (bannerStripe < 40) arduboy.fillRect(0, bannerStripe + 12, WIDTH, 2, BLACK);
+
+  // bannerStripe++;
+  // if (bannerStripe > 66) bannerStripe = -30;
 
   arduboy.display();
 
