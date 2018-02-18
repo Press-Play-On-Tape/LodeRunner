@@ -7,6 +7,15 @@
 #define NUMBER_OF_ENEMIES 10
 #define GRID_SIZE 10
 
+enum class GameState : uint8_t {
+
+  Intro,
+  LevelInit,
+  LevelEntry,
+  LevelPlay
+
+};
+
 enum class LevelElement : uint8_t {
 
   Blank,       // 0
@@ -58,25 +67,79 @@ enum class PlayerStance : int8_t {
 };
 
 enum class Direction : uint8_t {
-  Up,
-  RightUp1,
-  RightUp,
-  RightUp2,
-  Right,
-  RightDown1,
-  RightDown,
-  RightDown2,
-  Down,
-  LeftDown1,
-  LeftDown,
-  LeftDown2,
-  Left,
-  LeftUp1,
-  LeftUp,
-  LeftUp2,
-  None,
+  Up          = 0,
+  RightUp1    = 1,
+  RightUp     = 2,
+  RightUp2    = 3,
+  Right       = 4,
+  RightDown1  = 5,
+  RightDown   = 6,
+  RightDown2  = 7,
+  Down        = 8,
+  LeftDown1   = 9,
+  LeftDown    = 10,
+  LeftDown2   = 11,
+  Left        = 12,
+  LeftUp1     = 13,
+  LeftUp      = 14,
+  LeftUp2     = 15,
+  None        = 16,
 };
 
+enum class EscapeHole : uint8_t {
+
+  None,
+  MoveUp1,
+  MoveUp2,
+  MoveUp3,
+  MoveUp4,
+  MoveUp5,
+  MoveUp6,
+  MoveUp7,
+  MoveUp8,
+  MoveUp9,
+  MoveUp10,
+  Wiggle1,
+  Wiggle2,
+  Wiggle3,
+  Wiggle4,
+  Wiggle5,
+  Wiggle6,
+  Wiggle7,
+  Wiggle8,
+  Wait1,
+  Wait2,
+  Wait3,
+  Wait4,
+  Wait5,
+  Wait6,
+  Wait7,
+  Wait8,
+  Wait9,
+  Wait10,
+  Wait11,
+  Wait12,
+  Wait13,
+  Wait14,
+  Wait15,
+  Wait16,
+  Wait17,
+  Wait18,
+  Wait19,
+  Wait20,
+  Wait21,
+  Wait22,
+  Wait23,
+  Wait24,
+  Wait25,
+  Wait26,
+  Wait27,
+  Wait28,
+  Wait29,
+  Wait30,
+  WaitMax
+
+};
 
 
 // Level elements ..
@@ -176,7 +239,7 @@ inline Direction operator--( Direction & c ) {
 inline Direction operator--( Direction & c, int ) {
 
   Direction result = c;
-  ++c;
+  --c;
   return result;
 
 }
@@ -202,20 +265,20 @@ inline bool operator>=(const Direction lhs, const Direction rhs)   { return !ope
 
 Direction getDirection(int16_t xDiff, int16_t yDiff) {
 
-  if (xDiff > 0) {
+  if (xDiff < 0) {
   
     if (yDiff > 0) {
     
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp1; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp1; }
       if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightUp; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp2; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp2; }
       
     }
     else if (yDiff < 0) {
     
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown1; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown1; }
       if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightDown; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown2; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown2; }
     
     }
     else {
@@ -225,20 +288,20 @@ Direction getDirection(int16_t xDiff, int16_t yDiff) {
     }
   
   } 
-  else if (xDiff < 0) {
+  else if (xDiff > 0) {
   
     if (yDiff > 0) {
     
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp1; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp1; }
       if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftUp; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp2; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp2; }
       
     }
     else if (yDiff < 0) {
     
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown1; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown1; }
       if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftDown; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown2; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown2; }
     
     }
     else {
@@ -250,12 +313,12 @@ Direction getDirection(int16_t xDiff, int16_t yDiff) {
   }
   else {  
   
-    if (yDiff > 0) {
+    if (yDiff < 0) {
     
       return Direction::Down;
       
     }
-    else if (yDiff < 0) {
+    else if (yDiff > 0) {
     
       return Direction::Up;
       
@@ -272,6 +335,39 @@ Direction getDirection(int16_t xDiff, int16_t yDiff) {
 
 }
 
+
+// Escape Hole elements ..
+
+inline EscapeHole operator++( EscapeHole & c ) {
+
+  c = static_cast<EscapeHole>( static_cast<uint8_t>(c) + 1 );
+  return c;
+
+}
+
+inline EscapeHole operator++( EscapeHole & c, int ) {
+
+  EscapeHole result = c;
+  ++c;
+  return result;
+
+}
+
+inline EscapeHole operator--( EscapeHole & c ) {
+ 
+  c = static_cast<EscapeHole>( static_cast<uint8_t>(c) - 1 );
+  return c;
+
+}
+
+inline EscapeHole operator--( EscapeHole & c, int ) {
+
+  EscapeHole result = c;
+  --c;
+  return result;
+
+}
+
 struct Player {
 
   uint8_t x;
@@ -284,11 +380,12 @@ struct Player {
 
 struct Enemy {
 
-  uint8_t x;
-  uint8_t y;
+  uint16_t x;
+  uint16_t y;
   PlayerStance stance;
   int8_t xDelta;
   int8_t yDelta;
+  EscapeHole escapeHole;
   bool enabled;
 
 };
@@ -300,4 +397,12 @@ struct Level {
   int8_t xOffsetDelta;
   int8_t yOffsetDelta;
 
+};
+
+struct Hole {
+
+  uint8_t x;
+  uint8_t y;
+  uint8_t countDown;
+  
 };

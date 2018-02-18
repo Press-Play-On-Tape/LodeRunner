@@ -19,6 +19,9 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         level.xOffsetDelta = 0;
 
         setLevelData(nearestX - 1, nearestY + 1, LevelElement::Brick_1);
+        Hole hole = {static_cast<uint8_t>(nearestX - 1), static_cast<uint8_t>(nearestY + 1), 100};
+        holes.enqueue(hole);
+
         arduboy.pollButtons();
         return;
 
@@ -32,8 +35,8 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   else if (arduboy.justPressed(B_BUTTON) && !arduboy.justPressed(A_BUTTON)) {
 
     if (inCellX(2) && inCellY()) {
-      nearestX = getNearestX(2);
 
+      nearestX = getNearestX(2);
       LevelElement rightDown = getLevelData(nearestX + 1, nearestY + 1);
 
       if (rightDown == LevelElement::Brick) {
@@ -44,6 +47,9 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         level.xOffsetDelta = 0;
 
         setLevelData(nearestX + 1, nearestY + 1, LevelElement::Brick_1);
+        Hole hole = {static_cast<uint8_t>(nearestX + 1), static_cast<uint8_t>(nearestY + 1), 100};
+        holes.enqueue(hole);
+
         arduboy.pollButtons();
         return;
 
@@ -88,7 +94,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
     if (player.stance == PlayerStance::Falling) {
 
-      if (inCellY() && canBeStoodOn(down)) {
+      if (inCellY() && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
         moveRight = false;
         moveDown = false;
@@ -102,19 +108,20 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       }
       else { 
+
         moveRight = false;
         moveDown = true;
 
       }     
 
     }
-    else if (player.stance >= PlayerStance::Running_Right1 && player.stance <= PlayerStance::Running_Right4 && canBeFallenInto(down) && right != LevelElement::Rail) {
+    else if (player.stance >= PlayerStance::Running_Right1 && player.stance <= PlayerStance::Running_Right4 && canBeFallenInto(down, enemies, nearestX, nearestY + 1) && right != LevelElement::Rail) {
 
         moveRight = false;
         moveDown = true;
 
     }
-    else if (canBeStoodOn(down)) {
+    else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
       switch (right) {
 
@@ -148,11 +155,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       }
     
     }
-    else if (canBeOccupied(right) && canBeFallenOn(rightDown)/* && canBeStoodOn(down)*/) {
+    else if (canBeOccupied(right) && canBeFallenOn(rightDown)) {
 
       if (player.stance < PlayerStance::Swinging_Left4 || player.stance > PlayerStance::Swinging_Left1) player.stance = PlayerStance::Swinging_Left1;
       moveRight = true;
-      if (!canBeStoodOn(rightDown)) moveDown = true;
+      if (!canBeStoodOn(rightDown, enemies, nearestX, nearestY + 1)) moveDown = true;
 
     }
     else {
@@ -190,7 +197,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   //  Left
   
   else if ( arduboy.justPressed(LEFT_BUTTON) || ((!arduboy.justPressed(RIGHT_BUTTON) && !arduboy.justPressed(UP_BUTTON) && !arduboy.justPressed(DOWN_BUTTON)) && (player.xDelta == -2 || level.xOffsetDelta == 2)) ) {
-  
+
     boolean moveLeft = true;
     boolean moveDown = false;
 
@@ -217,10 +224,9 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     LevelElement leftDown = getLevelData(nearestX - 1, nearestY + 1);
     LevelElement down = getLevelData(nearestX, nearestY + 1);
 
-
     if (player.stance == PlayerStance::Falling) {
 
-      if (inCellY() && canBeStoodOn(down)) {
+      if (inCellY() && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
         moveLeft = false;
         moveDown = false;
@@ -241,12 +247,13 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       }
 
     }
-    else if (player.stance >= PlayerStance::Running_Left4 && player.stance <= PlayerStance::Running_Left1 && canBeFallenInto(down) && left != LevelElement::Rail) {
+    else if (player.stance >= PlayerStance::Running_Left4 && player.stance <= PlayerStance::Running_Left1 && canBeFallenInto(down, enemies, nearestX, nearestY + 1) && left != LevelElement::Rail) {
+
         moveLeft = false;
         moveDown = true;
 
     }
-    else if (canBeStoodOn(down)) {
+    else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
       switch (left) {
 
@@ -284,7 +291,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (player.stance < PlayerStance::Swinging_Left4 || player.stance > PlayerStance::Swinging_Left1) player.stance = PlayerStance::Swinging_Left1;
       moveLeft = true;
-      if (!canBeStoodOn(leftDown)) moveDown = true;
+      if (!canBeStoodOn(leftDown, enemies, nearestX, nearestY + 1)) moveDown = true;
 
     }
     else {
@@ -341,7 +348,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           moveDown = false;
 
         }
-        else if (canBeStoodOn(down)) {
+        else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
           moveDown = false;
           player.stance = PlayerStance::StandingStill;
@@ -431,11 +438,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           moveDown = false;
 
         }
-        else if (canBeStoodOn(down)) {
+        else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
           moveDown = false;
           player.stance = PlayerStance::StandingStill;
-          
+
         }          
 
         break;

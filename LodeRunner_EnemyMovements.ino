@@ -10,11 +10,23 @@ void enemyMovements(Enemy *enemy) {
     uint8_t enemyY = enemy->y / GRID_SIZE;
 
     LevelElement current =    getLevelData(enemyX, enemyY);
+    LevelElement down =       getLevelData(enemyX, enemyY + 1);
 
 
     // If the enemy is in a hole, then attemt to wiggle out ..
 
-    if (current >= LevelElement::Brick_Transition) {
+    if (enemy->escapeHole > EscapeHole::None) {
+
+
+      // Check to see if the enemy can continue falling ..
+
+      if (canBeStoodOn_Enemy(down)) {
+        
+        enemy->yDelta = 0;
+
+      }
+
+      enemy->escapeHole--;
 
     }
 
@@ -24,13 +36,10 @@ void enemyMovements(Enemy *enemy) {
     else {
 
       LevelElement up =         getLevelData(enemyX, enemyY - 1);
-      LevelElement rightUp =    getLevelData(enemyX + 1, enemyY - 1);
       LevelElement right =      getLevelData(enemyX + 1, enemyY);
       LevelElement rightDown =  getLevelData(enemyX + 1, enemyY + 1);
-      LevelElement down =       getLevelData(enemyX, enemyY + 1);
       LevelElement leftDown =   getLevelData(enemyX - 1, enemyY + 1);
       LevelElement left =       getLevelData(enemyX - 1, enemyY);
-      LevelElement leftUp =     getLevelData(enemyX - 1, enemyY - 1);
 
       int16_t xDiff = enemy->x - (player.x - level.xOffset);
       int16_t yDiff = enemy->y - (player.y - level.yOffset);
@@ -42,26 +51,43 @@ void enemyMovements(Enemy *enemy) {
 
       // Can the enemy move in the preferred direction ?
 
-      hasMoved = attemptToMove(enemy, direction, current, up, rightUp, right, rightDown, down, leftDown, left, leftUp);
-  
+      hasMoved = attemptToMove(enemy, enemyX, enemyY, direction, current, up, right, rightDown, down, leftDown, left);
+
 
       // If not, try to move in the closest possible direction to the preferred ..
 
-      for (uint8_t x = 0; x < 8; x++) {
+      if (!hasMoved) {
 
-        if (!hasMoved) { 
-          
-          direction1--; 
-          hasMoved = attemptToMove(enemy, direction1, current, up, rightUp, right, rightDown, down, leftDown, left, leftUp); 
-          if (hasMoved) break;
-          
+        for (uint8_t x = 0; x < 8; x++) {
+
+          if (!hasMoved) { 
+            
+            direction1--; 
+            hasMoved = attemptToMove(enemy, enemyX, enemyY, direction1, current, up, right, rightDown, down, leftDown, left); 
+            if (hasMoved) break;
+            
+          }
+      
+          if (!hasMoved) { 
+            
+            direction2++; 
+            hasMoved = attemptToMove(enemy, enemyX, enemyY, direction2, current, up, right, rightDown, down, leftDown, left); 
+            if (hasMoved) break;
+
+          }
+
         }
-    
-        if (!hasMoved) { 
-          
-          direction2++; 
-          hasMoved = attemptToMove(enemy, direction2, current, up, rightUp, right, rightDown, down, leftDown, left, leftUp); 
-          if (hasMoved) break;
+
+      }
+
+
+      // If no movement and we are falling, check to see if we have hit the bottom ..
+
+      if (!hasMoved && enemy->stance == PlayerStance::Falling) {
+
+        if (canBeStoodOn_Enemy(down)) {
+
+          enemy->yDelta = 0;
 
         }
 
@@ -78,10 +104,10 @@ void enemyMovements(Enemy *enemy) {
 
 }
 
-boolean attemptToMove(Enemy *enemy, Direction direction, 
-                      LevelElement current, LevelElement up, LevelElement rightUp, 
+boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction direction, 
+                      LevelElement current, LevelElement up,  
                       LevelElement right, LevelElement rightDown, LevelElement down,
-                      LevelElement leftDown, LevelElement left, LevelElement leftUp) {
+                      LevelElement leftDown, LevelElement left) {
 
   bool hasMoved = false;
 
@@ -92,31 +118,52 @@ boolean attemptToMove(Enemy *enemy, Direction direction,
 
       if ( (current == LevelElement::Ladder || current == LevelElement::LadderLevel) && 
             (up == LevelElement::Ladder || up == LevelElement::LadderLevel) ) {
+
         if (enemy->stance < PlayerStance::Climbing_Up1 || enemy->stance > PlayerStance::Climbing_Up2) enemy->stance = PlayerStance::Climbing_Up1;
         moveUp(enemy);
         hasMoved = true;
+
       }
 
       break;
 
     case Direction::RightUp2 ... Direction::RightDown1:
 
-      if (canBeStoodOn_Enemy(rightDown) && canBeOccupiedTemporarily(right)) {
+      if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
+
+        enemy->stance = PlayerStance::Falling;
+        moveDown(enemy);
+        hasMoved = true;
+
+
+        // If we have fallen into a brick hole, start counting ..
+
+        switch (down) {
+
+          case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
+            enemy->escapeHole = EscapeHole::WaitMax;
+            break;
+          
+          default:  break;
+
+        }
+
+      }
+
+      else if (canBeStoodOn_Enemy(rightDown) && canBeOccupied_Enemy(right)) {
+
         if (enemy->stance < PlayerStance::Running_Right1 || enemy->stance < PlayerStance::Running_Right4) enemy->stance = PlayerStance::Running_Right1;
         moveRight(enemy);
         hasMoved = true;
-      }
 
-      if (canBeFallenIntoTemporarily(rightDown) && canBeOccupiedTemporarily(right)) {
-        enemy->stance = PlayerStance::Falling;
-        moveRight(enemy);
-        hasMoved = true;
       }
 
       else if (right == LevelElement::Rail) {
+
         if (enemy->stance < PlayerStance::Swinging_Right1 || enemy->stance < PlayerStance::Swinging_Right4) enemy->stance = PlayerStance::Swinging_Right1;
         moveRight(enemy);
         hasMoved = true;
+
       }
 
       else if (right == LevelElement::Ladder || right == LevelElement::LadderLevel) {
@@ -130,43 +177,81 @@ boolean attemptToMove(Enemy *enemy, Direction direction,
     case Direction::RightDown ... Direction::LeftDown:
 
       if (down == LevelElement::Ladder || down == LevelElement::LadderLevel) {
+
         if (enemy->stance < PlayerStance::Climbing_Down1 || enemy->stance < PlayerStance::Climbing_Down2) enemy->stance = PlayerStance::Climbing_Down1;
         moveDown(enemy);
         hasMoved = true;
+
       }
 
-      else if (canBeFallenInto(down)) {
+      else if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
+
         enemy->stance = PlayerStance::Falling;
         moveDown(enemy);
         hasMoved = true;
+
+
+        // If we have fallen into a brick hole, start counting ..
+
+        switch (down) {
+
+          case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
+            enemy->escapeHole = EscapeHole::WaitMax;
+            break;
+          
+          default:  break;
+
+        }
+
       }
 
       break;
 
     case Direction::LeftDown2 ... Direction::LeftUp1:
 
-      if (canBeStoodOn_Enemy(leftDown) && canBeOccupiedTemporarily(left)) {
+      if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
+
+        enemy->stance = PlayerStance::Falling;
+        moveDown(enemy);
+        hasMoved = true;
+
+
+        // If we have fallen into a brick hole, start counting ..
+
+        switch (down) {
+
+          case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
+            enemy->escapeHole = EscapeHole::WaitMax;
+            break;
+          
+          default:  break;
+
+        }
+
+      }
+
+      else if (canBeStoodOn_Enemy(leftDown) && canBeOccupied_Enemy(left)) {
+
         if (enemy->stance < PlayerStance::Running_Left4 || enemy->stance < PlayerStance::Running_Left1) enemy->stance = PlayerStance::Running_Left1;
         moveLeft(enemy);
         hasMoved = true;
-      }
 
-      if (canBeFallenIntoTemporarily(rightDown) && canBeOccupiedTemporarily(left)) {
-        enemy->stance = PlayerStance::Falling;
-        moveLeft(enemy);
-        hasMoved = true;
       }
 
       else if (left == LevelElement::Rail) {
+
         if (enemy->stance < PlayerStance::Swinging_Left4 || enemy->stance < PlayerStance::Swinging_Left1) enemy->stance = PlayerStance::Swinging_Left1;
         moveLeft(enemy);
         hasMoved = true;
+
       }
 
       else if (left == LevelElement::Ladder || left == LevelElement::LadderLevel) {
+
         if (enemy->stance < PlayerStance::Climbing_Up1 || enemy->stance < PlayerStance::Climbing_Up2) enemy->stance = PlayerStance::Climbing_Up1;
         moveLeft(enemy);
         hasMoved = true;
+
       }
       break;
 
@@ -177,6 +262,53 @@ boolean attemptToMove(Enemy *enemy, Direction direction,
   return hasMoved;
   
 }
+
+
+void setDirectionAfterHoleEscape(Enemy *enemy) {
+
+  uint8_t enemyX = enemy->x / GRID_SIZE;
+  uint8_t enemyY = enemy->y / GRID_SIZE;
+
+  LevelElement left       = getLevelData(enemyX - 1, enemyY);
+  LevelElement leftDown   = getLevelData(enemyX - 1, enemyY + 1);
+  LevelElement right      = getLevelData(enemyX + 1, enemyY);
+  LevelElement rightDown  = getLevelData(enemyX + 1, enemyY + 1);
+
+  if (static_cast<int16_t>(enemy->x) > (static_cast<int16_t>(player.x) - level.xOffset)) {
+
+    if (canBeOccupied_Enemy(left) && canBeStoodOn_Enemy(leftDown)) {
+    
+      enemy->stance = PlayerStance::Running_Left1;
+      enemy->xDelta = -2;
+      
+    }
+    else {
+    
+      enemy->stance = PlayerStance::Running_Right1;
+      enemy->xDelta = 2;
+
+    }
+
+  }
+  else {
+
+    if (canBeOccupied_Enemy(right) && canBeStoodOn_Enemy(rightDown)) {
+
+      enemy->stance = PlayerStance::Running_Right1;
+      enemy->xDelta = 2;
+      
+    }
+    else {
+
+      enemy->stance = PlayerStance::Running_Left1;
+      enemy->xDelta = -2;
+      
+    }
+
+  }
+
+}
+
 
 void moveUp(Enemy *enemy) {
 
