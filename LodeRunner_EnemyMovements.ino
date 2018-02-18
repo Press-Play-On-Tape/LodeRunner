@@ -232,7 +232,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       else if (canBeStoodOn_Enemy(leftDown) && canBeOccupied_Enemy(left)) {
 
-        if (enemy->stance < PlayerStance::Running_Left4 || enemy->stance < PlayerStance::Running_Left1) enemy->stance = PlayerStance::Running_Left1;
+        if (enemy->stance < PlayerStance::Running_Left4 || enemy->stance > PlayerStance::Running_Left1) enemy->stance = PlayerStance::Running_Left1;
         moveLeft(enemy);
         hasMoved = true;
 
