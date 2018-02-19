@@ -3,26 +3,26 @@
 
 void renderScreen(bool play) {
 
-  for (uint8_t y = 0; y < height; y++) {
+  for (uint8_t y = 0; y < level.getHeight(); y++) {
 
-    for (uint8_t x = 0; x < width * 2; x++) {
+    for (uint8_t x = 0; x < level.getWidth() * 2; x++) {
 
-      if (level.xOffset + (x * GRID_SIZE) > -GRID_SIZE && level.xOffset + (x * GRID_SIZE) < 128 && level.yOffset + (y * GRID_SIZE) > -GRID_SIZE && level.yOffset + (y * GRID_SIZE) < 64) {
+      if (level.getXOffset() + (x * GRID_SIZE) > -GRID_SIZE && level.getXOffset() + (x * GRID_SIZE) < 128 && level.getYOffset() + (y * GRID_SIZE) > -GRID_SIZE && level.getYOffset() + (y * GRID_SIZE) < 64) {
 
-        LevelElement element = (LevelElement)getLevelData(x, y);
+        LevelElement element = (LevelElement)level.getLevelData(x, y);
         
         switch (element) {
 
           case LevelElement::Brick ... LevelElement::Gold:
-            arduboy.drawCompressedMirror(level.xOffset + (x * GRID_SIZE), level.yOffset + (y * GRID_SIZE), levelElements[(uint8_t)element], WHITE, false);
+            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[(uint8_t)element], WHITE, false);
             break;
 
           case LevelElement::Brick_1 ... LevelElement::Brick_4:
-            arduboy.drawCompressedMirror(level.xOffset + (x * GRID_SIZE), level.yOffset + (y * GRID_SIZE) - GRID_SIZE, levelElements[(uint8_t)element], WHITE, false);
+            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE) - GRID_SIZE, levelElements[(uint8_t)element], WHITE, false);
             break;
 
           case LevelElement::Brick_Transition ... LevelElement::Brick_Close_4:
-            arduboy.drawCompressedMirror(level.xOffset + (x * GRID_SIZE), level.yOffset + (y * GRID_SIZE), levelElements[(uint8_t)element], WHITE, false);
+            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[(uint8_t)element], WHITE, false);
             break;
 
           default:
@@ -64,7 +64,7 @@ void renderScreen(bool play) {
       if (enemy->escapeHole == EscapeHole::None) {
 
         boolean flip = ((int8_t) enemy->stance < 0);
-        arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset, men[absT((int8_t)enemy->stance)], WHITE, flip);
+        arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset(), men[absT((int8_t)enemy->stance)], WHITE, flip);
 
       }
       else {
@@ -72,47 +72,47 @@ void renderScreen(bool play) {
         switch (enemy->escapeHole) {
 
           case EscapeHole::Wait1 ... EscapeHole::WaitMax:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset, man_StandingStill, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset(), man_StandingStill, WHITE, false);
             break;
 
           case EscapeHole::Wiggle1:
           case EscapeHole::Wiggle2:
           case EscapeHole::Wiggle5:
           case EscapeHole::Wiggle6:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset - 1, enemy->y + level.yOffset, man_StandingStill, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset() - 1, enemy->y + level.getYOffset(), man_StandingStill, WHITE, false);
             break;
 
           case EscapeHole::Wiggle3:
           case EscapeHole::Wiggle4:
           case EscapeHole::Wiggle7:
           case EscapeHole::Wiggle8:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset + 1, enemy->y + level.yOffset, man_StandingStill, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset() + 1, enemy->y + level.getYOffset(), man_StandingStill, WHITE, false);
             break;
 
           case EscapeHole::MoveUp9:
           case EscapeHole::MoveUp10:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset - 2, man_LaddderLeft, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset() - 2, man_LaddderLeft, WHITE, false);
             break;
 
           case EscapeHole::MoveUp7:
           case EscapeHole::MoveUp8:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset - 4, man_LaddderRight, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset() - 4, man_LaddderRight, WHITE, false);
             break;
 
           case EscapeHole::MoveUp5:
           case EscapeHole::MoveUp6:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset - 6, man_LaddderLeft, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset() - 6, man_LaddderLeft, WHITE, false);
             break;
 
           case EscapeHole::MoveUp3:
           case EscapeHole::MoveUp4:
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset - 8, man_LaddderRight, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset() - 8, man_LaddderRight, WHITE, false);
             break;
 
           case EscapeHole::MoveUp2:
           case EscapeHole::MoveUp1:
           
-            arduboy.drawCompressedMirror(enemy->x + level.xOffset, enemy->y + level.yOffset - 10, man_LaddderLeft, WHITE, false);
+            arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset() - 10, man_LaddderLeft, WHITE, false);
             enemy->y = enemy->y - 10;
             enemy->escapeHole = EscapeHole::None;
             setDirectionAfterHoleEscape(enemy);

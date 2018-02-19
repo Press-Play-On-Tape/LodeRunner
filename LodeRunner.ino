@@ -1,9 +1,10 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
-#include "Utils.h"
-#include "Enums.h"
-#include "Images.h"
-#include "levels.h"
+#include "src/utils/Utils.h"
+#include "src/utils/Enums.h"
+#include "src/images/Images.h"
+#include "src/levels/Levels.h"
+#include "src/levels/Level.h"
 #include "src/utils/Queue.h"
 
 Arduboy2Ext arduboy;
@@ -12,29 +13,11 @@ ArduboyTones sound(arduboy.audio.enabled);
 Player player = {20, 35, PlayerStance::StandingStill, 0, 0};
 Enemy enemies[NUMBER_OF_ENEMIES];
 
-Level level = {0, -55, 0, 0};
+Level level;
 
 
-const uint8_t width = 14;
-const uint8_t height = 11;
 
-const uint8_t PROGMEM Level1[] = {
-    // 14 x 7
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, //0
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, //1
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x04, 0x43, 0x00, 0x00, 0x00, 0x00, //2
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x04, 0x40, 0x03, 0x00, 0x00, 0x00, 0x00, //3
-    0x00, 0x00, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, //4
-    0x00, 0x00, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, 0x03, 0x11, 0x11, 0x11, 0x11, //5
-    0x00, 0x44, 0x00, 0x00, 0x03, 0x00, 0x00, 0x44, 0x44, 0x43, 0x00, 0x00, 0x00, 0x00, //6
-    0x04, 0x00, 0x31, 0x11, 0x11, 0x10, 0x44, 0x00, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00, //7
-    0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x44, 0x00, 0x01, 0x11, 0x11, 0x11, 0x13, //8 
-    0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x04, 0x44, 0x44, 0x00, 0x00, 0x00, 0x00, 0x03, //9
-    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x10, 0x00, 0x00, 0x11, 0x11, 0x11, 0x11, 0x11, //10
-//    0     2     4     6     8     10    12    14    16    18    20    22    24    26
-};
-
-uint8_t levelData[width][height];
+// uint8_t levelData[level.getWidth()][level.getHeight()];
 bool flashPlayer = false;
 
 uint8_t getNearestX(int8_t margin = 5);
@@ -60,15 +43,13 @@ void setup() {
   arduboy.initRandomSeed();
 
 
-  for (uint8_t y = 0; y < height; y++) {
+  level.setXOffset(0);
+  level.setXOffsetDelta(0);
+  level.setYOffset(-55);
+  level.setYOffsetDelta(0);
 
-    for (uint8_t x = 0; x < width; x++) {
+  level.loadLevel();
 
-      levelData[x][y] = pgm_read_byte(&Level1[(y * width) + x]);
-
-    }
-
-  }
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
@@ -157,7 +138,7 @@ void LevelPlay(boolean play) {
 
     uint8_t nearestX = getNearestX();
     uint8_t nearestY = getNearestY();
-    LevelElement nearest = getLevelData(nearestX, nearestY);
+    LevelElement nearest = level.getLevelData(nearestX, nearestY);
 
 
     // Detect next movements for player and enemies ..
@@ -193,7 +174,7 @@ void LevelPlay(boolean play) {
 
     if (arduboy.everyXFrames(2)) {
 
-      if ((player.xDelta != 0 || player.yDelta != 0 || level.xOffsetDelta != 0 || level.yOffsetDelta != 0)) {
+      if ((player.xDelta != 0 || player.yDelta != 0 || level.getXOffsetDelta() != 0 || level.getYOffsetDelta() != 0)) {
 
         player.stance = getNextStance(player.stance);
 
@@ -221,8 +202,8 @@ void LevelPlay(boolean play) {
 
     player.x = player.x + player.xDelta;
     player.y = player.y + player.yDelta;
-    level.xOffset = level.xOffset + level.xOffsetDelta;
-    level.yOffset = level.yOffset + level.yOffsetDelta;
+    level.setXOffset(level.getXOffset() + level.getXOffsetDelta());
+    level.setYOffset(level.getYOffset() + level.getYOffsetDelta());
 
 
     // Move enemies ..
@@ -245,17 +226,17 @@ void LevelPlay(boolean play) {
 
     if (arduboy.everyXFrames(2)) {
       
-      for (uint8_t y = 0; y < height; y++) {
+      for (uint8_t y = 0; y < level.getHeight(); y++) {
 
-        for (uint8_t x = 0; x < width * 2; x++) {
+        for (uint8_t x = 0; x < level.getWidth() * 2; x++) {
 
-          LevelElement element = (LevelElement)getLevelData(x, y);
+          LevelElement element = (LevelElement)level.getLevelData(x, y);
           
           switch (element) {
 
             case LevelElement::Brick_1 ... LevelElement::Brick_4:
               element++;
-              setLevelData(x, y, element);
+              level.setLevelData(x, y, element);
               break;
 
             default:
@@ -285,23 +266,23 @@ void LevelPlay(boolean play) {
           switch (hole.countDown) {
 
             case 32:        
-              setLevelData(hole.x, hole.y, LevelElement::Brick_Close_1);
+              level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_1);
               break;
 
             case 24:
-              setLevelData(hole.x, hole.y, LevelElement::Brick_Close_2);
+              level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_2);
               break;
 
             case 18:
-              setLevelData(hole.x, hole.y, LevelElement::Brick_Close_3);
+              level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_3);
               break;
 
             case 8:
-              setLevelData(hole.x, hole.y, LevelElement::Brick_Close_4);
+              level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_4);
               break;
 
             case 1:
-              setLevelData(hole.x, hole.y, LevelElement::Brick);
+              level.setLevelData(hole.x, hole.y, LevelElement::Brick);
               break;
 
             default: break;
@@ -323,6 +304,8 @@ void LevelPlay(boolean play) {
 
           holes.dequeue();
 
+          if (holes.isEmpty()) { break; }
+
         }
         else {
 
@@ -340,7 +323,7 @@ void LevelPlay(boolean play) {
 
     // We are mnot playing so wait for a key press to continue the game ..
 
-    if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::LevelPlay; }
+    if (arduboy.justPressed(A_BUTTON)) { level.loadLevel(); gameState = GameState::LevelPlay;   }
 
   }
 

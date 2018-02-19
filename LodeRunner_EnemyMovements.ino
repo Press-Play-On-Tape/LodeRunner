@@ -9,8 +9,8 @@ void enemyMovements(Enemy *enemy) {
     uint8_t enemyX = enemy->x / GRID_SIZE;
     uint8_t enemyY = enemy->y / GRID_SIZE;
 
-    LevelElement current =    getLevelData(enemyX, enemyY);
-    LevelElement down =       getLevelData(enemyX, enemyY + 1);
+    LevelElement current =    level.getLevelData(enemyX, enemyY);
+    LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
 
 
     // If the enemy is in a hole, then attemt to wiggle out ..
@@ -35,14 +35,14 @@ void enemyMovements(Enemy *enemy) {
 
     else {
 
-      LevelElement up =         getLevelData(enemyX, enemyY - 1);
-      LevelElement right =      getLevelData(enemyX + 1, enemyY);
-      LevelElement rightDown =  getLevelData(enemyX + 1, enemyY + 1);
-      LevelElement leftDown =   getLevelData(enemyX - 1, enemyY + 1);
-      LevelElement left =       getLevelData(enemyX - 1, enemyY);
+      LevelElement up =         level.getLevelData(enemyX, enemyY - 1);
+      LevelElement right =      level.getLevelData(enemyX + 1, enemyY);
+      LevelElement rightDown =  level.getLevelData(enemyX + 1, enemyY + 1);
+      LevelElement leftDown =   level.getLevelData(enemyX - 1, enemyY + 1);
+      LevelElement left =       level.getLevelData(enemyX - 1, enemyY);
 
-      int16_t xDiff = enemy->x - (player.x - level.xOffset);
-      int16_t yDiff = enemy->y - (player.y - level.yOffset);
+      int16_t xDiff = enemy->x - (player.x - level.getXOffset());
+      int16_t yDiff = enemy->y - (player.y - level.getYOffset());
 
       Direction direction = getDirection(xDiff, yDiff);
       Direction direction1 = direction;
@@ -269,12 +269,12 @@ void setDirectionAfterHoleEscape(Enemy *enemy) {
   uint8_t enemyX = enemy->x / GRID_SIZE;
   uint8_t enemyY = enemy->y / GRID_SIZE;
 
-  LevelElement left       = getLevelData(enemyX - 1, enemyY);
-  LevelElement leftDown   = getLevelData(enemyX - 1, enemyY + 1);
-  LevelElement right      = getLevelData(enemyX + 1, enemyY);
-  LevelElement rightDown  = getLevelData(enemyX + 1, enemyY + 1);
+  LevelElement left       = level.getLevelData(enemyX - 1, enemyY);
+  LevelElement leftDown   = level.getLevelData(enemyX - 1, enemyY + 1);
+  LevelElement right      = level.getLevelData(enemyX + 1, enemyY);
+  LevelElement rightDown  = level.getLevelData(enemyX + 1, enemyY + 1);
 
-  if (static_cast<int16_t>(enemy->x) > (static_cast<int16_t>(player.x) - level.xOffset)) {
+  if (static_cast<int16_t>(enemy->x) > (static_cast<int16_t>(player.x) - level.getXOffset())) {
 
     if (canBeOccupied_Enemy(left) && canBeStoodOn_Enemy(leftDown)) {
     

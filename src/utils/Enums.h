@@ -1,11 +1,20 @@
 #pragma once
 
-#include "src/utils/Arduboy2Ext.h"
+#include "Arduboy2Ext.h"
 #include "Utils.h"
 
 #define HEIGHT_LESS_TOOLBAR 56
 #define NUMBER_OF_ENEMIES 10
 #define GRID_SIZE 10
+
+/* ----------------------------------------------------------------------------
+ *  A better absolute!
+ */
+template<typename T> T absT(const T & v) {
+  
+  return (v < 0) ? -v : v;
+
+}
 
 enum class GameState : uint8_t {
 
@@ -387,15 +396,6 @@ struct Enemy {
   int8_t yDelta;
   EscapeHole escapeHole;
   bool enabled;
-
-};
-
-struct Level {
-
-  int16_t xOffset;
-  int16_t yOffset;
-  int8_t xOffsetDelta;
-  int8_t yOffsetDelta;
 
 };
 
