@@ -99,18 +99,20 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         moveRight = false;
         moveDown = false;
         player.stance = PlayerStance::StandingStill;
-
+arduboy.print("R1");
       }
       else if (inCellY() && right == LevelElement::Rail && inCellY()) {
 
         if (player.stance < PlayerStance::Swinging_Right1 || player.stance > PlayerStance::Swinging_Right4) player.stance = PlayerStance::Swinging_Right1;
         moveRight = true;
+arduboy.print("R2");
 
       }
       else { 
 
         moveRight = false;
         moveDown = true;
+arduboy.print("R3");
 
       }     
 
@@ -119,6 +121,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         moveRight = false;
         moveDown = true;
+arduboy.print("R4");
 
     }
     else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
@@ -129,12 +132,14 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         case LevelElement::Solid:
 
           moveRight = false;
+arduboy.print("R5");
           break;
 
         default:
 
           if (player.stance < PlayerStance::Running_Right1 || player.stance > PlayerStance::Running_Right4) player.stance = PlayerStance::Running_Right1;
           moveRight = true;
+arduboy.print("R6");
           break;
       
       }
@@ -146,28 +151,32 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         if (player.stance < PlayerStance::Swinging_Right1 || player.stance > PlayerStance::Swinging_Right4) player.stance = PlayerStance::Swinging_Right1;
         moveRight = true;
+arduboy.print("R7");
 
       }
       else {
 
         moveRight = false;
+arduboy.print("R8");
 
       }
     
     }
     else if (canBeOccupied(right) && canBeFallenOn(rightDown)) {
 
-      switch (right) {
+//       switch (right) {
 
-        case LevelElement::Blank:
-          player.stance = PlayerStance::Falling;
-          break;
+//         case LevelElement::Blank:
+//           player.stance = PlayerStance::Falling;
+// arduboy.print("R9");
+//           break;
 
-        default:
-          if (player.stance < PlayerStance::Swinging_Right1 || player.stance > PlayerStance::Swinging_Right4) player.stance = PlayerStance::Swinging_Right1;
-          break;
+//         default:
+//           if (player.stance < PlayerStance::Swinging_Right1 || player.stance > PlayerStance::Swinging_Right4) player.stance = PlayerStance::Swinging_Right1;
+// arduboy.print("RA");
+//           break;
 
-      }
+//       }
 
       moveRight = true;
       if (!canBeStoodOn(rightDown, enemies, nearestX, nearestY + 1)) moveDown = true;
@@ -176,6 +185,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     else {
 
       moveDown = true;
+arduboy.print("RB");
 
     }
 
