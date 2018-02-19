@@ -4,7 +4,7 @@
 #include "Enums.h"
 #include "Images.h"
 #include "levels.h"
-#include "src/utils/QueueArray.h"
+#include "src/utils/Queue.h"
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
@@ -43,14 +43,14 @@ uint8_t getNearestY(int8_t margin = 5);
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
 
-QueueArray<Hole> holes;
+Queue<Hole, 10> holes;
+
 
 
 // --------------------------------------------------------------------------------------
 //  Setup ..
 //
-void setup()
-{
+void setup() {
 
   arduboy.boot();
   arduboy.flashlight();
@@ -81,8 +81,6 @@ void setup()
   enemies[0].y = 90;
   enemies[0].enabled = true;
 
-  // Hole hole = {2,2,255};
-  // holes.push(hole);
 }
 
 
@@ -109,12 +107,12 @@ void loop() {
 
   }
 
-
 }
 
 
-
-
+// --------------------------------------------------------------------------------------
+//  Display intro banner ..
+//
 void Intro() {
 
   if (!(arduboy.nextFrame())) return;
@@ -122,13 +120,17 @@ void Intro() {
   arduboy.clear();
 
   arduboy.drawCompressedMirror(0, 4, banner2, WHITE, false);
-  // if (bannerStripe < 52) arduboy.fillRect(0, bannerStripe, WIDTH, 2, BLACK);
-  // if (bannerStripe < 48) arduboy.fillRect(0, bannerStripe + 4, WIDTH, 2, BLACK);
-  // if (bannerStripe < 44) arduboy.fillRect(0, bannerStripe + 8, WIDTH, 2, BLACK);
-  // if (bannerStripe < 40) arduboy.fillRect(0, bannerStripe + 12, WIDTH, 2, BLACK);
 
-  // bannerStripe++;
-  // if (bannerStripe > 66) bannerStripe = -30;
+  /* Pharap .. uncomment from here 
+  
+  if (bannerStripe < 52) arduboy.fillRect(0, bannerStripe, WIDTH, 2, BLACK);
+  if (bannerStripe < 48) arduboy.fillRect(0, bannerStripe + 4, WIDTH, 2, BLACK);
+  if (bannerStripe < 44) arduboy.fillRect(0, bannerStripe + 8, WIDTH, 2, BLACK);
+  if (bannerStripe < 40) arduboy.fillRect(0, bannerStripe + 12, WIDTH, 2, BLACK);
+  bannerStripe++;
+  if (bannerStripe > 66) bannerStripe = -30;
+
+  Pharap to here .. */
 
   arduboy.display();
 
@@ -139,6 +141,12 @@ void Intro() {
 
 }
 
+
+// --------------------------------------------------------------------------------------
+//  Play the current level ..  
+//
+//  If 'play' is false, play is halted and the player flashes waiting on a keypress.
+//
 void LevelPlay(boolean play) {
 
   if (!(arduboy.nextFrame())) return;
@@ -170,41 +178,18 @@ void LevelPlay(boolean play) {
 
   }
 
-// -----------------------------------------------------------------------------------
+
+  // Render the screen ..
 
   renderScreen(play);
 
 
-
-
-
-
-
-
- arduboy.setCursor(0,0);
-//  arduboy.print(queueSize());
-
-//   arduboy.print(" ");
-//   arduboy.print(nearestX);
-//   arduboy.print(" ");
-//   arduboy.print(nearestY);
-  // arduboy.print("x");
-  // arduboy.print(player.x);
-  // arduboy.print(" ");
-  // arduboy.print(level.xOffset);
-  // arduboy.print(" y");
-  // arduboy.print(player.y);
-  // arduboy.print(" ");
-  // arduboy.print(level.yOffset);
-  // arduboy.print(" ");
-  // arduboy.print((int8_t)player.stance);
-//   arduboy.print(" ");
-
+  // Update the player and enemy stance, positions, etc ..
 
   if (play) {
 
 
-    // Update stances ..
+    // Update player stance ..
 
     if (arduboy.everyXFrames(2)) {
 
@@ -214,7 +199,8 @@ void LevelPlay(boolean play) {
 
       }
 
-      // Move enemies ..
+
+      // Update enemt stances ..
 
       for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
@@ -239,7 +225,6 @@ void LevelPlay(boolean play) {
     level.yOffset = level.yOffset + level.yOffsetDelta;
 
 
-
     // Move enemies ..
 
     for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -254,9 +239,6 @@ void LevelPlay(boolean play) {
       }
 
     }
-
-
-
 
 
     // Update level details ..
@@ -287,13 +269,14 @@ void LevelPlay(boolean play) {
 
     }
 
+
+    // Do any holes need to be filled in ?
+
     if (!holes.isEmpty()) {
-    
-      uint8_t size = holes.count();
 
-      for (uint8_t x = 0; x < size; x++) {
+      for (uint8_t x = 0; x < holes.getCount(); x++) {
 
-        Hole hole = holes.dequeue();
+        Hole &hole = holes.operator[](x);
 
         if (hole.countDown > 0) {
 
@@ -301,35 +284,49 @@ void LevelPlay(boolean play) {
 
           switch (hole.countDown) {
 
-            case 32:
+            case 32:        
               setLevelData(hole.x, hole.y, LevelElement::Brick_Close_1);
-              holes.enqueue(hole);
               break;
 
             case 24:
               setLevelData(hole.x, hole.y, LevelElement::Brick_Close_2);
-              holes.enqueue(hole);
               break;
 
             case 18:
               setLevelData(hole.x, hole.y, LevelElement::Brick_Close_3);
-              holes.enqueue(hole);
               break;
 
             case 8:
               setLevelData(hole.x, hole.y, LevelElement::Brick_Close_4);
-              holes.enqueue(hole);
               break;
 
             case 1:
               setLevelData(hole.x, hole.y, LevelElement::Brick);
               break;
 
-            default:
-              holes.enqueue(hole);
-              break;
+            default: break;
 
           }
+
+        }
+
+      }
+
+
+      // Burn any holes that have been filled in from the queue ..
+
+      while (true) {
+        
+        Hole &hole = holes.peek();
+
+        if (hole.countDown == 1) {
+
+          holes.dequeue();
+
+        }
+        else {
+
+          break;
 
         }
 
@@ -338,10 +335,10 @@ void LevelPlay(boolean play) {
     }
 
   }
+  else {
 
 
-
-  if (!play) {
+    // We are mnot playing so wait for a key press to continue the game ..
 
     if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::LevelPlay; }
 

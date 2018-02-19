@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include "../../Enums.h"
+
 //
 // Declaration
 //
@@ -37,7 +37,7 @@ public:
 	const ItemType & peek(void) const; // O(1)
 	bool enqueue(const ItemType & item); // O(1)
 	bool enqueue(ItemType && item); // O(1)
-	ItemType & dequeue(void); // O(n)
+	ItemType dequeue(void); // O(n)
 
 	void drop(void); // O(n)
 
@@ -99,7 +99,7 @@ const typename Queue< Type, Capacity >::ItemType & Queue< Type, Capacity >::peek
 }
 
 template< typename Type, uint8_t Capacity >
-typename Queue< Type, Capacity >::ItemType & Queue< Type, Capacity >::dequeue(void)  // O(n)
+typename Queue< Type, Capacity >::ItemType Queue< Type, Capacity >::dequeue(void)  // O(n)
 {
 	const auto result = this->items[this->next]; // ought to be std::move
 	
