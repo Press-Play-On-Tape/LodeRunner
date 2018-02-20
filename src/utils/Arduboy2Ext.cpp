@@ -47,7 +47,7 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
 
   int width = (int)cs.readBits(8) + 1;
   int height = (int)cs.readBits(8) + 1;
-  uint8_t spanColour = (uint8_t)cs.readBits(1); // starting colour
+  uint8_t spanColour = static_cast<uint8_t>(cs.readBits(1)); // starting colour
 
   // no need to draw at all if we're offscreen
   if ((sx + width < 0) || (sx > WIDTH - 1) || (sy + height < 0) || (sy > HEIGHT - 1))

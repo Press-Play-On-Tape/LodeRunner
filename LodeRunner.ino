@@ -42,26 +42,6 @@ void setup() {
   arduboy.setFrameRate(90);
   arduboy.initRandomSeed();
 
-
-  level.setXOffset(0);
-  level.setXOffsetDelta(0);
-  level.setYOffset(-55);
-  level.setYOffsetDelta(0);
-
-  level.loadLevel();
-
-
-  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
-
-    enemies[x].x = 0;
-
-  }
-
-
-  enemies[0].x = 70;
-  enemies[0].y = 90;
-  enemies[0].enabled = true;
-
 }
 
 
@@ -100,7 +80,7 @@ void Intro() {
   arduboy.pollButtons();
   arduboy.clear();
 
-  arduboy.drawCompressedMirror(0, 4, banner2, WHITE, false);
+  arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
 
   /* Pharap .. uncomment from here 
   
@@ -117,7 +97,12 @@ void Intro() {
 
 
 
-  if (arduboy.justPressed(A_BUTTON))  { gameState = GameState::LevelInit; }
+  if (arduboy.justPressed(A_BUTTON))  { 
+    
+    gameState = GameState::LevelInit; 
+    level.loadLevel(&player, enemies); 
+    
+  }
 
 
 }
@@ -181,7 +166,7 @@ void LevelPlay(boolean play) {
       }
 
 
-      // Update enemt stances ..
+      // Update enemy stances ..
 
       for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
@@ -323,7 +308,7 @@ void LevelPlay(boolean play) {
 
     // We are mnot playing so wait for a key press to continue the game ..
 
-    if (arduboy.justPressed(A_BUTTON)) { level.loadLevel(); gameState = GameState::LevelPlay;   }
+    if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::LevelPlay;  }
 
   }
 

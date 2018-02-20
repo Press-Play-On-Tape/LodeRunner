@@ -11,7 +11,7 @@ class Level {
     Level(){};
         
     LevelElement getLevelData(const uint8_t x, const uint8_t y);
-    void loadLevel();
+    void loadLevel(Player *player, Enemy enemies[]);
 
     uint8_t getHeight();
     uint8_t getWidth();
@@ -36,6 +36,10 @@ class Level {
     int8_t _xOffsetDelta;
     int8_t _yOffsetDelta;
     uint8_t _levelData[_width][_height];
+
+    uint8_t _levelLadderElementCount;
+    LevelPoint _levelLadder[10];
+    LevelPoint _reentryPoint[4];
 
 };
 
@@ -81,32 +85,96 @@ void Level::setYOffsetDelta(int8_t val) {
     _yOffsetDelta = val;
 }
 
-void Level::loadLevel() {
-      Serial.println("LoadLevel");
-  for (uint8_t y = 0; y < _height; y++) {
 
-    for (uint8_t x = 0; x < _width; x++) {
+// -----------------------------------------------------------------------------------------------
+//  Load level data ..
+//
+void Level::loadLevel(Player *player, Enemy enemies[]) {
 
-      _levelData[x][y] = pgm_read_byte(&Level1[(y * _width) + x]);
+  uint8_t dataOffset = 0;
+
+
+  // Load player starting position ..
+  
+  _xOffset = pgm_read_word_near(&Level1[dataOffset++]);
+  dataOffset++;
+  _xOffsetDelta = pgm_read_byte(&Level1[dataOffset++]);
+  _yOffset = pgm_read_word_near(&Level1[dataOffset++]);
+  dataOffset++;
+  _yOffsetDelta = pgm_read_byte(&Level1[dataOffset++]);
+
+//_yOffset = -55;
+
+
+  // Load player starting position ..
+
+  player->x = pgm_read_byte(&Level1[dataOffset++]);
+  player->y = pgm_read_byte(&Level1[dataOffset++]);
+
+Serial.println(_yOffset);
+  // Load enemies ..
+
+  uint8_t numberOfEnemies = pgm_read_byte(&Level1[dataOffset++]);
+
+  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+    if (x  < numberOfEnemies) {
+
+      enemies[x].x = pgm_read_byte(&Level1[dataOffset++]);
+      enemies[x].y = pgm_read_byte(&Level1[dataOffset++]);
+      enemies[x].enabled = true;
+
+    }
+    else {
+
+      enemies[x].enabled = false;
 
     }
 
   }
 
+
+  // Load re-entry points ..
+
+  for (uint8_t x = 0; x < 4; x++) {
+
+    _reentryPoint[x].x = pgm_read_byte(&Level1[dataOffset++]);
+    _reentryPoint[x].y = pgm_read_byte(&Level1[dataOffset++]);
+
+  }
+
+
+  // Load level ladder points ..
+
+  _levelLadderElementCount = pgm_read_byte(&Level1[dataOffset++]);
+
+  for (uint8_t x = 0; x < _levelLadderElementCount; x++) {
+
+    _levelLadder[x].x = pgm_read_byte(&Level1[dataOffset++]);
+    _levelLadder[x].y = pgm_read_byte(&Level1[dataOffset++]);
+
+  }
+
+
+
+  // Load level data ..
+
   for (uint8_t y = 0; y < _height; y++) {
 
     for (uint8_t x = 0; x < _width; x++) {
 
-      Serial.print(_levelData[x][y]);
-      Serial.print(" ");
+      _levelData[x][y] = pgm_read_byte(&Level1[(y * _width) + x + dataOffset]);
 
     }
-      Serial.println(" ");
 
   }
 
 }
 
+
+// -----------------------------------------------------------------------------------------------
+//  Get level element at position x and y ..
+//
 LevelElement Level::getLevelData(const uint8_t x, const uint8_t y) {
 
   if ((x / 2) >= _width || y >= _height) return LevelElement::Brick;
@@ -126,16 +194,20 @@ LevelElement Level::getLevelData(const uint8_t x, const uint8_t y) {
       
 }
 
+
+// -----------------------------------------------------------------------------------------------
+//  Set level element at position x and y ..
+//
 void Level::setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement) {
 
   if (x % 2 == 0) {
 
-    _levelData[x / 2][y] = (_levelData[x / 2][y] & 0x0f) | ((uint8_t)levelElement << 4); 
+    _levelData[x / 2][y] = (_levelData[x / 2][y] & 0x0f) | (static_cast<uint8_t>(levelElement) << 4); 
 
   }
   else {
 
-    _levelData[x / 2][y] = (_levelData[x / 2][y] & 0xf0) | (uint8_t)levelElement; 
+    _levelData[x / 2][y] = (_levelData[x / 2][y] & 0xf0) | static_cast<uint8_t>(levelElement); 
     
   }
       

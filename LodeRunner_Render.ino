@@ -14,15 +14,15 @@ void renderScreen(bool play) {
         switch (element) {
 
           case LevelElement::Brick ... LevelElement::Gold:
-            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[(uint8_t)element], WHITE, false);
+            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], WHITE, false);
             break;
 
           case LevelElement::Brick_1 ... LevelElement::Brick_4:
-            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE) - GRID_SIZE, levelElements[(uint8_t)element], WHITE, false);
+            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE) - GRID_SIZE, levelElements[static_cast<uint8_t>(element)], WHITE, false);
             break;
 
           case LevelElement::Brick_Transition ... LevelElement::Brick_Close_4:
-            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[(uint8_t)element], WHITE, false);
+            arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], WHITE, false);
             break;
 
           default:
@@ -47,8 +47,8 @@ void renderScreen(bool play) {
 
   if (play || flashPlayer) {
 
-    boolean flip = ((int8_t) player.stance < 0);
-    arduboy.drawCompressedMirror(player.x, player.y, men[absT((int8_t)player.stance)], WHITE, flip);
+    boolean flip = (static_cast<int8_t>(player.stance) < 0);
+    arduboy.drawCompressedMirror(player.x, player.y, men[absT(static_cast<int8_t>(player.stance))], WHITE, flip);
 
   }
 
@@ -63,8 +63,8 @@ void renderScreen(bool play) {
 
       if (enemy->escapeHole == EscapeHole::None) {
 
-        boolean flip = ((int8_t) enemy->stance < 0);
-        arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset(), men[absT((int8_t)enemy->stance)], WHITE, flip);
+        boolean flip = (static_cast<int8_t>(enemy->stance) < 0);
+        arduboy.drawCompressedMirror(enemy->x + level.getXOffset(), enemy->y + level.getYOffset(), men[absT(static_cast<int8_t>(enemy->stance))], WHITE, flip);
 
       }
       else {

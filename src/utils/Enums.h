@@ -406,3 +406,10 @@ struct Hole {
   uint8_t countDown;
   
 };
+
+struct LevelPoint {
+
+  uint8_t x;
+  uint8_t y;
+  
+};

@@ -4,19 +4,11 @@
 
 void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
-  arduboy.setCursor(0,0);
-  arduboy.print(player.x);
-  arduboy.print(" ");
-  arduboy.print(player.y);
-  arduboy.print(" ");
-arduboy.print(holes.getCount());
-  arduboy.print(" ");
 
-//  if (arduboy.justPressed(A_BUTTON) && !arduboy.justPressed(B_BUTTON)) {
-  if (arduboy.pressed(A_BUTTON) && !arduboy.pressed(B_BUTTON)) {
+  if (arduboy.justPressed(A_BUTTON) && !arduboy.justPressed(B_BUTTON)) {
 
     if (inCellX(2) && inCellY()) {
-arduboy.print(holes.getCount());
+
       nearestX = getNearestX(2);
       LevelElement leftDown = level.getLevelData(nearestX - 1, nearestY + 1);
 
@@ -41,11 +33,9 @@ arduboy.print(holes.getCount());
   } 
 
 
-//  else if (arduboy.justPressed(B_BUTTON) && !arduboy.justPressed(A_BUTTON)) {
-  else if (arduboy.pressed(B_BUTTON) && !arduboy.pressed(A_BUTTON)) {
+  else if (arduboy.justPressed(B_BUTTON) && !arduboy.justPressed(A_BUTTON)) {
 
     if (inCellX(2) && inCellY()) {
-arduboy.print(holes.getCount());
 
       nearestX = getNearestX(2);
       LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
@@ -669,7 +659,7 @@ void movePlayerUp() {
       if (player.y > 0) {
 
         player.yDelta = -2;
-        level.setXOffsetDelta(0);
+        level.setYOffsetDelta(0);
 
       }
 
