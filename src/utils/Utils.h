@@ -37,6 +37,16 @@ void drawHorizontalDottedLine(Arduboy2Ext *arduboy, uint8_t x1, uint8_t x2, uint
 }
 
 
+/* ----------------------------------------------------------------------------
+ *  Draw a vertical dotted line. 
+ */
+void drawVerticalDottedLine(Arduboy2Ext *arduboy, uint8_t y1, uint8_t y2, uint8_t x) {
+
+  for (uint8_t y3 = y1; y3 <= y2; y3+=2) {
+    arduboy->drawPixel(x, y3, WHITE);
+  }
+  
+}
 
 
 // ---------------------------------------------------------------------------------
@@ -184,11 +194,30 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
 
 }
 
+// ---------------------------------------------------------------------------------
+// Can be stood on by the enemy ?
+//
+boolean canBeStoodOnBasic_Enemy(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Brick:
+    case LevelElement::Solid:
+    case LevelElement::Ladder:
+    case LevelElement::LadderLevel:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
 
 // ---------------------------------------------------------------------------------
 // Can be stood on by the enemy ?
 //
-// The enemy can stand on bricks that have been dug our or are reforming.  Of 
+// The enemy can stand on bricks that have been dug out or are reforming.  Of 
 // course they will fall into these if they do step on them.
 //
 boolean canBeStoodOn_Enemy(LevelElement levelElement) {
@@ -271,13 +300,17 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
     case LevelElement::Brick_Close_3:
     case LevelElement::Brick_Close_4:
 
+
+      // Is another enemy in the position already ?
+
       for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
         Enemy *enemy = &enemies[x];
 
         if (enemy->enabled) {
 
-          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+//          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
 
             return false; 
 

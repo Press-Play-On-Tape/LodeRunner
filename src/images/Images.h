@@ -197,9 +197,23 @@ const uint8_t PROGMEM man12[] = {
 0x01
 };
 
-const uint8_t* const men[] = { 
-man_StandingStill, man1, man2, man3, man2, man_LaddderLeft, man_LaddderRight, man7, man8, man7, man9, man11, man12
+const uint8_t PROGMEM man_Rebirth_1[] = {
+0x09, 0x0f, 0x10, 0x9b, 0xce, 0x6e, 0xb7, 0xdb, 0x75, 0x3a, 0x36
 };
+
+const uint8_t PROGMEM man_Rebirth_2[] = {
+0x09, 0x0f, 0xe8, 0xd3, 0xe9, 0x74, 0xfc, 0xdb, 0xed, 0x76, 0xbb, 0xdd, 0x6e, 0x67, 0x03
+};
+
+const uint8_t PROGMEM man_Rebirth_3[] = {
+0x09, 0x0f, 0xe8, 0xd2, 0xd9, 0xed, 0x76, 0xbb, 0x4e, 0xc7, 0xb7, 0xdd, 0x6e, 0xb7, 0xdb, 0xed, 
+0x76, 0x36
+};
+
+const uint8_t* const men[] = { 
+man_StandingStill, man1, man2, man3, man2, man_LaddderLeft, man_LaddderRight, man7, man8, man7, man9, man11, man12, man_Rebirth_1, man_Rebirth_2, man_Rebirth_3
+};
+
 
 
 // ---------------------------------------------------------------------------------------------------------------------------------

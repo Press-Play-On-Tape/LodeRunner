@@ -19,6 +19,7 @@ class Level {
     int16_t getYOffset();
     int8_t getXOffsetDelta();
     int8_t getYOffsetDelta();
+    ReentryPoint getReentryPoint(const uint8_t index);
     
     void setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement);
     void setXOffset(int16_t val);
@@ -39,7 +40,7 @@ class Level {
 
     uint8_t _levelLadderElementCount;
     LevelPoint _levelLadder[10];
-    LevelPoint _reentryPoint[4];
+    ReentryPoint _reentryPoint[4];
 
 };
 
@@ -85,6 +86,11 @@ void Level::setYOffsetDelta(int8_t val) {
     _yOffsetDelta = val;
 }
 
+ReentryPoint Level::getReentryPoint(const uint8_t index) {
+
+  return _reentryPoint[index];
+}
+
 
 // -----------------------------------------------------------------------------------------------
 //  Load level data ..
@@ -96,14 +102,10 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   // Load player starting position ..
   
-  _xOffset = pgm_read_word_near(&Level1[dataOffset++]);
-  dataOffset++;
+  _xOffset = pgm_read_word_near(&Level1[dataOffset++]);         dataOffset++;
   _xOffsetDelta = pgm_read_byte(&Level1[dataOffset++]);
-  _yOffset = pgm_read_word_near(&Level1[dataOffset++]);
-  dataOffset++;
+  _yOffset = pgm_read_word_near(&Level1[dataOffset++]);         dataOffset++;
   _yOffsetDelta = pgm_read_byte(&Level1[dataOffset++]);
-
-//_yOffset = -55;
 
 
   // Load player starting position ..
@@ -140,6 +142,7 @@ Serial.println(_yOffset);
 
     _reentryPoint[x].x = pgm_read_byte(&Level1[dataOffset++]);
     _reentryPoint[x].y = pgm_read_byte(&Level1[dataOffset++]);
+    _reentryPoint[x].stance = static_cast<PlayerStance>(pgm_read_byte(&Level1[dataOffset++]));
 
   }
 

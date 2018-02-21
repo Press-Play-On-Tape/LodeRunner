@@ -1,7 +1,8 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
 
-void renderScreen(bool play) {
+//void renderScreen(GameState gameState) {
+void renderScreen() {
 
   for (uint8_t y = 0; y < level.getHeight(); y++) {
 
@@ -39,13 +40,13 @@ void renderScreen(bool play) {
 
   // Draw player ..
 
-  if (!play) {
+  if (gameState != GameState::LevelPlay) {
 
     if (arduboy.everyXFrames(6)) flashPlayer = !flashPlayer;
 
   }
 
-  if (play || flashPlayer) {
+  if (gameState == GameState::LevelPlay || flashPlayer) {
 
     boolean flip = (static_cast<int8_t>(player.stance) < 0);
     arduboy.drawCompressedMirror(player.x, player.y, men[absT(static_cast<int8_t>(player.stance))], WHITE, flip);
@@ -129,8 +130,32 @@ void renderScreen(bool play) {
 
   }
 
+
+  // Draw rectangle ..
+
+  if (gameState == GameState::LevelEntry) {
+
+    arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
+    drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
+    drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
+    drawVerticalDottedLine(&arduboy, 0, 64, introRect);
+    drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
+
+    for (int8_t x = introRect - 1; x >= 0; x--) {
+
+      arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
+
+    }
+
+    introRect--;
+
+    if (introRect == -1) gameState = GameState::LevelFlash;
+
+  }
+
+
  
-  // Draw foot and side bars ..
+  // Draw footer ..
 
   arduboy.fillRect(0, 55, 128, 64, BLACK);
   drawHorizontalDottedLine(&arduboy, 0, 128, 56);
@@ -145,5 +170,6 @@ void renderScreen(bool play) {
   arduboy.drawCompressedMirror(45, 57, digit_01, WHITE, false);
   arduboy.drawCompressedMirror(50, 57, digit_02, WHITE, false);
   arduboy.drawCompressedMirror(55, 57, digit_03, WHITE, false);
+
 
 }

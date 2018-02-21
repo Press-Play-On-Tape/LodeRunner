@@ -21,7 +21,9 @@ enum class GameState : uint8_t {
   Intro,
   LevelInit,
   LevelEntry,
-  LevelPlay
+  LevelFlash,
+  LevelPlay,
+  LevelExit 
 
 };
 
@@ -72,6 +74,9 @@ enum class PlayerStance : int8_t {
   Swinging_Right4,
   Falling = 11,
   Burn_Right = 12,
+  Rebirth_1 = 13,
+  Rebirth_2,
+  Rebirth_3
 
 };
 
@@ -411,5 +416,13 @@ struct LevelPoint {
 
   uint8_t x;
   uint8_t y;
+  
+};
+
+struct ReentryPoint {
+
+  uint8_t x;
+  uint8_t y;
+  PlayerStance stance;
   
 };

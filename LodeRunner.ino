@@ -25,6 +25,7 @@ uint8_t getNearestY(int8_t margin = 5);
 
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
+uint8_t introRect = 0;
 
 Queue<Hole, 10> holes;
 
@@ -57,11 +58,19 @@ void loop() {
       break;
 
     case GameState::LevelInit:
-      LevelPlay(false);
+      introRect = 28;
+      gameState = GameState::LevelEntry;
+
+    case GameState::LevelEntry:
+      LevelPlay();
+      break;
+
+    case GameState::LevelFlash:
+      LevelPlay();
       break;
 
     case GameState::LevelPlay:
-      LevelPlay(true);
+      LevelPlay();
       break;
 
       default: break;
@@ -113,13 +122,13 @@ void Intro() {
 //
 //  If 'play' is false, play is halted and the player flashes waiting on a keypress.
 //
-void LevelPlay(boolean play) {
+void LevelPlay() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
   arduboy.clear();
 
-  if (play) {
+  if (gameState == GameState::LevelPlay) {
 
     uint8_t nearestX = getNearestX();
     uint8_t nearestY = getNearestY();
@@ -127,7 +136,7 @@ void LevelPlay(boolean play) {
 
 
     // Detect next movements for player and enemies ..
-    
+
     playerMovements(nearestX, nearestY, nearest);
 
     for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -147,12 +156,12 @@ void LevelPlay(boolean play) {
 
   // Render the screen ..
 
-  renderScreen(play);
+  renderScreen();
 
 
   // Update the player and enemy stance, positions, etc ..
 
-  if (play) {
+  if (gameState == GameState::LevelPlay) {
 
 
     // Update player stance ..
@@ -172,9 +181,26 @@ void LevelPlay(boolean play) {
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled && enemy->escapeHole == EscapeHole::None && (enemy->xDelta != 0 || enemy->yDelta != 0)) {
+        if (enemy->enabled && enemy->escapeHole == EscapeHole::None) {
 
-          enemy->stance = getNextStance(enemy->stance);
+          switch (enemy->stance) {
+
+            case PlayerStance::Rebirth_1 ... PlayerStance::Rebirth_3:
+              
+              enemy->stance = getNextStance(enemy->stance);
+              break;
+
+            default:
+              
+              if (enemy->xDelta != 0 || enemy->yDelta != 0) {
+
+                enemy->stance = getNextStance(enemy->stance);
+
+              }
+
+              break;
+
+          }
 
         }
 
@@ -258,7 +284,7 @@ void LevelPlay(boolean play) {
               level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_2);
               break;
 
-            case 18:
+            case 16:
               level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_3);
               break;
 
@@ -267,6 +293,28 @@ void LevelPlay(boolean play) {
               break;
 
             case 1:
+
+              // Have any of the enemies been trapped ?  If so, relocate them ..
+
+              for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+                Enemy *enemy = &enemies[x];
+
+                if (enemy->enabled && (hole.x * GRID_SIZE) == enemy->x && (hole.y * GRID_SIZE) == enemy->y) {
+
+                  ReentryPoint startingLocation = level.getReentryPoint(random(0, 4));
+
+                  enemy->x = (startingLocation.x * GRID_SIZE);
+                  enemy->y = (startingLocation.y * GRID_SIZE);
+                  enemy->stance = startingLocation.stance;
+                  enemy->escapeHole = EscapeHole::None;
+                  enemy->yDelta = 0;
+                  enemy->yDelta = 0;
+
+                }
+
+              }
+
               level.setLevelData(hole.x, hole.y, LevelElement::Brick);
               break;
 

@@ -65,6 +65,9 @@ PlayerStance getNextStance(PlayerStance stance) {
       case PlayerStance::Swinging_Right2:       return PlayerStance::Swinging_Right3;
       case PlayerStance::Swinging_Right3:       return PlayerStance::Swinging_Right4;
       case PlayerStance::Swinging_Right4:       return PlayerStance::Swinging_Right1;
+      case PlayerStance::Rebirth_1:             return PlayerStance::Rebirth_2;
+      case PlayerStance::Rebirth_2:             return PlayerStance::Rebirth_3;
+      case PlayerStance::Rebirth_3:             return PlayerStance::StandingStill;
       default:                                  return stance;
 
     }

@@ -10,10 +10,16 @@ const uint8_t PROGMEM Level1[] = {
     0x14, 0x23,         // Player starting postion ..
     0x01,               // Number of enemies
     0x46, 0x5A,         // Enemy 1
-    0x00, 0x00,         // Rentry point 1
-    0x08, 0x00,         // Rentry point 2
-    0x10, 0x00,         // Rentry point 3
-    0x18, 0x00,         // Rentry point 4
+ //   0x03, 0x08, 0x0B,   // Rentry point 1 (cell X, cell y, stance) ..
+ //   0x03, 0x08, 0x0B,   // Rentry point 2
+ //   0x03, 0x08, 0x0B,   // Rentry point 3
+ //   0x03, 0x08, 0x0B,   // Rentry point 4
+
+    0x06, 0x06, 0x0D,   // Rentry point 1 (cell X, cell y, stance) ..
+    0x06, 0x06, 0x0D,   // Rentry point 2
+    0x06, 0x06, 0x0D,   // Rentry point 3
+    0x06, 0x06, 0x0D,   // Rentry point 4
+
     0x02,               // Level ladder element count ..
     0x03, 0x00,
     0x03, 0x01,
