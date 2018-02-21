@@ -250,7 +250,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
       
-      if (current == LevelElement::Rail && canBeStoodOnBasic_Enemy(leftDown)) {
+      else if (current == LevelElement::Rail && canBeStoodOnBasic_Enemy(leftDown)) {
 
         if (enemy->stance < PlayerStance::Running_Left4 || enemy->stance > PlayerStance::Running_Left1) enemy->stance = PlayerStance::Running_Left1;
         moveLeft(enemy);
@@ -268,7 +268,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       else if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
 
-        if (left != LevelElement::Ladder || left != LevelElement::LadderLevel) {
+        if (left == LevelElement::Ladder || left == LevelElement::LadderLevel) {
 
           if (enemy->stance < PlayerStance::Swinging_Left4 || enemy->stance > PlayerStance::Swinging_Left1)  enemy->stance = PlayerStance::Swinging_Left1;
           moveLeft(enemy);
