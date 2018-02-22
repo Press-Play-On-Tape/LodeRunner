@@ -20,14 +20,19 @@ Level level;
 // uint8_t levelData[level.getWidth()][level.getHeight()];
 bool flashPlayer = false;
 
-uint8_t getNearestX(int8_t margin = 5);
-uint8_t getNearestY(int8_t margin = 5);
 
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
-uint8_t introRect = 0;
+int8_t introRect = 0;
 
 Queue<Hole, 10> holes;
+
+
+// --------------------------------------------------------------------------------------
+//  Forward declarations ..
+//
+uint8_t getNearestX(int8_t margin = HALF_GRID_SIZE);
+uint8_t getNearestY(int8_t margin = HALF_GRID_SIZE);
 
 
 
@@ -59,9 +64,10 @@ void loop() {
 
     case GameState::LevelInit:
       introRect = 28;
-      gameState = GameState::LevelEntry;
+      gameState = GameState::LevelEntryAnimation;
+      /* break; Drop through to next case */
 
-    case GameState::LevelEntry:
+    case GameState::LevelEntryAnimation:
       LevelPlay();
       break;
 
@@ -70,6 +76,15 @@ void loop() {
       break;
 
     case GameState::LevelPlay:
+      LevelPlay();
+      break;
+
+    case GameState::LevelExitInit:
+      introRect = 0;
+      gameState = GameState::LevelExitAnimation;
+      /* break; Drop through to next case */
+
+    case GameState::LevelExitAnimation:
       LevelPlay();
       break;
 
@@ -87,7 +102,7 @@ void Intro() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
-  arduboy.clear();
+  //arduboy.clear();
 
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
 
@@ -102,7 +117,7 @@ void Intro() {
 
   Pharap to here .. */
 
-  arduboy.display();
+  arduboy.display(CLEAR_BUFFER);
 
 
 
@@ -126,7 +141,7 @@ void LevelPlay() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
-  arduboy.clear();
+  //arduboy.clear();
 
   if (gameState == GameState::LevelPlay) {
 
@@ -302,11 +317,11 @@ void LevelPlay() {
 
                 if (enemy->enabled && (hole.x * GRID_SIZE) == enemy->x && (hole.y * GRID_SIZE) == enemy->y) {
 
-                  ReentryPoint startingLocation = level.getReentryPoint(random(0, 4));
+                  LevelPoint startingLocation = level.getReentryPoint(random(0, 4));
 
                   enemy->x = (startingLocation.x * GRID_SIZE);
                   enemy->y = (startingLocation.y * GRID_SIZE);
-                  enemy->stance = startingLocation.stance;
+                  enemy->stance = PlayerStance::Rebirth_1;
                   enemy->escapeHole = EscapeHole::None;
                   enemy->yDelta = 0;
                   enemy->yDelta = 0;
@@ -354,12 +369,12 @@ void LevelPlay() {
   else {
 
 
-    // We are mnot playing so wait for a key press to continue the game ..
+    // We are not playing so wait for a key press to continue the game ..
 
     if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::LevelPlay;  }
 
   }
 
-  arduboy.display();
+  arduboy.display(CLEAR_BUFFER);
 
 }

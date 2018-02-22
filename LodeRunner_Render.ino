@@ -131,28 +131,49 @@ void renderScreen() {
   }
 
 
-  // Draw rectangle ..
+  // Draw entry rectangle ..
 
-  if (gameState == GameState::LevelEntry) {
+  switch (gameState) {
 
-    arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
-    drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
-    drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
-    drawVerticalDottedLine(&arduboy, 0, 64, introRect);
-    drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
+    case GameState::LevelEntryAnimation:
 
-    for (int8_t x = introRect - 1; x >= 0; x--) {
+      arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
+      drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
+      drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
+      drawVerticalDottedLine(&arduboy, 0, 64, introRect);
+      drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
 
-      arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
+      for (int8_t x = introRect - 1; x >= 0; x--) {
 
-    }
+        arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
 
-    introRect--;
+      }
 
-    if (introRect == -1) gameState = GameState::LevelFlash;
+      introRect--;
+
+      if (introRect == -1) gameState = GameState::LevelFlash;
+      break;
+
+    case GameState::LevelExitAnimation:
+
+      arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
+      drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
+      drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
+      drawVerticalDottedLine(&arduboy, 0, 64, introRect);
+      drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
+
+      for (int8_t x = 0; x < introRect; x++) {
+
+        arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
+
+      }
+
+      introRect++;
+
+      if (introRect == 32) gameState = GameState::LevelGameOver;
+      break;
 
   }
-
 
  
   // Draw footer ..

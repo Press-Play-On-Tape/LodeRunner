@@ -15,10 +15,10 @@ const uint8_t PROGMEM Level1[] = {
  //   0x03, 0x08, 0x0B,   // Rentry point 3
  //   0x03, 0x08, 0x0B,   // Rentry point 4
 
-    0x06, 0x06, 0x0D,   // Rentry point 1 (cell X, cell y, stance) ..
-    0x06, 0x06, 0x0D,   // Rentry point 2
-    0x06, 0x06, 0x0D,   // Rentry point 3
-    0x06, 0x06, 0x0D,   // Rentry point 4
+    0x06, 0x06,         // Rentry point 1 (cell X, cell y) ..
+    0x06, 0x06,         // Rentry point 2
+    0x06, 0x06,         // Rentry point 3
+    0x06, 0x06,         // Rentry point 4
 
     0x02,               // Level ladder element count ..
     0x03, 0x00,

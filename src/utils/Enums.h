@@ -3,9 +3,10 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define HEIGHT_LESS_TOOLBAR 56
-#define NUMBER_OF_ENEMIES 10
-#define GRID_SIZE 10
+#define HEIGHT_LESS_TOOLBAR   56
+#define NUMBER_OF_ENEMIES     10
+#define GRID_SIZE             10
+#define HALF_GRID_SIZE        (GRID_SIZE / 2)
 
 /* ----------------------------------------------------------------------------
  *  A better absolute!
@@ -20,10 +21,12 @@ enum class GameState : uint8_t {
 
   Intro,
   LevelInit,
-  LevelEntry,
+  LevelEntryAnimation,
   LevelFlash,
   LevelPlay,
-  LevelExit 
+  LevelExitInit,
+  LevelExitAnimation,
+  LevelGameOver
 
 };
 
@@ -416,13 +419,5 @@ struct LevelPoint {
 
   uint8_t x;
   uint8_t y;
-  
-};
-
-struct ReentryPoint {
-
-  uint8_t x;
-  uint8_t y;
-  PlayerStance stance;
   
 };
