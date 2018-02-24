@@ -19,6 +19,7 @@ class Level {
     int16_t getYOffset();
     int8_t getXOffsetDelta();
     int8_t getYOffsetDelta();
+    uint8_t getLevelNumber();
     LevelPoint getReentryPoint(const uint8_t index);
     
     void setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement);
@@ -26,6 +27,7 @@ class Level {
     void setYOffset(int16_t val);
     void setXOffsetDelta(int8_t val);
     void setYOffsetDelta(int8_t val);
+    void setLevelNumber(uint8_t val);
 
   private:
 
@@ -37,6 +39,7 @@ class Level {
     int8_t _xOffsetDelta;
     int8_t _yOffsetDelta;
     uint8_t _levelData[_width][_height];
+    uint8_t _levelNumber;
 
     uint8_t _levelLadderElementCount;
     LevelPoint _levelLadder[10];
@@ -70,6 +73,10 @@ int8_t Level::getYOffsetDelta() {
     return _yOffsetDelta;
 }
 
+uint8_t Level::getLevelNumber() {
+    return 034;//_levelNumber;
+}
+
 void Level::setXOffset(int16_t val) {
     _xOffset = val;
 }
@@ -84,6 +91,10 @@ void Level::setXOffsetDelta(int8_t val) {
 
 void Level::setYOffsetDelta(int8_t val) {
     _yOffsetDelta = val;
+}
+
+void Level::setLevelNumber(uint8_t val) {
+    _levelNumber = val;
 }
 
 LevelPoint Level::getReentryPoint(const uint8_t index) {
@@ -122,8 +133,8 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     if (x  < numberOfEnemies) {
 
-      enemies[x].x = pgm_read_byte(&Level1[dataOffset++]);
-      enemies[x].y = pgm_read_byte(&Level1[dataOffset++]);
+      enemies[x].x = pgm_read_byte(&Level1[dataOffset++]) * GRID_SIZE;
+      enemies[x].y = pgm_read_byte(&Level1[dataOffset++]) * GRID_SIZE;
       enemies[x].enabled = true;
 
     }

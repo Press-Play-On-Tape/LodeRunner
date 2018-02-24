@@ -40,11 +40,7 @@ void renderScreen() {
 
   // Draw player ..
 
-  if (gameState != GameState::LevelPlay) {
-
-    if (arduboy.everyXFrames(6)) flashPlayer = !flashPlayer;
-
-  }
+  if (arduboy.everyXFrames(6)) flashPlayer = !flashPlayer;
 
   if (gameState == GameState::LevelPlay || flashPlayer) {
 
@@ -131,6 +127,68 @@ void renderScreen() {
   }
 
 
+  if (flashPlayer) {
+
+
+    if (drawArrow(Direction::Up)) {
+
+      arduboy.drawCompressedMirror(62, 0, arrow_TM_mask, BLACK, false);
+      arduboy.drawCompressedMirror(62, 0, arrow_TM, WHITE, false);
+
+    }
+
+    if (drawArrow(Direction::RightUp)) {
+
+      arduboy.drawCompressedMirror(123, 0, arrow_TR_mask, BLACK, false);
+      arduboy.drawCompressedMirror(123, 0, arrow_TR, WHITE, false);
+
+    }
+
+    if (drawArrow(Direction::Right)) {
+
+      arduboy.drawCompressedMirror(124, 24, arrow_MR_mask, BLACK, false);
+      arduboy.drawCompressedMirror(124, 24, arrow_MR, WHITE, false);
+
+    }
+    
+    if (drawArrow(Direction::RightDown)) {
+
+      arduboy.drawCompressedMirror(123, 50, arrow_BR_mask, BLACK, false);
+      arduboy.drawCompressedMirror(123, 50, arrow_BR, WHITE, false);
+
+    }
+      
+    if (drawArrow(Direction::Down)) {
+
+      arduboy.drawCompressedMirror(62, 50, arrow_BM_mask, BLACK, false);
+      arduboy.drawCompressedMirror(62, 50, arrow_BM, WHITE, false);
+
+    }
+  
+    if (drawArrow(Direction::LeftDown)) {
+
+      arduboy.drawCompressedMirror(0, 50, arrow_BR_mask, BLACK, true);
+      arduboy.drawCompressedMirror(0, 50, arrow_BR, WHITE, true);
+
+    }
+
+    if (drawArrow(Direction::Left)) {
+
+      arduboy.drawCompressedMirror(0, 24, arrow_MR_mask, BLACK, true);
+      arduboy.drawCompressedMirror(0, 24, arrow_MR, WHITE, true);
+
+    }
+
+    if (drawArrow(Direction::LeftUp)) {
+
+      arduboy.drawCompressedMirror(0, 0, arrow_TR_mask, BLACK, true);
+      arduboy.drawCompressedMirror(0, 0, arrow_TR, WHITE, true);
+
+    }
+
+  }
+
+
   // Draw entry rectangle ..
 
   switch (gameState) {
@@ -184,13 +242,55 @@ void renderScreen() {
 
   // Draw scoreboard ..
 
-  arduboy.drawCompressedMirror(0, 58, score, WHITE, false);
-  arduboy.drawCompressedMirror(30, 57, digit_00, WHITE, false);
-  arduboy.drawCompressedMirror(35, 57, digit_00, WHITE, false);
-  arduboy.drawCompressedMirror(40, 57, digit_00, WHITE, false);
-  arduboy.drawCompressedMirror(45, 57, digit_01, WHITE, false);
-  arduboy.drawCompressedMirror(50, 57, digit_02, WHITE, false);
-  arduboy.drawCompressedMirror(55, 57, digit_03, WHITE, false);
+  uint16_t score = player.score;
+  arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
+  arduboy.drawCompressedMirror(29, 57, digit_00, WHITE, false);
+  arduboy.drawCompressedMirror(34, 57, digits[score / 10000], WHITE, false);
+  score = score - (score / 10000) * 10000;
+  arduboy.drawCompressedMirror(39, 57, digits[score / 1000], WHITE, false);
+  score = score - (score / 1000) * 1000;
+  arduboy.drawCompressedMirror(44, 57, digits[score / 100], WHITE, false);
+  score = score - (score / 100) * 100;
+  arduboy.drawCompressedMirror(49, 57, digits[score / 10], WHITE, false);
+  arduboy.drawCompressedMirror(54, 57, digits[score % 10], WHITE, false);
 
+  uint8_t menLeft = player.men;
+  arduboy.drawCompressedMirror(64, 58, men_sc, WHITE, false);
+  arduboy.drawCompressedMirror(82, 57, digits[menLeft / 10], WHITE, false);
+  arduboy.drawCompressedMirror(87, 57, digits[menLeft % 10], WHITE, false);
+
+  uint8_t levelNumber = level.getLevelNumber();
+  arduboy.drawCompressedMirror(96, 58, level_sc, WHITE, false);
+  arduboy.drawCompressedMirror(113, 57, digits[levelNumber / 100], WHITE, false);
+  levelNumber = levelNumber - (levelNumber / 100) * 100;
+  arduboy.drawCompressedMirror(118, 57, digits[levelNumber / 10], WHITE, false);
+  arduboy.drawCompressedMirror(123, 57, digits[levelNumber % 10], WHITE, false);
+
+
+
+}
+
+bool drawArrow(Direction direction) {
+
+  for (uint8_t y = 0; y < level.getHeight(); y++) {
+
+    for (uint8_t x = 0; x < level.getWidth() * 2; x++) {
+      
+      if (level.getLevelData(x, y) == LevelElement::Gold) {
+
+        int16_t xDiff = ((player.x - level.getXOffset()) / GRID_SIZE) - x;
+        int16_t yDiff = ((player.y - level.getYOffset()) / GRID_SIZE) - y;
+
+        Direction retDirection = getDirection_8Directions(xDiff, yDiff);
+
+        if (direction == retDirection) return true;
+
+      }
+
+    }
+
+  }
+
+  return false;
 
 }

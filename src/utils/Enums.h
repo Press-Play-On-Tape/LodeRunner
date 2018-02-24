@@ -3,10 +3,12 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define HEIGHT_LESS_TOOLBAR   56
-#define NUMBER_OF_ENEMIES     10
-#define GRID_SIZE             10
-#define HALF_GRID_SIZE        (GRID_SIZE / 2)
+#define HEIGHT_LESS_TOOLBAR           56
+#define NUMBER_OF_ENEMIES             10
+#define GRID_SIZE                     10
+#define HALF_GRID_SIZE                (GRID_SIZE / 2)
+
+#define ENEMY_GOLD_PICKUP_THRESHOLD   1
 
 /* ----------------------------------------------------------------------------
  *  A better absolute!
@@ -280,7 +282,7 @@ inline bool operator<=(const Direction lhs, const Direction rhs)   { return !ope
 inline bool operator>=(const Direction lhs, const Direction rhs)   { return !operator <  (lhs,rhs); }
 
 
-Direction getDirection(int16_t xDiff, int16_t yDiff) {
+Direction getDirection_16Directions(int16_t xDiff, int16_t yDiff) {
 
   if (xDiff < 0) {
   
@@ -353,6 +355,63 @@ Direction getDirection(int16_t xDiff, int16_t yDiff) {
 }
 
 
+#define THRESHOLD 4
+
+Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff) {
+
+  auto ax = abs(xDiff);
+  auto ay = abs(yDiff);
+
+  if (xDiff > 0) {  // left
+  
+    if (yDiff > 0) { // up
+      
+      if (ay - ax > THRESHOLD)        return Direction::Up;
+      else if (ax - ay > THRESHOLD)   return Direction::Left;
+      else                            return Direction::LeftUp;
+
+    }
+    else if (yDiff < 0) { //down
+      
+      if (ay - ax > THRESHOLD)        return Direction::Down;
+      else if (ax - ay > THRESHOLD)   return Direction::Left;
+      else                            return Direction::LeftDown;
+
+    }
+    else                              return Direction::Left;    
+
+  }
+  else if (xDiff < 0) {
+
+    if (yDiff > 0) { // up
+      
+      if (ay - ax > THRESHOLD)        return Direction::Up;
+      else if (ax - ay > THRESHOLD)   return Direction::Right;
+      else                            return Direction::RightUp;
+
+    }
+    else if (yDiff < 0) { //down
+      
+      if (ay - ax > THRESHOLD)        return Direction::Down;
+      else if (ax - ay > THRESHOLD)   return Direction::Right;
+      else                            return Direction::RightDown;
+
+    }
+    else                              return Direction::Right;    
+
+  }
+  else {
+
+    if (yDiff < 0)                    return Direction::Down;
+    else if (yDiff > 0)               return Direction::Up;
+    else                              return Direction::Up; 
+
+  }
+  
+  return                              Direction::Up;       // Default, should never get here!
+
+}
+
 // Escape Hole elements ..
 
 inline EscapeHole operator++( EscapeHole & c ) {
@@ -392,6 +451,8 @@ struct Player {
   PlayerStance stance;
   int8_t xDelta;
   int8_t yDelta;
+  uint16_t score;
+  uint8_t men;
 
 };
 
@@ -404,6 +465,7 @@ struct Enemy {
   int8_t yDelta;
   EscapeHole escapeHole;
   bool enabled;
+  bool hasGold;
 
 };
 

@@ -10,7 +10,7 @@
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 
-Player player = {20, 35, PlayerStance::StandingStill, 0, 0};
+Player player = {20, 35, PlayerStance::StandingStill, 0, 0, 0, 5};
 Enemy enemies[NUMBER_OF_ENEMIES];
 
 Level level;

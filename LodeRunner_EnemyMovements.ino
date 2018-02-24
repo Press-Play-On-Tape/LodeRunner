@@ -3,6 +3,26 @@
 
 void enemyMovements(Enemy *enemy) {
 
+  uint8_t enemyX = enemy->x / GRID_SIZE;
+  uint8_t enemyY = enemy->y / GRID_SIZE;
+
+
+  // Check to see if the enemy has touched gold!
+
+  if (level.getLevelData(enemyX, enemyY) == LevelElement::Gold) {
+
+    if (random(0, ENEMY_GOLD_PICKUP_THRESHOLD) == 0) {
+
+      enemy->hasGold = true;
+      level.setLevelData(enemyX, enemyY, LevelElement::Blank);
+
+    }
+
+  }
+
+
+  // Move enemy ..
+
   switch (enemy->stance) {
 
 
@@ -19,8 +39,8 @@ void enemyMovements(Enemy *enemy) {
       if (enemy->x % GRID_SIZE == 0 && enemy->y % GRID_SIZE == 0) {
 
         bool hasMoved = false;
-        uint8_t enemyX = enemy->x / GRID_SIZE;
-        uint8_t enemyY = enemy->y / GRID_SIZE;
+        enemyX = enemy->x / GRID_SIZE;
+        enemyY = enemy->y / GRID_SIZE;
 
         LevelElement current =    level.getLevelData(enemyX, enemyY);
         LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
@@ -29,6 +49,17 @@ void enemyMovements(Enemy *enemy) {
         // If the enemy is in a hole, then attemt to wiggle out ..
 
         if (enemy->escapeHole > EscapeHole::None) {
+
+
+          // If the enemy has gold, then make it available to pickup ..
+
+          if (enemy->hasGold) {
+
+            enemy->hasGold = false;
+            level.setLevelData(enemyX, enemyY - 1, LevelElement::Gold);
+
+          }
+
 
 
           // Check to see if the enemy can continue falling ..
@@ -57,7 +88,7 @@ void enemyMovements(Enemy *enemy) {
           int16_t xDiff = enemy->x - (player.x - level.getXOffset());
           int16_t yDiff = enemy->y - (player.y - level.getYOffset());
 
-          Direction direction = getDirection(xDiff, yDiff);
+          Direction direction = getDirection_16Directions(xDiff, yDiff);
           Direction direction1 = direction;
           Direction direction2 = direction;
 
