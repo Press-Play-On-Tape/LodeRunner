@@ -101,6 +101,24 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
 
 
 // ---------------------------------------------------------------------------------
+// Can be stood on by the enemy ?
+//
+boolean isSolid(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Brick:
+    case LevelElement::Solid:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
+
+// ---------------------------------------------------------------------------------
 // Can the player fall onto these elements ?
 //
 // Elements should be the same as the 'canBeStoodOn' with the addition of the rail.

@@ -6,11 +6,12 @@
 #include "src/levels/Levels.h"
 #include "src/levels/Level.h"
 #include "src/utils/Queue.h"
+#include "src/utils/EEPROM_Utils.h"
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 
-Player player = {20, 35, PlayerStance::StandingStill, 0, 0, 0, 5};
+Player player = {20, 35, PlayerStance::StandingStill, 0, 0, 0, 5, GameState::Intro};
 Enemy enemies[NUMBER_OF_ENEMIES];
 
 Level level;
@@ -24,7 +25,7 @@ bool flashPlayer = false;
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
 int8_t introRect = 0;
-
+uint8_t menuSelect = 0;
 Queue<Hole, 10> holes;
 
 
@@ -34,7 +35,9 @@ Queue<Hole, 10> holes;
 uint8_t getNearestX(int8_t margin = HALF_GRID_SIZE);
 uint8_t getNearestY(int8_t margin = HALF_GRID_SIZE);
 
-
+#ifdef INC_ARROWS
+Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff);
+#endif
 
 // --------------------------------------------------------------------------------------
 //  Setup ..
@@ -47,6 +50,8 @@ void setup() {
   arduboy.audio.begin();
   arduboy.setFrameRate(90);
   arduboy.initRandomSeed();
+  EEPROM_Utils::initEEPROM();
+  level.setLevelNumber(EEPROM_Utils::getLevelNumber());
 
 }
 
@@ -62,19 +67,18 @@ void loop() {
       Intro();
       break;
 
+    case GameState::GameSelect:
+      GameSelect();
+      break;
+
     case GameState::LevelInit:
+      level.loadLevel(&player, enemies); 
       introRect = 28;
       gameState = GameState::LevelEntryAnimation;
       /* break; Drop through to next case */
 
     case GameState::LevelEntryAnimation:
-      LevelPlay();
-      break;
-
     case GameState::LevelFlash:
-      LevelPlay();
-      break;
-
     case GameState::LevelPlay:
       LevelPlay();
       break;
@@ -85,6 +89,9 @@ void loop() {
       /* break; Drop through to next case */
 
     case GameState::LevelExitAnimation:
+    case GameState::NextLevel:
+    case GameState::GameOver:
+    case GameState::RestartLevel:
       LevelPlay();
       break;
 
@@ -119,15 +126,43 @@ void Intro() {
 
   arduboy.display(CLEAR_BUFFER);
 
+  if (arduboy.justPressed(A_BUTTON))  { gameState = (EEPROM_Utils::getLevelNumber() == 1 ? GameState::LevelInit : GameState::GameSelect); }
+
+}
 
 
-  if (arduboy.justPressed(A_BUTTON))  { 
-    
-    gameState = GameState::LevelInit; 
-    level.loadLevel(&player, enemies); 
-    
+
+// --------------------------------------------------------------------------------------
+//  Display intro banner ..
+//
+void GameSelect() {
+
+  if (!(arduboy.nextFrame())) return;
+  arduboy.pollButtons();
+
+  arduboy.drawCompressedMirror(38, 24, menuOption, WHITE, false);
+  arduboy.drawCompressedMirror(31, (menuSelect == 0 ? 24 : 34), menuArrow, WHITE, false);
+
+  for (uint8_t x = 0; x < WIDTH; x = x + 10) {
+  
+    arduboy.drawCompressedMirror(x, 0, brick, WHITE, false);
+    arduboy.drawCompressedMirror(x, 55, brick, WHITE, false);
+
   }
 
+  arduboy.display(CLEAR_BUFFER);
+
+  if (arduboy.justPressed(UP_BUTTON) && menuSelect == 1)    { menuSelect = 0; }
+  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect == 0)  { menuSelect = 1; }
+
+  if (arduboy.justPressed(A_BUTTON)) {
+    
+    if (menuSelect == 0) { level.setLevelNumber(EEPROM_Utils::getLevelNumber()); }
+    if (menuSelect == 1) { level.setLevelNumber(1); }
+
+     gameState = GameState::LevelInit; 
+     
+  }
 
 }
 
@@ -141,7 +176,8 @@ void LevelPlay() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
-  //arduboy.clear();
+
+
 
   if (gameState == GameState::LevelPlay) {
 
@@ -149,6 +185,12 @@ void LevelPlay() {
     uint8_t nearestY = getNearestY();
     LevelElement nearest = level.getLevelData(nearestX, nearestY);
 
+// arduboy.setCursor(0,0);
+// arduboy.print(player.x);
+// arduboy.print(" ");
+// arduboy.print(level.getXOffset());
+// arduboy.print(" ");
+// arduboy.print(nearestY);
 
     // Detect next movements for player and enemies ..
 
@@ -232,6 +274,18 @@ void LevelPlay() {
     level.setYOffset(level.getYOffset() + level.getYOffsetDelta());
 
 
+    // If the player has gone off the top of the screen .. level over!
+
+    if (player.y > (level.getHeight() * GRID_SIZE)) {
+
+      gameState = GameState::LevelExitInit;
+      player.nextState = GameState::NextLevel;
+      level.setLevelNumber(level.getLevelNumber() + 1);
+      EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
+
+    } 
+
+
     // Move enemies ..
 
     for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -242,6 +296,34 @@ void LevelPlay() {
 
         enemy->x = enemy->x + enemy->xDelta;
         enemy->y = enemy->y + enemy->yDelta;
+
+      }
+
+    }
+
+
+    // Are any of the enemies touching the player?
+
+    for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+      Enemy *enemy = &enemies[x];
+
+      if (enemy->enabled && arduboy.collide(Rect {static_cast<int16_t>(enemy->x), static_cast<int16_t>(enemy->y), 10, 10}, Rect {static_cast<int16_t>(player.x - level.getXOffset()), static_cast<int16_t>(player.y - level.getYOffset()), 10, 10} )) {
+
+        player.men--;
+
+        if (player.men > 0) {
+
+          gameState = GameState::LevelExitInit;
+          player.nextState = GameState::RestartLevel;
+
+        }
+        else {
+
+          gameState = GameState::LevelExitInit;
+          player.nextState = GameState::GameOver;
+
+        }
 
       }
 
@@ -371,7 +453,29 @@ void LevelPlay() {
 
     // We are not playing so wait for a key press to continue the game ..
 
-    if (arduboy.justPressed(A_BUTTON)) { gameState = GameState::LevelPlay;  }
+    if (arduboy.justPressed(A_BUTTON)) { 
+
+      switch (gameState) {
+
+        case GameState::NextLevel:
+          gameState = GameState::LevelInit;  
+          break;
+
+        case GameState::RestartLevel:
+          gameState = GameState::LevelInit;  
+          break;
+
+        case GameState::GameOver:
+          gameState = GameState::Intro;  
+          break;
+
+        default:
+          gameState = GameState::LevelPlay;
+          break;
+
+      }  
+      
+    }
 
   }
 

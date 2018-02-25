@@ -73,3 +73,138 @@ PlayerStance getNextStance(PlayerStance stance) {
   }
 
 }
+
+Direction getDirection_16Directions(int16_t xDiff, int16_t yDiff) {
+
+  if (xDiff < 0) {
+  
+    if (yDiff > 0) {
+    
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightUp; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp2; }
+      
+    }
+    else if (yDiff < 0) {
+    
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightDown; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown2; }
+    
+    }
+    else {
+    
+      return Direction::Right;
+      
+    }
+  
+  } 
+  else if (xDiff > 0) {
+  
+    if (yDiff > 0) {
+    
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftUp; }
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp2; }
+      
+    }
+    else if (yDiff < 0) {
+    
+      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown1; }
+      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftDown; }
+      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown2; }
+    
+    }
+    else {
+    
+      return Direction::Left;
+      
+    }
+  
+  }
+  else {  
+  
+    if (yDiff < 0) {
+    
+      return Direction::Down;
+      
+    }
+    else if (yDiff > 0) {
+    
+      return Direction::Up;
+      
+    }
+    else {
+    
+      return Direction::Up;   // Player should be dead !
+      
+    }
+  
+  }
+
+  return Direction::Up;       // Default, should never get here!
+
+}
+
+#define THRESHOLD 4
+
+#ifdef INC_ARROWS
+
+Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff) {
+
+  auto ax = abs(xDiff);
+  auto ay = abs(yDiff);
+
+  if (xDiff > 0) {  // left
+  
+    if (yDiff > 0) { // up
+      
+      if (ay - ax > THRESHOLD)        return Direction::Up;
+      else if (ax - ay > THRESHOLD)   return Direction::Left;
+      else                            return Direction::LeftUp;
+
+    }
+    else if (yDiff < 0) { //down
+      
+      if (ay - ax > THRESHOLD)        return Direction::Down;
+      else if (ax - ay > THRESHOLD)   return Direction::Left;
+      else                            return Direction::LeftDown;
+
+    }
+    else                              return Direction::Left;    
+
+  }
+  else if (xDiff < 0) {
+
+    if (yDiff > 0) { // up
+      
+      if (ay - ax > THRESHOLD)        return Direction::Up;
+      else if (ax - ay > THRESHOLD)   return Direction::Right;
+      else                            return Direction::RightUp;
+
+    }
+    else if (yDiff < 0) { //down
+      
+      if (ay - ax > THRESHOLD)        return Direction::Down;
+      else if (ax - ay > THRESHOLD)   return Direction::Right;
+      else                            return Direction::RightDown;
+
+    }
+    else                              return Direction::Right;    
+
+  }
+  else {
+
+    if (yDiff < 0)                    return Direction::Down;
+    else if (yDiff > 0)               return Direction::Up;
+    else                              return Direction::Up; 
+
+  }
+  
+  return                              Direction::Up;       // Default, should never get here!
+
+}
+
+#endif
+
+

@@ -3,12 +3,24 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
+#define _INC_ARROWS
+
 #define HEIGHT_LESS_TOOLBAR           56
 #define NUMBER_OF_ENEMIES             10
 #define GRID_SIZE                     10
 #define HALF_GRID_SIZE                (GRID_SIZE / 2)
 
 #define ENEMY_GOLD_PICKUP_THRESHOLD   1
+#define ENEMY_GOLD_HOLD_MINIMUM       20
+#define ENEMY_GOLD_HOLD_MAXIMUM       30
+#define ENEMY_GOLD_DROP_VALUE         15
+
+#define LEVEL_ANIMATION_BANNER_WIDTH  28
+
+#define EEPROM_START                  EEPROM_STORAGE_SPACE_START + 175
+#define EEPROM_START_C1               EEPROM_START
+#define EEPROM_START_C2               EEPROM_START + 1
+#define EEPROM_LEVEL_NO               EEPROM_START + 2
 
 /* ----------------------------------------------------------------------------
  *  A better absolute!
@@ -22,13 +34,16 @@ template<typename T> T absT(const T & v) {
 enum class GameState : uint8_t {
 
   Intro,
+  GameSelect,
   LevelInit,
   LevelEntryAnimation,
   LevelFlash,
   LevelPlay,
   LevelExitInit,
   LevelExitAnimation,
-  LevelGameOver
+  GameOver,
+  NextLevel,
+  RestartLevel
 
 };
 
@@ -282,135 +297,7 @@ inline bool operator<=(const Direction lhs, const Direction rhs)   { return !ope
 inline bool operator>=(const Direction lhs, const Direction rhs)   { return !operator <  (lhs,rhs); }
 
 
-Direction getDirection_16Directions(int16_t xDiff, int16_t yDiff) {
 
-  if (xDiff < 0) {
-  
-    if (yDiff > 0) {
-    
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightUp; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp2; }
-      
-    }
-    else if (yDiff < 0) {
-    
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightDown; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown2; }
-    
-    }
-    else {
-    
-      return Direction::Right;
-      
-    }
-  
-  } 
-  else if (xDiff > 0) {
-  
-    if (yDiff > 0) {
-    
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftUp; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp2; }
-      
-    }
-    else if (yDiff < 0) {
-    
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftDown; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown2; }
-    
-    }
-    else {
-    
-      return Direction::Left;
-      
-    }
-  
-  }
-  else {  
-  
-    if (yDiff < 0) {
-    
-      return Direction::Down;
-      
-    }
-    else if (yDiff > 0) {
-    
-      return Direction::Up;
-      
-    }
-    else {
-    
-      return Direction::Up;   // Player should be dead !
-      
-    }
-  
-  }
-
-  return Direction::Up;       // Default, should never get here!
-
-}
-
-
-#define THRESHOLD 4
-
-Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff) {
-
-  auto ax = abs(xDiff);
-  auto ay = abs(yDiff);
-
-  if (xDiff > 0) {  // left
-  
-    if (yDiff > 0) { // up
-      
-      if (ay - ax > THRESHOLD)        return Direction::Up;
-      else if (ax - ay > THRESHOLD)   return Direction::Left;
-      else                            return Direction::LeftUp;
-
-    }
-    else if (yDiff < 0) { //down
-      
-      if (ay - ax > THRESHOLD)        return Direction::Down;
-      else if (ax - ay > THRESHOLD)   return Direction::Left;
-      else                            return Direction::LeftDown;
-
-    }
-    else                              return Direction::Left;    
-
-  }
-  else if (xDiff < 0) {
-
-    if (yDiff > 0) { // up
-      
-      if (ay - ax > THRESHOLD)        return Direction::Up;
-      else if (ax - ay > THRESHOLD)   return Direction::Right;
-      else                            return Direction::RightUp;
-
-    }
-    else if (yDiff < 0) { //down
-      
-      if (ay - ax > THRESHOLD)        return Direction::Down;
-      else if (ax - ay > THRESHOLD)   return Direction::Right;
-      else                            return Direction::RightDown;
-
-    }
-    else                              return Direction::Right;    
-
-  }
-  else {
-
-    if (yDiff < 0)                    return Direction::Down;
-    else if (yDiff > 0)               return Direction::Up;
-    else                              return Direction::Up; 
-
-  }
-  
-  return                              Direction::Up;       // Default, should never get here!
-
-}
 
 // Escape Hole elements ..
 
@@ -453,11 +340,13 @@ struct Player {
   int8_t yDelta;
   uint16_t score;
   uint8_t men;
+  GameState nextState;
 
 };
 
 struct Enemy {
 
+  uint8_t id;
   uint16_t x;
   uint16_t y;
   PlayerStance stance;
@@ -465,7 +354,7 @@ struct Enemy {
   int8_t yDelta;
   EscapeHole escapeHole;
   bool enabled;
-  bool hasGold;
+  uint8_t hasGold;
 
 };
 

@@ -9,11 +9,11 @@ void enemyMovements(Enemy *enemy) {
 
   // Check to see if the enemy has touched gold!
 
-  if (level.getLevelData(enemyX, enemyY) == LevelElement::Gold) {
+  if (level.getLevelData(enemyX, enemyY) == LevelElement::Gold && enemy->hasGold == 0) {
 
     if (random(0, ENEMY_GOLD_PICKUP_THRESHOLD) == 0) {
 
-      enemy->hasGold = true;
+      enemy->hasGold = random(ENEMY_GOLD_HOLD_MINIMUM, ENEMY_GOLD_HOLD_MAXIMUM);
       level.setLevelData(enemyX, enemyY, LevelElement::Blank);
 
     }
@@ -38,6 +38,7 @@ void enemyMovements(Enemy *enemy) {
 
       if (enemy->x % GRID_SIZE == 0 && enemy->y % GRID_SIZE == 0) {
 
+
         bool hasMoved = false;
         enemyX = enemy->x / GRID_SIZE;
         enemyY = enemy->y / GRID_SIZE;
@@ -53,9 +54,9 @@ void enemyMovements(Enemy *enemy) {
 
           // If the enemy has gold, then make it available to pickup ..
 
-          if (enemy->hasGold) {
+          if (enemy->hasGold > 0) {
 
-            enemy->hasGold = false;
+            enemy->hasGold = 0;
             level.setLevelData(enemyX, enemyY - 1, LevelElement::Gold);
 
           }
@@ -84,6 +85,7 @@ void enemyMovements(Enemy *enemy) {
           LevelElement rightDown =  level.getLevelData(enemyX + 1, enemyY + 1);
           LevelElement leftDown =   level.getLevelData(enemyX - 1, enemyY + 1);
           LevelElement left =       level.getLevelData(enemyX - 1, enemyY);
+          LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
 
           int16_t xDiff = enemy->x - (player.x - level.getXOffset());
           int16_t yDiff = enemy->y - (player.y - level.getYOffset());
@@ -92,6 +94,22 @@ void enemyMovements(Enemy *enemy) {
           Direction direction1 = direction;
           Direction direction2 = direction;
 
+
+
+          // Drop the gold?
+
+          if (enemy->hasGold > 0 && isSolid(down) && current == LevelElement::Blank) {
+
+            enemy->hasGold--;
+
+            if (enemy->hasGold == ENEMY_GOLD_DROP_VALUE) {
+
+              level.setLevelData(enemyX, enemyY, LevelElement::Gold);
+
+            }
+
+          }
+ 
 
           // Can the enemy move in the preferred direction ?
 
@@ -147,6 +165,28 @@ void enemyMovements(Enemy *enemy) {
 
 }
 
+boolean isOccupiedByAnotherEnemy(Enemy *enemies, Enemy *enemy, int8_t xDelta, int8_t yDelta) {
+
+  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+    Enemy *testEnemy = &enemies[x];
+
+    if (testEnemy->id != enemy->id) {
+
+      if (testEnemy->x == enemy->x + xDelta && testEnemy->y == enemy->y + yDelta) {
+
+        return true;
+
+      }
+
+    }
+
+  }
+
+  return false;
+
+}
+
 boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction direction, 
                       LevelElement current, LevelElement up,  
                       LevelElement right, LevelElement rightDown, LevelElement down,
@@ -160,7 +200,8 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
     case Direction::Up     ... Direction::RightUp:
 
       if ( (current == LevelElement::Ladder || current == LevelElement::LadderLevel) && 
-            (up == LevelElement::Ladder || up == LevelElement::LadderLevel) ) {
+            (up == LevelElement::Ladder || up == LevelElement::LadderLevel) &&
+            !isOccupiedByAnotherEnemy(enemies, enemy, 0, -GRID_SIZE) ) {
 
         if (enemy->stance < PlayerStance::Climbing_Up1 || enemy->stance > PlayerStance::Climbing_Up2) enemy->stance = PlayerStance::Climbing_Up1;
         moveUp(enemy);
@@ -172,7 +213,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
     case Direction::RightUp2 ... Direction::RightDown1:
 
-      if (right == LevelElement::Rail) {
+      if (right == LevelElement::Rail && !isOccupiedByAnotherEnemy(enemies, enemy, GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Swinging_Right1 || enemy->stance > PlayerStance::Swinging_Right4) enemy->stance = PlayerStance::Swinging_Right1;
         moveRight(enemy);
@@ -180,7 +221,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
 
-      else if (current == LevelElement::Rail && canBeStoodOnBasic_Enemy(rightDown)) {
+      else if (current == LevelElement::Rail && canBeStoodOnBasic_Enemy(rightDown) && !isOccupiedByAnotherEnemy(enemies, enemy, GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Running_Right1 || enemy->stance > PlayerStance::Running_Right4) enemy->stance = PlayerStance::Running_Right1;
         moveRight(enemy);
@@ -188,7 +229,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
 
-      else if (right == LevelElement::Ladder || right == LevelElement::LadderLevel) {
+      else if ((right == LevelElement::Ladder || right == LevelElement::LadderLevel) && !isOccupiedByAnotherEnemy(enemies, enemy, GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Climbing_Up1 || enemy->stance > PlayerStance::Climbing_Up2) enemy->stance = PlayerStance::Climbing_Up1;
         moveRight(enemy);
@@ -198,7 +239,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       else if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
 
-        if (right == LevelElement::Ladder || right == LevelElement::LadderLevel) {
+        if ((right == LevelElement::Ladder || right == LevelElement::LadderLevel) && !isOccupiedByAnotherEnemy(enemies, enemy, GRID_SIZE, 0)) {
 
           if (enemy->stance < PlayerStance::Swinging_Right1 || enemy->stance > PlayerStance::Swinging_Right4)  enemy->stance = PlayerStance::Swinging_Right1;
           moveRight(enemy);
@@ -206,21 +247,25 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
         else {
-          
-          enemy->stance = PlayerStance::Falling;
-          moveDown(enemy);
-          hasMoved = true;
-
-
-          // If we have fallen into a brick hole, start counting ..
-
-          switch (down) {
-
-            case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
-              enemy->escapeHole = EscapeHole::WaitMax;
-              break;
             
-            default:  break;
+          if (!isOccupiedByAnotherEnemy(enemies, enemy, 0, GRID_SIZE)) {
+
+            enemy->stance = PlayerStance::Falling;
+            moveDown(enemy);
+            hasMoved = true;
+
+
+            // If we have fallen into a brick hole, start counting ..
+
+            switch (down) {
+
+              case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
+                enemy->escapeHole = EscapeHole::WaitMax;
+                break;
+              
+              default:  break;
+
+            }
 
           }
 
@@ -228,7 +273,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
 
-      else if (canBeStoodOn_Enemy(rightDown) && canBeOccupied_Enemy(right)) {
+      else if (canBeStoodOn_Enemy(rightDown) && canBeOccupied_Enemy(right) && !isOccupiedByAnotherEnemy(enemies, enemy, GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Running_Right1 || enemy->stance > PlayerStance::Running_Right4) enemy->stance = PlayerStance::Running_Right1;
         moveRight(enemy);
@@ -240,7 +285,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
     case Direction::RightDown ... Direction::LeftDown:
 
-      if (down == LevelElement::Ladder || down == LevelElement::LadderLevel) {
+      if ((down == LevelElement::Ladder || down == LevelElement::LadderLevel) && !isOccupiedByAnotherEnemy(enemies, enemy, 0, GRID_SIZE)) {
 
         if (enemy->stance < PlayerStance::Climbing_Down1 || enemy->stance < PlayerStance::Climbing_Down2) enemy->stance = PlayerStance::Climbing_Down1;
         moveDown(enemy);
@@ -248,7 +293,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
 
-      else if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
+      else if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1) && !isOccupiedByAnotherEnemy(enemies, enemy, 0, GRID_SIZE)) {
 
         enemy->stance = PlayerStance::Falling;
         moveDown(enemy);
@@ -273,7 +318,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
     case Direction::LeftDown2 ... Direction::LeftUp1:
 
-      if (left == LevelElement::Rail) {
+      if (left == LevelElement::Rail && !isOccupiedByAnotherEnemy(enemies, enemy, -GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Swinging_Left4 || enemy->stance > PlayerStance::Swinging_Left1) enemy->stance = PlayerStance::Swinging_Left1;
         moveLeft(enemy);
@@ -281,7 +326,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
       
-      else if (current == LevelElement::Rail && canBeStoodOnBasic_Enemy(leftDown)) {
+      else if (current == LevelElement::Rail && canBeStoodOnBasic_Enemy(leftDown) && !isOccupiedByAnotherEnemy(enemies, enemy, -GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Running_Left4 || enemy->stance > PlayerStance::Running_Left1) enemy->stance = PlayerStance::Running_Left1;
         moveLeft(enemy);
@@ -289,7 +334,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
       
-      else if (left == LevelElement::Ladder || left == LevelElement::LadderLevel) {
+      else if ((left == LevelElement::Ladder || left == LevelElement::LadderLevel) && !isOccupiedByAnotherEnemy(enemies, enemy, -GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Climbing_Up1 || enemy->stance > PlayerStance::Climbing_Up2) enemy->stance = PlayerStance::Climbing_Up1;
         moveLeft(enemy);
@@ -299,7 +344,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       else if (canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1)) {
 
-        if (left == LevelElement::Ladder || left == LevelElement::LadderLevel) {
+        if ((left == LevelElement::Ladder || left == LevelElement::LadderLevel) && !isOccupiedByAnotherEnemy(enemies, enemy, -GRID_SIZE, 0)) {
 
           if (enemy->stance < PlayerStance::Swinging_Left4 || enemy->stance > PlayerStance::Swinging_Left1)  enemy->stance = PlayerStance::Swinging_Left1;
           moveLeft(enemy);
@@ -308,20 +353,24 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
         }
         else {
 
-          enemy->stance = PlayerStance::Falling;
-          moveDown(enemy);
-          hasMoved = true;
+          if (!isOccupiedByAnotherEnemy(enemies, enemy, 0, GRID_SIZE)) {
+
+            enemy->stance = PlayerStance::Falling;
+            moveDown(enemy);
+            hasMoved = true;
 
 
-          // If we have fallen into a brick hole, start counting ..
+            // If we have fallen into a brick hole, start counting ..
 
-          switch (down) {
+            switch (down) {
 
-            case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
-              enemy->escapeHole = EscapeHole::WaitMax;
-              break;
-            
-            default:  break;
+              case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
+                enemy->escapeHole = EscapeHole::WaitMax;
+                break;
+              
+              default:  break;
+
+            }
 
           }
 
@@ -329,7 +378,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
       }
             
-      else if (canBeStoodOn_Enemy(leftDown) && canBeOccupied_Enemy(left)) {
+      else if (canBeStoodOn_Enemy(leftDown) && canBeOccupied_Enemy(left) && !isOccupiedByAnotherEnemy(enemies, enemy, -GRID_SIZE, 0)) {
 
         if (enemy->stance < PlayerStance::Running_Left4 || enemy->stance > PlayerStance::Running_Left1) enemy->stance = PlayerStance::Running_Left1;
         moveLeft(enemy);

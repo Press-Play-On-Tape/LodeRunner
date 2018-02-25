@@ -12,6 +12,7 @@ class Level {
         
     LevelElement getLevelData(const uint8_t x, const uint8_t y);
     void loadLevel(Player *player, Enemy enemies[]);
+    void pickupGold();
 
     uint8_t getHeight();
     uint8_t getWidth();
@@ -20,7 +21,10 @@ class Level {
     int8_t getXOffsetDelta();
     int8_t getYOffsetDelta();
     uint8_t getLevelNumber();
+    uint8_t getGoldLeft();
+    uint8_t getLevelLadderElementCount();
     LevelPoint getReentryPoint(const uint8_t index);
+    LevelPoint getLevelLadderElement(const uint8_t index);
     
     void setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement);
     void setXOffset(int16_t val);
@@ -28,11 +32,12 @@ class Level {
     void setXOffsetDelta(int8_t val);
     void setYOffsetDelta(int8_t val);
     void setLevelNumber(uint8_t val);
+    void setGoldLeft(uint8_t val);
 
   private:
 
     static const uint8_t _width = 14;
-    static const uint8_t _height = 11;
+    static const uint8_t _height = 16;
 
     int16_t _xOffset;
     int16_t _yOffset;
@@ -40,6 +45,7 @@ class Level {
     int8_t _yOffsetDelta;
     uint8_t _levelData[_width][_height];
     uint8_t _levelNumber;
+    uint8_t _goldLeft;
 
     uint8_t _levelLadderElementCount;
     LevelPoint _levelLadder[10];
@@ -74,7 +80,15 @@ int8_t Level::getYOffsetDelta() {
 }
 
 uint8_t Level::getLevelNumber() {
-    return 034;//_levelNumber;
+    return _levelNumber;
+}
+
+uint8_t Level::getGoldLeft() {
+    return _goldLeft;
+}
+
+uint8_t Level::getLevelLadderElementCount() {
+    return _levelLadderElementCount;
 }
 
 void Level::setXOffset(int16_t val) {
@@ -97,9 +111,20 @@ void Level::setLevelNumber(uint8_t val) {
     _levelNumber = val;
 }
 
+void Level::setGoldLeft(uint8_t val) {
+    _goldLeft = val;
+}
+
 LevelPoint Level::getReentryPoint(const uint8_t index) {
 
   return _reentryPoint[index];
+
+}
+
+LevelPoint Level::getLevelLadderElement(const uint8_t index) {
+
+  return _levelLadder[index];
+
 }
 
 
@@ -109,32 +134,82 @@ LevelPoint Level::getReentryPoint(const uint8_t index) {
 void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   uint8_t dataOffset = 0;
+  uint8_t goldLeft = 0;
 
-
-  // Load player starting position ..
-  
-  _xOffset = pgm_read_word_near(&Level1[dataOffset++]);         dataOffset++;
-  _xOffsetDelta = pgm_read_byte(&Level1[dataOffset++]);
-  _yOffset = pgm_read_word_near(&Level1[dataOffset++]);         dataOffset++;
-  _yOffsetDelta = pgm_read_byte(&Level1[dataOffset++]);
+  const uint8_t *levelToLoad = levels[_levelNumber];
 
 
   // Load player starting position ..
 
-  player->x = pgm_read_byte(&Level1[dataOffset++]);
-  player->y = pgm_read_byte(&Level1[dataOffset++]);
+  uint16_t  playerX = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+  uint16_t  playerY = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+
+
+  // Determine player's X Pos and level offset ..
+
+  if (playerX < (WIDTH / 2) - 5) {
+
+    _xOffset = 0;
+    player->x = playerX;
+
+  }
+  else {
+
+    if (playerX >= (WIDTH / 2) - 5 && playerX <= (_width * GRID_SIZE * 2) - WIDTH) {
+
+      player->x = (WIDTH / 2) - 5;
+      _xOffset = player->x - playerX;
+
+
+    }
+    else {
+
+      _xOffset = -153;
+      player->x = (playerX + _xOffset);
+
+    }
+
+  }
+
+
+  // Determine player's Y Pos and level offset ..
+
+  if (playerY < (HEIGHT_LESS_TOOLBAR / 2) - 5) {
+
+    _yOffset = 0;
+    player->y = playerY;
+
+  }
+  else {
+
+    if (playerY >= (HEIGHT_LESS_TOOLBAR / 2) - 5 && playerY <= (_height * GRID_SIZE) - HEIGHT_LESS_TOOLBAR) {
+
+      player->y = (HEIGHT_LESS_TOOLBAR / 2) - 5;
+      _yOffset = player->y - playerY;
+
+    }
+    else {
+
+      _yOffset = -(_height * GRID_SIZE) + HEIGHT_LESS_TOOLBAR;
+      player->y = playerY + _yOffset;
+
+    }
+
+  }
 
 
   // Load enemies ..
 
-  uint8_t numberOfEnemies = pgm_read_byte(&Level1[dataOffset++]);
+  uint8_t numberOfEnemies = pgm_read_byte(&levelToLoad[dataOffset++]);
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
+    enemies[x].id = 0;
+    
     if (x  < numberOfEnemies) {
 
-      enemies[x].x = pgm_read_byte(&Level1[dataOffset++]) * GRID_SIZE;
-      enemies[x].y = pgm_read_byte(&Level1[dataOffset++]) * GRID_SIZE;
+      enemies[x].x = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+      enemies[x].y = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
       enemies[x].enabled = true;
 
     }
@@ -151,20 +226,20 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   for (uint8_t x = 0; x < 4; x++) {
 
-    _reentryPoint[x].x = pgm_read_byte(&Level1[dataOffset++]);
-    _reentryPoint[x].y = pgm_read_byte(&Level1[dataOffset++]);
+    _reentryPoint[x].x = pgm_read_byte(&levelToLoad[dataOffset++]);
+    _reentryPoint[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
 
   }
 
 
   // Load level ladder points ..
 
-  _levelLadderElementCount = pgm_read_byte(&Level1[dataOffset++]);
+  _levelLadderElementCount = pgm_read_byte(&levelToLoad[dataOffset++]);
 
   for (uint8_t x = 0; x < _levelLadderElementCount; x++) {
 
-    _levelLadder[x].x = pgm_read_byte(&Level1[dataOffset++]);
-    _levelLadder[x].y = pgm_read_byte(&Level1[dataOffset++]);
+    _levelLadder[x].x = pgm_read_byte(&levelToLoad[dataOffset++]);
+    _levelLadder[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
 
   }
 
@@ -176,11 +251,21 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     for (uint8_t x = 0; x < _width; x++) {
 
-      _levelData[x][y] = pgm_read_byte(&Level1[(y * _width) + x + dataOffset]);
+      uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
+
+      if (leftValue(data) == static_cast<uint8_t>(LevelElement::LadderLevel))     { data = data & 0x0F;}
+      if (rightValue(data) == static_cast<uint8_t>(LevelElement::LadderLevel))    { data = data & 0xF0;}
+
+      if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+      if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
+
+      _levelData[x][y] = data;
 
     }
 
   }
+
+  _goldLeft = goldLeft;
 
 }
 
@@ -224,4 +309,28 @@ void Level::setLevelData(const uint8_t x, const uint8_t y, const LevelElement le
     
   }
       
+}
+
+
+// -----------------------------------------------------------------------------------------------
+//  Update the level when the last gold is collected ..
+//
+void Level::pickupGold() {
+
+  _goldLeft--;
+
+  if (_goldLeft == 0) {
+
+    // Update map with level ladder ..
+
+    for (uint8_t x = 0; x < _levelLadderElementCount; x++) {
+
+      LevelPoint lp = _levelLadder[x];
+
+      Level::setLevelData(lp.x, lp.y, LevelElement::LadderLevel);
+
+    }
+
+  }
+
 }

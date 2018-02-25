@@ -11,6 +11,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
     player.score = player.score + 25;
     level.setLevelData(nearestX, nearestY, LevelElement::Blank);
+    level.pickupGold();
 
   }
 
@@ -102,11 +103,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
     }
 
-    LevelElement current = level.getLevelData(nearestX, nearestY);
+    //LevelElement current = level.getLevelData(nearestX, nearestY);
     LevelElement right = level.getLevelData(nearestX + 1, nearestY);
     LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
     LevelElement down = level.getLevelData(nearestX, nearestY + 1);
-    arduboy.setCursor(0,0);
+    //arduboy.setCursor(0,0);
 // arduboy.print((int8_t)current);
 // arduboy.print(" "); 
 
@@ -411,18 +412,20 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       case PlayerStance::Climbing_Up1 ... PlayerStance::Climbing_Up2:
 
-        if (inCellY() && nearest != LevelElement::Ladder) {
+        if (inCellY() && nearest != LevelElement::Ladder && nearest != LevelElement::LadderLevel) {
 
           moveUp = false;
           moveDown = false;
 
         }
 
+        
+
         break;
 
       default:
 
-        if (nearest == LevelElement::Ladder) {
+        if (nearest == LevelElement::Ladder || nearest == LevelElement::LadderLevel) {
 
           player.x = (nearestX * GRID_SIZE) + level.getXOffset();
           player.stance = PlayerStance::Climbing_Up1;
