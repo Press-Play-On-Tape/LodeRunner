@@ -54,7 +54,7 @@ enum class LevelElement : uint8_t {
   Solid,       // 2
   Ladder,      // 3
   Rail,        // 4
-  LadderLevel, // 5
+  FallThrough, // 5
   Gold,        // 6
   Brick_1,     // 7
   Brick_2,     // 8

@@ -158,6 +158,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         case LevelElement::Brick:
         case LevelElement::Solid:
+        case LevelElement::FallThrough:
 
           moveRight = false;
           break;
@@ -301,6 +302,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       switch (left) {
 
         case LevelElement::Brick:
+        case LevelElement::FallThrough:
         case LevelElement::Solid:
 
           moveLeft = false;
@@ -412,20 +414,18 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       case PlayerStance::Climbing_Up1 ... PlayerStance::Climbing_Up2:
 
-        if (inCellY() && nearest != LevelElement::Ladder && nearest != LevelElement::LadderLevel) {
+        if (inCellY() && nearest != LevelElement::Ladder) {
 
           moveUp = false;
           moveDown = false;
 
         }
 
-        
-
         break;
 
       default:
 
-        if (nearest == LevelElement::Ladder || nearest == LevelElement::LadderLevel) {
+        if (nearest == LevelElement::Ladder) {
 
           player.x = (nearestX * GRID_SIZE) + level.getXOffset();
           player.stance = PlayerStance::Climbing_Up1;
@@ -512,9 +512,17 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       default:
 
-        if (canBeOccupied(down)) {
+        if (down == LevelElement::Ladder) {
+
+          player.x = (nearestX * GRID_SIZE) + level.getXOffset();
+          if (player.stance < PlayerStance::Climbing_Down2 || player.stance > PlayerStance::Climbing_Down1) player.stance = PlayerStance::Climbing_Down1;
+          moveDown = true;
+
+        }
+        else if (canBeOccupied(down)) {
 
           if (down == LevelElement::Blank) player.stance = PlayerStance::Falling;
+          player.x = (nearestX * GRID_SIZE) + level.getXOffset();
           moveDown = true;
 
         }

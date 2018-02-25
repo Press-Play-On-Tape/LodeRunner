@@ -205,7 +205,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
     enemies[x].id = 0;
-    
+
     if (x  < numberOfEnemies) {
 
       enemies[x].x = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
@@ -252,9 +252,6 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
     for (uint8_t x = 0; x < _width; x++) {
 
       uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
-
-      if (leftValue(data) == static_cast<uint8_t>(LevelElement::LadderLevel))     { data = data & 0x0F;}
-      if (rightValue(data) == static_cast<uint8_t>(LevelElement::LadderLevel))    { data = data & 0xF0;}
 
       if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
       if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
@@ -327,7 +324,7 @@ void Level::pickupGold() {
 
       LevelPoint lp = _levelLadder[x];
 
-      Level::setLevelData(lp.x, lp.y, LevelElement::LadderLevel);
+      Level::setLevelData(lp.x, lp.y, LevelElement::Ladder);
 
     }
 

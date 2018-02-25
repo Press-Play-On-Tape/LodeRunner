@@ -61,7 +61,6 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
     case LevelElement::Brick:
     case LevelElement::Solid:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
       return true;
 
     case LevelElement::Brick_1:
@@ -131,7 +130,6 @@ boolean canBeFallenOn(LevelElement levelElement) {
     case LevelElement::Solid:
     case LevelElement::Rail:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
       return true;
 
     default:
@@ -154,7 +152,6 @@ boolean canBeOccupied(LevelElement levelElement) {
     case LevelElement::Blank:
     case LevelElement::Ladder:
     case LevelElement::Rail:
-    case LevelElement::LadderLevel:
     case LevelElement::Gold:
     case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
       return true;
@@ -175,6 +172,7 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
   switch (levelElement) {
 
     case LevelElement::Blank:
+    case LevelElement::FallThrough:
       return true;
 
     case LevelElement::Brick_1:
@@ -222,7 +220,6 @@ boolean canBeStoodOnBasic_Enemy(LevelElement levelElement) {
     case LevelElement::Brick:
     case LevelElement::Solid:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
       return true;
 
     default:
@@ -245,7 +242,6 @@ boolean canBeStoodOn_Enemy(LevelElement levelElement) {
     case LevelElement::Brick:
     case LevelElement::Solid:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
     case LevelElement::Brick_1:
     case LevelElement::Brick_2:
     case LevelElement::Brick_3:
@@ -277,7 +273,7 @@ boolean canBeOccupied_Enemy(LevelElement levelElement) {
     case LevelElement::Blank:
     case LevelElement::Ladder:
     case LevelElement::Rail:
-    case LevelElement::LadderLevel:
+    case LevelElement::FallThrough:
     case LevelElement::Gold:
     case LevelElement::Brick_1:
     case LevelElement::Brick_2:
@@ -306,6 +302,7 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
   switch (levelElement) {
 
     case LevelElement::Blank:
+    case LevelElement::FallThrough:
       return true;
 
     case LevelElement::Brick_1:
@@ -327,7 +324,6 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
 
         if (enemy->enabled) {
 
-//          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
           if (enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
 
             return false; 
