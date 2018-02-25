@@ -308,7 +308,7 @@ void LevelPlay() {
 
       Enemy *enemy = &enemies[x];
 
-      if (enemy->enabled && arduboy.collide(Rect {static_cast<int16_t>(enemy->x), static_cast<int16_t>(enemy->y), 10, 10}, Rect {static_cast<int16_t>(player.x - level.getXOffset()), static_cast<int16_t>(player.y - level.getYOffset()), 10, 10} )) {
+      if (enemy->enabled && arduboy.collide(Rect {static_cast<int16_t>(enemy->x) + 2, static_cast<int16_t>(enemy->y) + 2, 6, 6}, Rect {static_cast<int16_t>(player.x - level.getXOffset()) + 2, static_cast<int16_t>(player.y - level.getYOffset()) + 2, 6, 6} )) {
 
         player.men--;
 
