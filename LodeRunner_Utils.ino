@@ -3,38 +3,38 @@
 
 uint8_t getNearestX(int8_t margin) {
 
-  return (player.x - level.getXOffset() + margin) / GRID_SIZE;
+  return (player.getX() - level.getXOffset() + margin) / GRID_SIZE;
   
 }
 
 uint8_t getNearestY(int8_t margin) {
 
-  return (player.y - level.getYOffset() + margin) / GRID_SIZE;
+  return (player.getY() - level.getYOffset() + margin) / GRID_SIZE;
   
 }
 
 boolean inCellX() {
 
-  return ((player.x - level.getXOffset()) % GRID_SIZE == 0);
+  return ((player.getX() - level.getXOffset()) % GRID_SIZE == 0);
 
 }
 
 boolean inCellX(uint8_t margin) {
 
-  uint8_t rem = (player.x - level.getXOffset()) % GRID_SIZE;
+  uint8_t rem = (player.getX() - level.getXOffset()) % GRID_SIZE;
   return (rem > (GRID_SIZE / 2) ? GRID_SIZE - rem : rem) <= margin;
 
 }
 
 boolean inCellY() {
 
-  return ((player.y - level.getYOffset()) % GRID_SIZE == 0);
+  return ((player.getY() - level.getYOffset()) % GRID_SIZE == 0);
 
 }
 
 boolean inCellY(uint8_t margin) {
 
-  uint8_t rem = (player.y - level.getYOffset()) % GRID_SIZE;
+  uint8_t rem = (player.getY() - level.getYOffset()) % GRID_SIZE;
 
   return ((rem > (GRID_SIZE / 2) ? GRID_SIZE - rem : rem) <= margin);
 

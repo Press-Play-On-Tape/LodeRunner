@@ -46,8 +46,8 @@ void renderScreen() {
 
     if (gameState == GameState::LevelPlay || flashPlayer) {
 
-      boolean flip = (static_cast<int8_t>(player.stance) < 0);
-      arduboy.drawCompressedMirror(player.x, player.y, men[absT(static_cast<int8_t>(player.stance))], WHITE, flip);
+      boolean flip = (static_cast<int8_t>(player.getPlayerStance()) < 0);
+      arduboy.drawCompressedMirror(player.getX(), player.getY(), men[absT(static_cast<int8_t>(player.getPlayerStance()))], WHITE, flip);
 
     }
 
@@ -239,7 +239,7 @@ void renderScreen() {
 
       // Game over, restart level or next level ?
 
-      if (introRect == LEVEL_ANIMATION_BANNER_WIDTH) gameState = player.nextState;
+      if (introRect == LEVEL_ANIMATION_BANNER_WIDTH) gameState = player.getNextState();
       break;
 
     case GameState::NextLevel:
@@ -286,7 +286,7 @@ void renderScreen() {
 
   // Draw scoreboard ..
 
-  uint16_t score = player.score;
+  uint16_t score = player.getScore();
   arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
   arduboy.drawCompressedMirror(29, 57, digit_00, WHITE, false);
   arduboy.drawCompressedMirror(34, 57, digits[score / 10000], WHITE, false);
@@ -298,7 +298,7 @@ void renderScreen() {
   arduboy.drawCompressedMirror(49, 57, digits[score / 10], WHITE, false);
   arduboy.drawCompressedMirror(54, 57, digits[score % 10], WHITE, false);
 
-  uint8_t menLeft = player.men;
+  uint8_t menLeft = player.getMen();
   arduboy.drawCompressedMirror(64, 58, men_sc, WHITE, false);
   arduboy.drawCompressedMirror(82, 57, digits[menLeft / 10], WHITE, false);
   arduboy.drawCompressedMirror(87, 57, digits[menLeft % 10], WHITE, false);
@@ -321,8 +321,8 @@ bool drawArrow(Direction direction) {
       
       if (level.getLevelData(x, y) == LevelElement::Gold) {
 
-        int16_t xDiff = ((player.x - level.getXOffset()) / GRID_SIZE) - x;
-        int16_t yDiff = ((player.y - level.getYOffset()) / GRID_SIZE) - y;
+        int16_t xDiff = ((player.getX() - level.getXOffset()) / GRID_SIZE) - x;
+        int16_t yDiff = ((player.getY() - level.getYOffset()) / GRID_SIZE) - y;
 
         Direction retDirection = getDirection_8Directions(xDiff, yDiff);
 

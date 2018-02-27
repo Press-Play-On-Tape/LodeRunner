@@ -327,18 +327,18 @@ inline EscapeHole operator--( EscapeHole & c, int ) {
 
 }
 
-struct Player {
+// struct Player {
 
-  uint8_t x;
-  uint8_t y;
-  PlayerStance stance;
-  int8_t xDelta;
-  int8_t yDelta;
-  uint16_t score;
-  uint8_t men;
-  GameState nextState;
+//   uint8_t x;
+//   uint8_t y;
+//   PlayerStance stance;
+//   int8_t xDelta;
+//   int8_t yDelta;
+//   uint16_t score;
+//   uint8_t men;
+//   GameState nextState;
 
-};
+// };
 
 struct Enemy {
 

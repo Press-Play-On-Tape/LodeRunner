@@ -3,6 +3,7 @@
 #include "../utils/Arduboy2Ext.h"
 #include "../utils/Utils.h"
 #include "../utils/Enums.h"
+#include "../characters/Player.h"
 
 class Level {
 
@@ -150,22 +151,22 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   if (playerX < (WIDTH / 2) - 5) {
 
     _xOffset = 0;
-    player->x = playerX;
+    player->setX(playerX);
 
   }
   else {
 
     if (playerX >= (WIDTH / 2) - 5 && playerX <= (_width * GRID_SIZE * 2) - WIDTH) {
 
-      player->x = (WIDTH / 2) - 5;
-      _xOffset = player->x - playerX;
+      player->setX((WIDTH / 2) - 5);
+      _xOffset = player->getX() - playerX;
 
 
     }
     else {
 
       _xOffset = -153;
-      player->x = (playerX + _xOffset);
+      player->setX(playerX + _xOffset);
 
     }
 
@@ -177,21 +178,21 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   if (playerY < (HEIGHT_LESS_TOOLBAR / 2) - 5) {
 
     _yOffset = 0;
-    player->y = playerY;
+    player->setY(playerY);
 
   }
   else {
 
     if (playerY >= (HEIGHT_LESS_TOOLBAR / 2) - 5 && playerY <= (_height * GRID_SIZE) - HEIGHT_LESS_TOOLBAR) {
 
-      player->y = (HEIGHT_LESS_TOOLBAR / 2) - 5;
-      _yOffset = player->y - playerY;
+      player->setY((HEIGHT_LESS_TOOLBAR / 2) - 5);
+      _yOffset = player->getY() - playerY;
 
     }
     else {
 
       _yOffset = -(_height * GRID_SIZE) + HEIGHT_LESS_TOOLBAR;
-      player->y = playerY + _yOffset;
+      player->setY(playerY + _yOffset);
 
     }
 

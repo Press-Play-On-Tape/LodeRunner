@@ -11,14 +11,12 @@
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 
-Player player = {20, 35, PlayerStance::StandingStill, 0, 0, 0, 5, GameState::Intro};
+Player player;
 Enemy enemies[NUMBER_OF_ENEMIES];
 
 Level level;
 
 
-
-// uint8_t levelData[level.getWidth()][level.getHeight()];
 bool flashPlayer = false;
 
 
@@ -52,6 +50,11 @@ void setup() {
   arduboy.initRandomSeed();
   EEPROM_Utils::initEEPROM(false);
   EEPROM_Utils::getSavedGameData(&level, &player);
+
+  player.setX(20);
+  player.setY(35);
+  player.setPlayerStance(PlayerStance::StandingStill);
+  player.setNextState(GameState::Intro);
 
 }
 
@@ -227,9 +230,9 @@ void LevelPlay() {
 
     if (arduboy.everyXFrames(2)) {
 
-      if ((player.xDelta != 0 || player.yDelta != 0 || level.getXOffsetDelta() != 0 || level.getYOffsetDelta() != 0)) {
+      if ((player.getXDelta() != 0 || player.getYDelta() != 0 || level.getXOffsetDelta() != 0 || level.getYOffsetDelta() != 0)) {
 
-        player.stance = getNextStance(player.stance);
+        player.setPlayerStance(getNextStance(player.getPlayerStance()));
 
       }
 
@@ -270,18 +273,18 @@ void LevelPlay() {
 
     // Move player ..
 
-    player.x = player.x + player.xDelta;
-    player.y = player.y + player.yDelta;
+    player.setX(player.getX() + player.getXDelta());
+    player.setY(player.getY() + player.getYDelta());
     level.setXOffset(level.getXOffset() + level.getXOffsetDelta());
     level.setYOffset(level.getYOffset() + level.getYOffsetDelta());
 
 
     // If the player has gone off the top of the screen .. level over!
 
-    if (player.y > (level.getHeight() * GRID_SIZE)) {
+    if (player.getY() > (level.getHeight() * GRID_SIZE)) {
 
       gameState = GameState::LevelExitInit;
-      player.nextState = GameState::NextLevel;
+      player.setNextState(GameState::NextLevel);
       level.setLevelNumber(level.getLevelNumber() + 1);
       EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
 
@@ -310,20 +313,20 @@ void LevelPlay() {
 
       Enemy *enemy = &enemies[x];
 
-      if (enemy->enabled && arduboy.collide(Rect {static_cast<int16_t>(enemy->x) + 2, static_cast<int16_t>(enemy->y) + 2, 6, 6}, Rect {static_cast<int16_t>(player.x - level.getXOffset()) + 2, static_cast<int16_t>(player.y - level.getYOffset()) + 2, 6, 6} )) {
+      if (enemy->enabled && arduboy.collide(Rect {static_cast<int16_t>(enemy->x) + 2, static_cast<int16_t>(enemy->y) + 2, 6, 6}, Rect {static_cast<int16_t>(player.getX() - level.getXOffset()) + 2, static_cast<int16_t>(player.getY() - level.getYOffset()) + 2, 6, 6} )) {
 
-        player.men--;
+        player.setMen(player.getMen() - 1);
 
-        if (player.men > 0) {
+        if (player.getMen() > 0) {
 
           gameState = GameState::LevelExitInit;
-          player.nextState = GameState::RestartLevel;
+          player.setNextState(GameState::RestartLevel);
 
         }
         else {
 
           gameState = GameState::LevelExitInit;
-          player.nextState = GameState::GameOver;
+          player.setNextState(GameState::GameOver);
 
         }
 

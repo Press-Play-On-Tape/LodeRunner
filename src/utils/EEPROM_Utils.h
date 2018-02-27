@@ -79,9 +79,12 @@ void EEPROM_Utils::saveLevelNumber(uint8_t levelNumber) {
  */
 void EEPROM_Utils::getSavedGameData(Level *level, Player *player) {
 
+  int16_t score = 0;
+
   level->setLevelNumber(EEPROM.read(EEPROM_LEVEL_NO));
-  player->men = EEPROM.read(EEPROM_MEN_LEFT);
-  EEPROM.get(EEPROM_SCORE, player->score);
+  player->setMen(EEPROM.read(EEPROM_MEN_LEFT));
+  EEPROM.get(EEPROM_SCORE, score);
+  player->setScore(score);
 
 }
 
@@ -92,7 +95,7 @@ void EEPROM_Utils::getSavedGameData(Level *level, Player *player) {
 void EEPROM_Utils::saveGameData(Level *level, Player *player) {
 
   EEPROM.update(EEPROM_LEVEL_NO, level->getLevelNumber());
-  EEPROM.update(EEPROM_MEN_LEFT, player->men);
-  EEPROM.put(EEPROM_SCORE, player->score);
+  EEPROM.update(EEPROM_MEN_LEFT, player->getMen());
+  EEPROM.put(EEPROM_SCORE, player->getScore());
 
 }

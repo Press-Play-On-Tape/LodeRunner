@@ -99,8 +99,8 @@ void enemyMovements(Enemy *enemy) {
           LevelElement left =       level.getLevelData(enemyX - 1, enemyY);
           LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
 
-          int16_t xDiff = enemy->x - (player.x - level.getXOffset());
-          int16_t yDiff = enemy->y - (player.y - level.getYOffset());
+          int16_t xDiff = enemy->x - (player.getX() - level.getXOffset());
+          int16_t yDiff = enemy->y - (player.getY() - level.getYOffset());
 
           Direction direction = getDirection_16Directions(xDiff, yDiff);
           Direction direction1 = direction;
@@ -420,7 +420,7 @@ void setDirectionAfterHoleEscape(Enemy *enemy) {
   LevelElement right      = level.getLevelData(enemyX + 1, enemyY);
   LevelElement rightDown  = level.getLevelData(enemyX + 1, enemyY + 1);
 
-  if (static_cast<int16_t>(enemy->x) > (static_cast<int16_t>(player.x) - level.getXOffset())) {
+  if (static_cast<int16_t>(enemy->x) > (static_cast<int16_t>(player.getX()) - level.getXOffset())) {
 
     if (canBeOccupied_Enemy(left) && canBeStoodOn_Enemy(leftDown)) {
     
