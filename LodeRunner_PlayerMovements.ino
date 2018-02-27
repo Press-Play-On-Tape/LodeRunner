@@ -103,13 +103,10 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
     }
 
-    //LevelElement current = level.getLevelData(nearestX, nearestY);
     LevelElement right = level.getLevelData(nearestX + 1, nearestY);
     LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
     LevelElement down = level.getLevelData(nearestX, nearestY + 1);
-    //arduboy.setCursor(0,0);
-// arduboy.print((int8_t)current);
-// arduboy.print(" "); 
+
 
     if (player.stance == PlayerStance::Falling) {
 
@@ -118,7 +115,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         moveRight = false;
         moveDown = false;
         player.stance = PlayerStance::StandingStill;
-// arduboy.print("d");
 
       }
       
@@ -129,19 +125,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       }
 
-//       else if (inCellY() && current >= LevelElement::Brick_Close_1 && current <= LevelElement::Brick_Close_4) {
-
-//         moveRight = false;
-//         moveDown = false;
-// arduboy.print("e");
-
-//       }
-
       else { 
 
         moveRight = false;
         moveDown = true;
-// arduboy.print("a");
+
       }     
 
     }
@@ -149,7 +137,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         moveRight = false;
         moveDown = true;
-// arduboy.print("b");
 
     }
     else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
@@ -189,18 +176,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     }
     else if (canBeOccupied(right) && canBeFallenOn(rightDown)) {
 
-//       switch (right) {
-
-//         case LevelElement::Blank:
-//           player.stance = PlayerStance::Falling;
-//           break;
-
-//         default:
-//           if (player.stance < PlayerStance::Swinging_Right1 || player.stance > PlayerStance::Swinging_Right4) player.stance = PlayerStance::Swinging_Right1;
-//           break;
-
-//       }
-
       moveRight = true;
       if (!canBeStoodOn(rightDown, enemies, nearestX, nearestY + 1)) moveDown = true;
 
@@ -208,7 +183,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     else {
 
       moveDown = true;
-// arduboy.print("c");
 
     }
 
@@ -333,18 +307,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       
     }
     else if (canBeOccupied(left) && canBeFallenOn(leftDown)) {
-
-      // switch (left) {
-
-      //   case LevelElement::Blank:
-      //     player.stance = PlayerStance::Falling;
-      //     break;
-
-      //   default:
-      //     if (player.stance < PlayerStance::Swinging_Left4 || player.stance > PlayerStance::Swinging_Left1) player.stance = PlayerStance::Swinging_Left1;
-      //     break;
-
-      // }
 
       moveLeft = true;
       if (!canBeStoodOn(leftDown, enemies, nearestX, nearestY + 1)) moveDown = true;

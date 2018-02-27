@@ -8,7 +8,7 @@ class Level {
 
   public: 
 
-    Level(){};
+    Level() {};
         
     LevelElement getLevelData(const uint8_t x, const uint8_t y);
     void loadLevel(Player *player, Enemy enemies[]);
@@ -204,18 +204,20 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
-    enemies[x].id = 0;
+    Enemy *enemy = &enemies[x];
+
+    enemy->id = x;
 
     if (x  < numberOfEnemies) {
 
-      enemies[x].x = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
-      enemies[x].y = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
-      enemies[x].enabled = true;
+      enemy->x = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+      enemy->y = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+      enemy->enabled = true;
 
     }
     else {
 
-      enemies[x].enabled = false;
+      enemy->enabled = false;
 
     }
 

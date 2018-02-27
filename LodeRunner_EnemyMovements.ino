@@ -1,6 +1,18 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
 
+void clearEnemyMovementPositions(Enemy *enemies) {
+  
+  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+    Enemy *enemy = &enemies[x];
+    enemy->xFuturePosition = 0;
+    enemy->yFuturePosition = 0;
+
+  }
+  
+}
+
 void enemyMovements(Enemy *enemy) {
 
   uint8_t enemyX = enemy->x / GRID_SIZE;
@@ -44,7 +56,7 @@ void enemyMovements(Enemy *enemy) {
         enemyY = enemy->y / GRID_SIZE;
 
         LevelElement current =    level.getLevelData(enemyX, enemyY);
-        LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
+        //LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
 
 
         // If the enemy is in a hole, then attemt to wiggle out ..
@@ -171,9 +183,12 @@ boolean isOccupiedByAnotherEnemy(Enemy *enemies, Enemy *enemy, int8_t xDelta, in
 
     Enemy *testEnemy = &enemies[x];
 
-    if (testEnemy->id != enemy->id) {
+    if (testEnemy->enabled && testEnemy->id != enemy->id) {
 
-      if (testEnemy->x == enemy->x + xDelta && testEnemy->y == enemy->y + yDelta) {
+      Rect testRect = { static_cast<int16_t>(testEnemy->x + testEnemy->xFuturePosition), static_cast<int16_t>(testEnemy->y + testEnemy->yFuturePosition), GRID_SIZE, GRID_SIZE };
+      Rect enemyRect = { static_cast<int16_t>(enemy->x + xDelta), static_cast<int16_t>(enemy->y + yDelta), GRID_SIZE, GRID_SIZE };
+
+      if (arduboy.collide(testRect, enemyRect)) {
 
         return true;
 
@@ -445,6 +460,7 @@ void moveUp(Enemy *enemy) {
 
   enemy->xDelta = 0;
   enemy->yDelta = -2;
+  enemy->yFuturePosition = -GRID_SIZE;
  
 }
 
@@ -452,6 +468,7 @@ void moveRight(Enemy *enemy) {
 
   enemy->xDelta = 2;
   enemy->yDelta = 0;
+  enemy->xFuturePosition = GRID_SIZE;
  
 }
 
@@ -459,6 +476,7 @@ void moveDown(Enemy *enemy) {
 
   enemy->xDelta = 0;
   enemy->yDelta = 2;
+  enemy->yFuturePosition = GRID_SIZE;
  
 }
 
@@ -466,5 +484,6 @@ void moveLeft(Enemy *enemy) {
 
   enemy->xDelta = -2;
   enemy->yDelta = 0;
+  enemy->xFuturePosition = -GRID_SIZE;
  
 }

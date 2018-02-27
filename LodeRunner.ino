@@ -50,8 +50,8 @@ void setup() {
   arduboy.audio.begin();
   arduboy.setFrameRate(90);
   arduboy.initRandomSeed();
-  EEPROM_Utils::initEEPROM();
-  level.setLevelNumber(EEPROM_Utils::getLevelNumber());
+  EEPROM_Utils::initEEPROM(false);
+  EEPROM_Utils::getSavedGameData(&level, &player);
 
 }
 
@@ -72,8 +72,11 @@ void loop() {
       break;
 
     case GameState::LevelInit:
+
+      while (!holes.isEmpty()) holes.dequeue();
       level.loadLevel(&player, enemies); 
       introRect = 28;
+    
       gameState = GameState::LevelEntryAnimation;
       /* break; Drop through to next case */
 
@@ -89,9 +92,13 @@ void loop() {
       /* break; Drop through to next case */
 
     case GameState::LevelExitAnimation:
-    case GameState::NextLevel:
     case GameState::GameOver:
     case GameState::RestartLevel:
+      LevelPlay();
+      break;
+
+    case GameState::NextLevel:
+      EEPROM_Utils::saveGameData(&level, &player);
       LevelPlay();
       break;
 
@@ -157,8 +164,8 @@ void GameSelect() {
 
   if (arduboy.justPressed(A_BUTTON)) {
     
-    if (menuSelect == 0) { level.setLevelNumber(EEPROM_Utils::getLevelNumber()); }
-    if (menuSelect == 1) { level.setLevelNumber(1); }
+    if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); }
+    if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); }
 
      gameState = GameState::LevelInit; 
      
@@ -185,17 +192,12 @@ void LevelPlay() {
     uint8_t nearestY = getNearestY();
     LevelElement nearest = level.getLevelData(nearestX, nearestY);
 
-// arduboy.setCursor(0,0);
-// arduboy.print(player.x);
-// arduboy.print(" ");
-// arduboy.print(level.getXOffset());
-// arduboy.print(" ");
-// arduboy.print(nearestY);
 
     // Detect next movements for player and enemies ..
 
     playerMovements(nearestX, nearestY, nearest);
 
+    clearEnemyMovementPositions(enemies);
     for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
       Enemy *enemy = &enemies[x];

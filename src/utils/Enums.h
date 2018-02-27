@@ -17,10 +17,6 @@
 
 #define LEVEL_ANIMATION_BANNER_WIDTH  28
 
-#define EEPROM_START                  EEPROM_STORAGE_SPACE_START + 175
-#define EEPROM_START_C1               EEPROM_START
-#define EEPROM_START_C2               EEPROM_START + 1
-#define EEPROM_LEVEL_NO               EEPROM_START + 2
 
 /* ----------------------------------------------------------------------------
  *  A better absolute!
@@ -355,6 +351,8 @@ struct Enemy {
   EscapeHole escapeHole;
   bool enabled;
   uint8_t hasGold;
+  int8_t xFuturePosition;
+  int8_t yFuturePosition;
 
 };
 
