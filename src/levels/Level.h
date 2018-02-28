@@ -4,6 +4,7 @@
 #include "../utils/Utils.h"
 #include "../utils/Enums.h"
 #include "../characters/Player.h"
+#include "../characters/Enemy.h"
 
 class Level {
 
@@ -207,18 +208,18 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     Enemy *enemy = &enemies[x];
 
-    enemy->id = x;
+    enemy->setId(x);
 
     if (x  < numberOfEnemies) {
 
-      enemy->x = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
-      enemy->y = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
-      enemy->enabled = true;
+      enemy->getX() = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+      enemy->getY() = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+      enemy->setEnabled(true);
 
     }
     else {
 
-      enemy->enabled = false;
+      enemy->setEnabled(false);
 
     }
 

@@ -340,21 +340,21 @@ inline EscapeHole operator--( EscapeHole & c, int ) {
 
 // };
 
-struct Enemy {
+// struct Enemy {
 
-  uint8_t id;
-  uint16_t x;
-  uint16_t y;
-  PlayerStance stance;
-  int8_t xDelta;
-  int8_t yDelta;
-  EscapeHole escapeHole;
-  bool enabled;
-  uint8_t hasGold;
-  int8_t xFuturePosition;
-  int8_t yFuturePosition;
+//   uint8_t id;
+//   uint16_t x;
+//   uint16_t y;
+//   PlayerStance stance;
+//   int8_t xDelta;
+//   int8_t yDelta;
+//   EscapeHole escapeHole;
+//   bool enabled;
+//   uint8_t hasGold;
+//   int8_t xFuturePosition;
+//   int8_t yFuturePosition;
 
-};
+// };
 
 struct Hole {
 

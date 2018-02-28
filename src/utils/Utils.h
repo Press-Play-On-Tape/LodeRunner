@@ -2,7 +2,8 @@
 
 #include "Arduboy2Ext.h"
 #include "Enums.h"
-
+#include "../characters/Player.h"
+#include "../characters/Enemy.h"
 
 
 /* ----------------------------------------------------------------------------
@@ -77,9 +78,9 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled) {
+        if (enemy->getEnabled()) {
 
-          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->getPlayerStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return true; 
 
@@ -189,9 +190,9 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled) {
+        if (enemy->getEnabled()) {
 
-          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->getPlayerStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return false; 
 
@@ -322,9 +323,9 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled) {
+        if (enemy->getEnabled()) {
 
-          if (enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return false; 
 
