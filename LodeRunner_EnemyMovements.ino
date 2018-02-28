@@ -83,7 +83,7 @@ void enemyMovements(Enemy *enemy) {
 
 //          }
 
-          enemy->setEscapeHole(enemy->getEscapeHole() - 1);
+          enemy->setEscapeHole(static_cast<EscapeHole>(static_cast<uint8_t>(enemy->getEscapeHole()) - 1));
 
         }
 

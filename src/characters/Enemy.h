@@ -59,11 +59,11 @@ uint8_t Enemy::getId() {
   return _id;
 }
 
-uint8_t Enemy::getX() {
+uint16_t Enemy::getX() {
   return _x;
 }
 
-uint8_t Enemy::getY() {
+uint16_t Enemy::getY() {
   return _y;
 }
 
@@ -103,11 +103,11 @@ void Enemy::setId(uint8_t val) {
   _id = val;
 }
     
-void Enemy::setX(uint8_t val) {
+void Enemy::setX(uint16_t val) {
   _x = val;
 }
 
-void Enemy::setY(uint8_t val) {
+void Enemy::setY(uint16_t val) {
   _y = val;
 }
 
