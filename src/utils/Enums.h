@@ -3,6 +3,7 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
+#define LEVEL_COUNT                   6
 #define _INC_ARROWS
 
 #define HEIGHT_LESS_TOOLBAR           56

@@ -475,6 +475,10 @@ void LevelPlay() {
           gameState = GameState::Intro;  
           break;
 
+        case GameState::LevelExitAnimation:
+          gameState = player.getNextState();
+          break;
+
         default:
           gameState = GameState::LevelPlay;
           break;
