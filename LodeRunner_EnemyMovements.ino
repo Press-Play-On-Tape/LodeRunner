@@ -214,7 +214,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
     case Direction::LeftUp ... Direction::LeftUp2:
     case Direction::Up     ... Direction::RightUp:
 
-      if ( current == LevelElement::Ladder && up == LevelElement::Ladder && !isOccupiedByAnotherEnemy(enemies, enemy, 0, -GRID_SIZE) ) {
+      if ( current == LevelElement::Ladder && canBeOccupiedBasic_Enemy(up) && !isOccupiedByAnotherEnemy(enemies, enemy, 0, -GRID_SIZE) ) {
 
         if (enemy->getStance() < PlayerStance::Climbing_Up1 || enemy->getStance() > PlayerStance::Climbing_Up2) enemy->setStance(PlayerStance::Climbing_Up1);
         moveUp(enemy);

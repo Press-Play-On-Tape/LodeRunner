@@ -4,6 +4,9 @@
 //void renderScreen(GameState gameState) {
 void renderScreen() {
 
+
+  if (arduboy.everyXFrames(6)) flashPlayer = !flashPlayer;
+
   if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
       
     for (uint8_t y = 0; y < level.getHeight(); y++) {
@@ -41,8 +44,6 @@ void renderScreen() {
 
 
     // Draw player ..
-
-    if (arduboy.everyXFrames(6)) flashPlayer = !flashPlayer;
 
     if (gameState == GameState::LevelPlay || flashPlayer) {
 
@@ -303,12 +304,24 @@ void renderScreen() {
   arduboy.drawCompressedMirror(82, 57, digits[menLeft / 10], WHITE, false);
   arduboy.drawCompressedMirror(87, 57, digits[menLeft % 10], WHITE, false);
 
-  uint8_t levelNumber = level.getLevelNumber();
-  arduboy.drawCompressedMirror(96, 58, level_sc, WHITE, false);
-  arduboy.drawCompressedMirror(113, 57, digits[levelNumber / 100], WHITE, false);
-  levelNumber = levelNumber - (levelNumber / 100) * 100;
-  arduboy.drawCompressedMirror(118, 57, digits[levelNumber / 10], WHITE, false);
-  arduboy.drawCompressedMirror(123, 57, digits[levelNumber % 10], WHITE, false);
+  if (gameState == GameState::LevelPlay) {
+
+    uint8_t goldLeft = level.getGoldLeft();
+    arduboy.drawCompressedMirror(96, 58, gold_sc, WHITE, false);
+    arduboy.drawCompressedMirror(118, 57, digits[goldLeft / 10], WHITE, false);
+    arduboy.drawCompressedMirror(123, 57, digits[goldLeft % 10], WHITE, false);
+
+  }
+  else {
+
+    uint8_t levelNumber = level.getLevelNumber();
+    arduboy.drawCompressedMirror(96, 58, level_sc, WHITE, false);
+    arduboy.drawCompressedMirror(113, 57, digits[levelNumber / 100], WHITE, false);
+    levelNumber = levelNumber - (levelNumber / 100) * 100;
+    arduboy.drawCompressedMirror(118, 57, digits[levelNumber / 10], WHITE, false);
+    arduboy.drawCompressedMirror(123, 57, digits[levelNumber % 10], WHITE, false);
+
+  }
 
 }
 

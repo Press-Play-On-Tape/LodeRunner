@@ -21,7 +21,6 @@ Level level;
 
 bool flashPlayer = false;
 
-
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
 int8_t introRect = 0;

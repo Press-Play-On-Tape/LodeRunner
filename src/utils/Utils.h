@@ -267,6 +267,28 @@ boolean canBeStoodOn_Enemy(LevelElement levelElement) {
 //
 // Can the player enter the square - ie. is it empty or something that can be climbed on?
 //
+boolean canBeOccupiedBasic_Enemy(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Blank:
+    case LevelElement::Ladder:
+    case LevelElement::Rail:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
+
+
+// ---------------------------------------------------------------------------------
+// Can the space be occupied by the enemy ?
+//
+// Can the player enter the square - ie. is it empty or something that can be climbed on?
+//
 boolean canBeOccupied_Enemy(LevelElement levelElement) {
 
   switch (levelElement) {
@@ -293,7 +315,6 @@ boolean canBeOccupied_Enemy(LevelElement levelElement) {
   }
 
 }
-
 
 // ---------------------------------------------------------------------------------
 // Can the space be fallen into by the enemy ?
