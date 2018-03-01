@@ -55,7 +55,7 @@ void setup() {
 
   player.setX(20);
   player.setY(35);
-  player.setPlayerStance(PlayerStance::StandingStill);
+  player.setStance(PlayerStance::StandingStill);
   player.setNextState(GameState::Intro);
 
 }
@@ -234,7 +234,7 @@ void LevelPlay() {
 
       if ((player.getXDelta() != 0 || player.getYDelta() != 0 || level.getXOffsetDelta() != 0 || level.getYOffsetDelta() != 0)) {
 
-        player.setPlayerStance(getNextStance(player.getPlayerStance()));
+        player.setStance(getNextStance(player.getStance()));
 
       }
 
@@ -247,18 +247,18 @@ void LevelPlay() {
 
         if (enemy->getEnabled() && enemy->getEscapeHole() == EscapeHole::None) {
 
-          switch (enemy->getPlayerStance()) {
+          switch (enemy->getStance()) {
 
             case PlayerStance::Rebirth_1 ... PlayerStance::Rebirth_3:
               
-              enemy->setPlayerStance(getNextStance(enemy->getPlayerStance()));
+              enemy->setStance(getNextStance(enemy->getStance()));
               break;
 
             default:
               
               if (enemy->getXDelta() != 0 || enemy->getYDelta() != 0) {
 
-                enemy->setPlayerStance(getNextStance(enemy->getPlayerStance()));
+                enemy->setStance(getNextStance(enemy->getStance()));
 
               }
 
@@ -410,7 +410,7 @@ void LevelPlay() {
 
                   enemy->setX(startingLocation.x * GRID_SIZE);
                   enemy->setY(startingLocation.y * GRID_SIZE);
-                  enemy->setPlayerStance( PlayerStance::Rebirth_1);
+                  enemy->setStance( PlayerStance::Rebirth_1);
                   enemy->setEscapeHole(EscapeHole::None);
                   enemy->setXDelta(0);
                   enemy->setYDelta(0);

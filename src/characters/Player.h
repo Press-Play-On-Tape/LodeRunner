@@ -5,9 +5,7 @@
 #include "../utils/Enums.h"
 
 class Player {
-/*
 
-*/
   public: 
 
     Player() {};
@@ -18,7 +16,7 @@ class Player {
     int8_t getYDelta();
     uint16_t getScore();
     uint8_t getMen();
-    PlayerStance getPlayerStance();
+    PlayerStance getStance();
     GameState getNextState();
     
     void setX(uint8_t val);
@@ -27,7 +25,7 @@ class Player {
     void setYDelta(int8_t val);
     void setScore(uint16_t val);
     void setMen(uint8_t val);
-    void setPlayerStance(const PlayerStance val);
+    void setStance(const PlayerStance val);
     void setNextState(const GameState val);
 
   private:
@@ -69,7 +67,7 @@ uint8_t Player::getMen() {
   return _men;
 }
 
-PlayerStance Player::getPlayerStance() {
+PlayerStance Player::getStance() {
   return _stance;
 }
 
@@ -101,7 +99,7 @@ void Player::setMen(uint8_t val) {
   _men = val;
 }
 
-void Player::setPlayerStance(const PlayerStance val) {
+void Player::setStance(const PlayerStance val) {
   _stance = val;
 }
 

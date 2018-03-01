@@ -212,8 +212,8 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     if (x  < numberOfEnemies) {
 
-      enemy->getX() = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
-      enemy->getY() = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+      enemy->setX(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
+      enemy->setY(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
       enemy->setEnabled(true);
 
     }

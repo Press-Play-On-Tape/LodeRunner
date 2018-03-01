@@ -46,8 +46,8 @@ void renderScreen() {
 
     if (gameState == GameState::LevelPlay || flashPlayer) {
 
-      boolean flip = (static_cast<int8_t>(player.getPlayerStance()) < 0);
-      arduboy.drawCompressedMirror(player.getX(), player.getY(), men[absT(static_cast<int8_t>(player.getPlayerStance()))], WHITE, flip);
+      boolean flip = (static_cast<int8_t>(player.getStance()) < 0);
+      arduboy.drawCompressedMirror(player.getX(), player.getY(), men[absT(static_cast<int8_t>(player.getStance()))], WHITE, flip);
 
     }
 
@@ -62,8 +62,8 @@ void renderScreen() {
 
         if (enemy->getEscapeHole() == EscapeHole::None) {
 
-          boolean flip = (static_cast<int8_t>(enemy->getPlayerStance()) < 0);
-          arduboy.drawCompressedMirror(enemy->getX() + level.getXOffset(), enemy->getY() + level.getYOffset(), men[absT(static_cast<int8_t>(enemy->getPlayerStance()))], WHITE, flip);
+          boolean flip = (static_cast<int8_t>(enemy->getStance()) < 0);
+          arduboy.drawCompressedMirror(enemy->getX() + level.getXOffset(), enemy->getY() + level.getYOffset(), men[absT(static_cast<int8_t>(enemy->getStance()))], WHITE, flip);
 
         }
         else {

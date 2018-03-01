@@ -80,7 +80,7 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
 
         if (enemy->getEnabled()) {
 
-          if (enemy->getPlayerStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
+          if (enemy->getStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return true; 
 
@@ -192,7 +192,7 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
 
         if (enemy->getEnabled()) {
 
-          if (enemy->getPlayerStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
+          if (enemy->getStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return false; 
 

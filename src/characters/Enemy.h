@@ -5,9 +5,7 @@
 #include "../utils/Enums.h"
 
 class Enemy {
-/*
 
-*/
   public: 
 
     Enemy() {};
@@ -21,10 +19,10 @@ class Enemy {
     int8_t getYFuturePosition();
     bool getEnabled();
     uint8_t getHasGold();
-    PlayerStance getPlayerStance();
+    PlayerStance getStance();
     EscapeHole getEscapeHole();
     
-    void setid(uint8_t val);
+    void setId(uint8_t val);
     void setX(uint16_t val);
     void setY(uint16_t val);
     void setXDelta(int8_t val);
@@ -33,22 +31,20 @@ class Enemy {
     void setYFuturePosition(int8_t val);
     void setEnabled(bool val);
     void setHasGold(uint8_t val);
-    void setPlayerStance(const PlayerStance val);
+    void setStance(const PlayerStance val);
     void setEscapeHole(const EscapeHole val);
 
   private:
 
-  uint8_t _id;
+  uint8_t _flags;           // bits 0 - 3 enemy id, bits 4 enabled
+  uint8_t _futurePosition;  // bits 0 - 3 X, bits 4 - 7 Y
   uint16_t _x;
   uint16_t _y;
   int8_t _xDelta;
   int8_t _yDelta;
-  bool _enabled;
   uint8_t _hasGold;
-  int8_t _xFuturePosition;
-  int8_t _yFuturePosition;
 
-  PlayerStance stance;
+  PlayerStance _stance;
   EscapeHole _escapeHole;
 
 };
@@ -56,7 +52,7 @@ class Enemy {
 //--------------------------------------------------------------------------------------------------------------------------
 
 uint8_t Enemy::getId() {
-  return _id;
+  return (_flags & 0x0f);
 }
 
 uint16_t Enemy::getX() {
@@ -76,22 +72,22 @@ int8_t Enemy::getYDelta() {
 }
 
 int8_t Enemy::getXFuturePosition() {
-  return _xDelta;
+  return (_futurePosition & 0x0f);
 }
 
 int8_t Enemy::getYFuturePosition() {
-  return _yDelta;
+  return (_futurePosition & 0xF0) >> 4;
 }
 
 bool Enemy::getEnabled() {
-  return _enabled;
+  return (_flags & 0x10) == 0x10;
 }
 
-uint8_t Enemy::gatHasGold() {
-  return _men;
+uint8_t Enemy::getHasGold() {
+  return _hasGold;
 }
 
-PlayerStance Enemy::getEnemyStance() {
+PlayerStance Enemy::getStance() {
   return _stance;
 }
 
@@ -100,7 +96,7 @@ EscapeHole Enemy::getEscapeHole() {
 }
     
 void Enemy::setId(uint8_t val) {
-  _id = val;
+  _flags = (_flags & 0xf0) | val;
 }
     
 void Enemy::setX(uint16_t val) {
@@ -120,22 +116,22 @@ void Enemy::setYDelta(int8_t val) {
 }
 
 void Enemy::setXFuturePosition(int8_t val) {
-  _xFuturePosition = val;
+  _futurePosition = (_futurePosition & 0xf0) | val;
 }
 
 void Enemy::setYFuturePosition(int8_t val) {
-  _yFuturePosition = val;
+  _futurePosition = (_futurePosition & 0x0f) | (val << 4);
 }
 
 void Enemy::setEnabled(bool val) {
-  _enabled = val;
+  _flags = (_flags | (val ? 0x10 : 0x00));
 }
 
 void Enemy::setHasGold(uint8_t val) {
   _hasGold = val;
 }
 
-void Enemy::setEnemyStance(const PlayerStance val) {
+void Enemy::setStance(const PlayerStance val) {
   _stance = val;
 }
 
