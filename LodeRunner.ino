@@ -7,6 +7,8 @@
 #include "src/levels/Level.h"
 #include "src/utils/Queue.h"
 #include "src/utils/EEPROM_Utils.h"
+#include "src/characters/Player.h"
+#include "src/characters/Enemy.h"
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
@@ -205,7 +207,7 @@ void LevelPlay() {
 
       Enemy *enemy = &enemies[x];
 
-      if (enemy->enabled) {
+      if (enemy->getEnabled()) {
 
         enemyMovements(enemy);
 
@@ -243,20 +245,20 @@ void LevelPlay() {
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled && enemy->escapeHole == EscapeHole::None) {
+        if (enemy->getEnabled() && enemy->getEscapeHole() == EscapeHole::None) {
 
-          switch (enemy->stance) {
+          switch (enemy->getPlayerStance()) {
 
             case PlayerStance::Rebirth_1 ... PlayerStance::Rebirth_3:
               
-              enemy->stance = getNextStance(enemy->stance);
+              enemy->setPlayerStance(getNextStance(enemy->getPlayerStance()));
               break;
 
             default:
               
-              if (enemy->xDelta != 0 || enemy->yDelta != 0) {
+              if (enemy->getXDelta() != 0 || enemy->getYDelta() != 0) {
 
-                enemy->stance = getNextStance(enemy->stance);
+                enemy->setPlayerStance(getNextStance(enemy->getPlayerStance()));
 
               }
 
@@ -297,10 +299,10 @@ void LevelPlay() {
 
       Enemy *enemy = &enemies[x];
 
-      if (enemy->enabled) {
+      if (enemy->getEnabled()) {
 
-        enemy->x = enemy->x + enemy->xDelta;
-        enemy->y = enemy->y + enemy->yDelta;
+        enemy->setX(enemy->getX() + enemy->getXDelta());
+        enemy->setY(enemy->getY() + enemy->getYDelta());
 
       }
 
@@ -313,7 +315,7 @@ void LevelPlay() {
 
       Enemy *enemy = &enemies[x];
 
-      if (enemy->enabled && arduboy.collide(Rect {static_cast<int16_t>(enemy->x) + 2, static_cast<int16_t>(enemy->y) + 2, 6, 6}, Rect {static_cast<int16_t>(player.getX() - level.getXOffset()) + 2, static_cast<int16_t>(player.getY() - level.getYOffset()) + 2, 6, 6} )) {
+      if (enemy->getEnabled() && arduboy.collide(Rect {static_cast<int16_t>(enemy->getX()) + 2, static_cast<int16_t>(enemy->getY()) + 2, 6, 6}, Rect {static_cast<int16_t>(player.getX() - level.getXOffset()) + 2, static_cast<int16_t>(player.getY() - level.getYOffset()) + 2, 6, 6} )) {
 
         player.setMen(player.getMen() - 1);
 
@@ -402,16 +404,16 @@ void LevelPlay() {
 
                 Enemy *enemy = &enemies[x];
 
-                if (enemy->enabled && (hole.x * GRID_SIZE) == enemy->x && (hole.y * GRID_SIZE) == enemy->y) {
+                if (enemy->getEnabled() && (hole.x * GRID_SIZE) == enemy->getX() && (hole.y * GRID_SIZE) == enemy->getY()) {
 
                   LevelPoint startingLocation = level.getReentryPoint(random(0, 4));
 
-                  enemy->x = (startingLocation.x * GRID_SIZE);
-                  enemy->y = (startingLocation.y * GRID_SIZE);
-                  enemy->stance = PlayerStance::Rebirth_1;
-                  enemy->escapeHole = EscapeHole::None;
-                  enemy->yDelta = 0;
-                  enemy->yDelta = 0;
+                  enemy->setX(startingLocation.x * GRID_SIZE);
+                  enemy->setY(startingLocation.y * GRID_SIZE);
+                  enemy->setPlayerStance( PlayerStance::Rebirth_1);
+                  enemy->setEscapeHole(EscapeHole::None);
+                  enemy->setXDelta(0);
+                  enemy->setYDelta(0);
 
                 }
 
