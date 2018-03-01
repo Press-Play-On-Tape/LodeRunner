@@ -3,9 +3,20 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define HEIGHT_LESS_TOOLBAR 56
-#define NUMBER_OF_ENEMIES 10
-#define GRID_SIZE 10
+#define _INC_ARROWS
+
+#define HEIGHT_LESS_TOOLBAR           56
+#define NUMBER_OF_ENEMIES             10
+#define GRID_SIZE                     10
+#define HALF_GRID_SIZE                (GRID_SIZE / 2)
+
+#define ENEMY_GOLD_PICKUP_THRESHOLD   1
+#define ENEMY_GOLD_HOLD_MINIMUM       20
+#define ENEMY_GOLD_HOLD_MAXIMUM       30
+#define ENEMY_GOLD_DROP_VALUE         15
+
+#define LEVEL_ANIMATION_BANNER_WIDTH  28
+
 
 /* ----------------------------------------------------------------------------
  *  A better absolute!
@@ -19,11 +30,16 @@ template<typename T> T absT(const T & v) {
 enum class GameState : uint8_t {
 
   Intro,
+  GameSelect,
   LevelInit,
-  LevelEntry,
+  LevelEntryAnimation,
   LevelFlash,
   LevelPlay,
-  LevelExit 
+  LevelExitInit,
+  LevelExitAnimation,
+  GameOver,
+  NextLevel,
+  RestartLevel
 
 };
 
@@ -34,7 +50,7 @@ enum class LevelElement : uint8_t {
   Solid,       // 2
   Ladder,      // 3
   Rail,        // 4
-  LadderLevel, // 5
+  FallThrough, // 5
   Gold,        // 6
   Brick_1,     // 7
   Brick_2,     // 8
@@ -277,77 +293,6 @@ inline bool operator<=(const Direction lhs, const Direction rhs)   { return !ope
 inline bool operator>=(const Direction lhs, const Direction rhs)   { return !operator <  (lhs,rhs); }
 
 
-Direction getDirection(int16_t xDiff, int16_t yDiff) {
-
-  if (xDiff < 0) {
-  
-    if (yDiff > 0) {
-    
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightUp; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp2; }
-      
-    }
-    else if (yDiff < 0) {
-    
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightDown; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown2; }
-    
-    }
-    else {
-    
-      return Direction::Right;
-      
-    }
-  
-  } 
-  else if (xDiff > 0) {
-  
-    if (yDiff > 0) {
-    
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftUp; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp2; }
-      
-    }
-    else if (yDiff < 0) {
-    
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftDown; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown2; }
-    
-    }
-    else {
-    
-      return Direction::Left;
-      
-    }
-  
-  }
-  else {  
-  
-    if (yDiff < 0) {
-    
-      return Direction::Down;
-      
-    }
-    else if (yDiff > 0) {
-    
-      return Direction::Up;
-      
-    }
-    else {
-    
-      return Direction::Up;   // Player should be dead !
-      
-    }
-  
-  }
-
-  return Direction::Up;       // Default, should never get here!
-
-}
 
 
 // Escape Hole elements ..
@@ -382,27 +327,34 @@ inline EscapeHole operator--( EscapeHole & c, int ) {
 
 }
 
-struct Player {
+// struct Player {
 
-  uint8_t x;
-  uint8_t y;
-  PlayerStance stance;
-  int8_t xDelta;
-  int8_t yDelta;
+//   uint8_t x;
+//   uint8_t y;
+//   PlayerStance stance;
+//   int8_t xDelta;
+//   int8_t yDelta;
+//   uint16_t score;
+//   uint8_t men;
+//   GameState nextState;
 
-};
+// };
 
-struct Enemy {
+// struct Enemy {
 
-  uint16_t x;
-  uint16_t y;
-  PlayerStance stance;
-  int8_t xDelta;
-  int8_t yDelta;
-  EscapeHole escapeHole;
-  bool enabled;
+//   uint8_t id;
+//   uint16_t x;
+//   uint16_t y;
+//   PlayerStance stance;
+//   int8_t xDelta;
+//   int8_t yDelta;
+//   EscapeHole escapeHole;
+//   bool enabled;
+//   uint8_t hasGold;
+//   int8_t xFuturePosition;
+//   int8_t yFuturePosition;
 
-};
+// };
 
 struct Hole {
 
@@ -416,13 +368,5 @@ struct LevelPoint {
 
   uint8_t x;
   uint8_t y;
-  
-};
-
-struct ReentryPoint {
-
-  uint8_t x;
-  uint8_t y;
-  PlayerStance stance;
   
 };

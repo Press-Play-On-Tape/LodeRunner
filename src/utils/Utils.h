@@ -2,7 +2,8 @@
 
 #include "Arduboy2Ext.h"
 #include "Enums.h"
-
+#include "../characters/Player.h"
+#include "../characters/Enemy.h"
 
 
 /* ----------------------------------------------------------------------------
@@ -61,7 +62,6 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
     case LevelElement::Brick:
     case LevelElement::Solid:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
       return true;
 
     case LevelElement::Brick_1:
@@ -78,9 +78,9 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled) {
+        if (enemy->getEnabled()) {
 
-          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->getStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return true; 
 
@@ -101,6 +101,24 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
 
 
 // ---------------------------------------------------------------------------------
+// Can be stood on by the enemy ?
+//
+boolean isSolid(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Brick:
+    case LevelElement::Solid:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
+
+// ---------------------------------------------------------------------------------
 // Can the player fall onto these elements ?
 //
 // Elements should be the same as the 'canBeStoodOn' with the addition of the rail.
@@ -113,7 +131,6 @@ boolean canBeFallenOn(LevelElement levelElement) {
     case LevelElement::Solid:
     case LevelElement::Rail:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
       return true;
 
     default:
@@ -136,7 +153,6 @@ boolean canBeOccupied(LevelElement levelElement) {
     case LevelElement::Blank:
     case LevelElement::Ladder:
     case LevelElement::Rail:
-    case LevelElement::LadderLevel:
     case LevelElement::Gold:
     case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
       return true;
@@ -157,6 +173,7 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
   switch (levelElement) {
 
     case LevelElement::Blank:
+    case LevelElement::FallThrough:
       return true;
 
     case LevelElement::Brick_1:
@@ -173,9 +190,9 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled) {
+        if (enemy->getEnabled()) {
 
-          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->getStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return false; 
 
@@ -204,7 +221,6 @@ boolean canBeStoodOnBasic_Enemy(LevelElement levelElement) {
     case LevelElement::Brick:
     case LevelElement::Solid:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
       return true;
 
     default:
@@ -227,7 +243,6 @@ boolean canBeStoodOn_Enemy(LevelElement levelElement) {
     case LevelElement::Brick:
     case LevelElement::Solid:
     case LevelElement::Ladder:
-    case LevelElement::LadderLevel:
     case LevelElement::Brick_1:
     case LevelElement::Brick_2:
     case LevelElement::Brick_3:
@@ -252,6 +267,28 @@ boolean canBeStoodOn_Enemy(LevelElement levelElement) {
 //
 // Can the player enter the square - ie. is it empty or something that can be climbed on?
 //
+boolean canBeOccupiedBasic_Enemy(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Blank:
+    case LevelElement::Ladder:
+    case LevelElement::Rail:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
+
+
+// ---------------------------------------------------------------------------------
+// Can the space be occupied by the enemy ?
+//
+// Can the player enter the square - ie. is it empty or something that can be climbed on?
+//
 boolean canBeOccupied_Enemy(LevelElement levelElement) {
 
   switch (levelElement) {
@@ -259,7 +296,7 @@ boolean canBeOccupied_Enemy(LevelElement levelElement) {
     case LevelElement::Blank:
     case LevelElement::Ladder:
     case LevelElement::Rail:
-    case LevelElement::LadderLevel:
+    case LevelElement::FallThrough:
     case LevelElement::Gold:
     case LevelElement::Brick_1:
     case LevelElement::Brick_2:
@@ -279,7 +316,6 @@ boolean canBeOccupied_Enemy(LevelElement levelElement) {
 
 }
 
-
 // ---------------------------------------------------------------------------------
 // Can the space be fallen into by the enemy ?
 //
@@ -288,6 +324,7 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
   switch (levelElement) {
 
     case LevelElement::Blank:
+    case LevelElement::FallThrough:
       return true;
 
     case LevelElement::Brick_1:
@@ -307,10 +344,9 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
 
         Enemy *enemy = &enemies[x];
 
-        if (enemy->enabled) {
+        if (enemy->getEnabled()) {
 
-//          if (enemy->stance == PlayerStance::Falling && enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
-          if (enemy->x == positionX * GRID_SIZE && enemy->y == positionY * GRID_SIZE) {
+          if (enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
 
             return false; 
 
