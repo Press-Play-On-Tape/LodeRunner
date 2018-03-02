@@ -35,7 +35,6 @@ boolean inCellY() {
 boolean inCellY(uint8_t margin) {
 
   uint8_t rem = (player.getY() - level.getYOffset()) % GRID_SIZE;
-
   return ((rem > (GRID_SIZE / 2) ? GRID_SIZE - rem : rem) <= margin);
 
 }

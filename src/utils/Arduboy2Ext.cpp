@@ -2,17 +2,21 @@
 
 Arduboy2Ext::Arduboy2Ext() : Arduboy2/*Base*/() { }
 
+void Arduboy2Ext::clearButtonState() {
+
+  currentButtonState = previousButtonState = 0;
+
+}
+
 struct BitStreamReader {
 
   const uint8_t *source;
   uint16_t sourceIndex;
   uint8_t bitBuffer;
   uint8_t byteBuffer;
-  
-  BitStreamReader(const uint8_t *source)
-    : source(source), sourceIndex(), bitBuffer(), byteBuffer()
-  {
-  }
+
+
+  BitStreamReader(const uint8_t *source) : source(source), sourceIndex(), bitBuffer(), byteBuffer() { }
   
   uint16_t readBits(uint16_t bitCount)
   {
@@ -37,8 +41,8 @@ struct BitStreamReader {
 };
 
 
-void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bitmap, uint8_t color, bool mirror)
-{
+void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bitmap, uint8_t color, bool mirror) {
+
   // set up decompress state
 
   BitStreamReader cs = BitStreamReader(bitmap);
@@ -77,8 +81,8 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
 
   uint8_t byte = 0x00;
   uint8_t bit = 0x01;
-  while (rowOffset < rows) // + (frame*rows))
-  {
+  while (rowOffset < rows) {// + (frame*rows))
+  
     uint16_t bitLength = 1;
     while (cs.readBits(1) == 0)
       bitLength += 2;
@@ -86,8 +90,8 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
     uint16_t len = cs.readBits(bitLength) + 1; // span length
 
     // draw the span
-    for (uint16_t i = 0; i < len; ++i)
-    {
+    for (uint16_t i = 0; i < len; ++i) {
+
       if (spanColour != 0)
         byte |= bit;
       bit <<= 1;
@@ -98,11 +102,11 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
         int bRow = startRow + rowOffset;
 
         //if (byte) // possible optimisation
-        if ((bRow <= (HEIGHT / 8) - 1) && (bRow > -2) && (columnOffset + sx <= (WIDTH - 1)) && (columnOffset + sx >= 0))
-        {
+        if ((bRow <= (HEIGHT / 8) - 1) && (bRow > -2) && (columnOffset + sx <= (WIDTH - 1)) && (columnOffset + sx >= 0)) {
+
           int16_t offset = (bRow * WIDTH) + sx + columnOffset;
-          if (bRow >= 0)
-          {
+          
+          if (bRow >= 0) {
             int16_t index = offset;
             uint8_t value = byte << yOffset;
             
@@ -111,8 +115,9 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
             else
               sBuffer[index] &= ~value;
           }
-          if ((yOffset != 0) && (bRow < (HEIGHT / 8) - 1))
-          {
+
+          if ((yOffset != 0) && (bRow < (HEIGHT / 8) - 1)) {
+
             int16_t index = offset + WIDTH;
             uint8_t value = byte >> (8 - yOffset);
             
@@ -121,6 +126,7 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
             else
               sBuffer[index] &= ~value;
           }
+          
         }
 
 

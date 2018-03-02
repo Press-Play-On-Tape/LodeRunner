@@ -20,14 +20,14 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
   if (arduboy.justPressed(A_BUTTON) && !arduboy.justPressed(B_BUTTON)) {
 
-    if (inCellX(2) && inCellY()) {
+    if (inCellY()) {
 
       nearestX = getNearestX(2);
       LevelElement leftDown = level.getLevelData(nearestX - 1, nearestY + 1);
 
       if (leftDown == LevelElement::Brick) {
- 
-        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
+
+//        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
         player.setStance(PlayerStance::Burn_Left);
         player.setXDelta(0);
         level.setXOffsetDelta(0);
@@ -50,14 +50,14 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
   else if (arduboy.justPressed(B_BUTTON) && !arduboy.justPressed(A_BUTTON)) {
 
-    if (inCellX(2) && inCellY()) {
+    if (inCellY()) {
 
       nearestX = getNearestX(2);
       LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
 
       if (rightDown == LevelElement::Brick) {
  
-        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
+//        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
         player.setStance(PlayerStance::Burn_Right);
         player.setXDelta(0);
         level.setXOffsetDelta(0);

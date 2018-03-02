@@ -189,7 +189,6 @@ void LevelPlay() {
   arduboy.pollButtons();
 
 
-
   if (gameState == GameState::LevelPlay) {
 
     uint8_t nearestX = getNearestX();
@@ -201,14 +200,19 @@ void LevelPlay() {
 
     playerMovements(nearestX, nearestY, nearest);
 
-    clearEnemyMovementPositions(enemies);
-    for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
-      Enemy *enemy = &enemies[x];
+    if (arduboy.everyXFrames(2)) {
 
-      if (enemy->getEnabled()) {
+      clearEnemyMovementPositions(enemies);
+      for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
-        enemyMovements(enemy);
+        Enemy *enemy = &enemies[x];
+
+        if (enemy->getEnabled()) {
+
+          enemyMovements(enemy);
+
+        }
 
       }
 
@@ -236,8 +240,9 @@ void LevelPlay() {
         player.setStance(getNextStance(player.getStance()));
 
       }
-
-
+    
+    }
+    if (arduboy.everyXFrames(4)) {
       // Update enemy stances ..
 
       for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -294,14 +299,18 @@ void LevelPlay() {
 
     // Move enemies ..
 
-    for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+    if (arduboy.everyXFrames(2)) {
 
-      Enemy *enemy = &enemies[x];
+      for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
-      if (enemy->getEnabled()) {
+        Enemy *enemy = &enemies[x];
 
-        enemy->setX(enemy->getX() + enemy->getXDelta());
-        enemy->setY(enemy->getY() + enemy->getYDelta());
+        if (enemy->getEnabled()) {
+
+          enemy->setX(enemy->getX() + enemy->getXDelta());
+          enemy->setY(enemy->getY() + enemy->getYDelta());
+
+        }
 
       }
 
@@ -459,7 +468,8 @@ void LevelPlay() {
 
     // We are not playing so wait for a key press to continue the game ..
 
-    if (arduboy.justPressed(A_BUTTON)) { 
+    if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON) || arduboy.justPressed(UP_BUTTON) || 
+        arduboy.justPressed(RIGHT_BUTTON) || arduboy.justPressed(DOWN_BUTTON) || arduboy.justPressed(LEFT_BUTTON)) { 
 
       switch (gameState) {
 
@@ -480,6 +490,7 @@ void LevelPlay() {
           break;
 
         default:
+          arduboy.clearButtonState();
           gameState = GameState::LevelPlay;
           break;
 

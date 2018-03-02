@@ -7,6 +7,7 @@ class Arduboy2Ext : public Arduboy2/*Base*/ {
    public:
      Arduboy2Ext();
 
+     void clearButtonState();
      void drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bitmap, uint8_t color, bool mirror);
 
 };
