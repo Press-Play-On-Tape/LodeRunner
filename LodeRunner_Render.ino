@@ -13,7 +13,9 @@ void renderScreen() {
 
       for (uint8_t x = 0; x < level.getWidth() * 2; x++) {
 
-        if (level.getXOffset() + (x * GRID_SIZE) > -GRID_SIZE && level.getXOffset() + (x * GRID_SIZE) < 128 && level.getYOffset() + (y * GRID_SIZE) > -GRID_SIZE && level.getYOffset() + (y * GRID_SIZE) < 64) {
+        const auto tx = level.getXOffset() + (x * GRID_SIZE);
+        const auto ty = level.getYOffset() + (y * GRID_SIZE);
+        if (tx > -GRID_SIZE && tx < 128 && ty > -GRID_SIZE && ty < 64) {
 
           LevelElement element = (LevelElement)level.getLevelData(x, y);
           
