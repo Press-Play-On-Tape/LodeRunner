@@ -3,8 +3,8 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define LEVEL_COUNT                   6
 #define _INC_ARROWS
+#define INC_LEVEL_SELECTOR
 
 #define HEIGHT_LESS_TOOLBAR           56
 #define NUMBER_OF_ENEMIES             10
@@ -168,6 +168,26 @@ enum class EscapeHole : uint8_t {
   Wait28,
   Wait29,
   Wait30,
+  Wait31,
+  Wait32,
+  Wait33,
+  Wait34,
+  Wait35,
+  Wait36,
+  Wait37,
+  Wait38,
+  Wait39,
+  Wait40,
+  Wait41,
+  Wait42,
+  Wait43,
+  Wait44,
+  Wait45,
+  Wait46,
+  Wait47,
+  Wait48,
+  Wait49,
+  Wait50,
   WaitMax
 
 };

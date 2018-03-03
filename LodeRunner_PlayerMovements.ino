@@ -107,7 +107,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
     LevelElement down = level.getLevelData(nearestX, nearestY + 1);
 
-
     if (player.getStance() == PlayerStance::Falling) {
 
       if (inCellY() && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
@@ -159,7 +158,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       }
 
     }
-    else if (nearest == LevelElement::Rail && inCellY()) {
+    else if (nearest == LevelElement::Rail || nearest == LevelElement::Ladder) {
 
       if (canBeOccupied(right)) {
 
@@ -291,7 +290,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       }
 
     }
-    else if (nearest == LevelElement::Rail && inCellY()) {
+    else if (nearest == LevelElement::Rail || nearest == LevelElement::Ladder) {
 
       if (canBeOccupied(left)) {
 
@@ -351,7 +350,9 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     boolean moveDown = true;
 
     nearestY = getNearestY(+8);
+    LevelElement up = level.getLevelData(nearestX, (inCellY() ? nearestY - 1 : nearestY));
     LevelElement down = level.getLevelData(nearestX, (inCellY() ? nearestY + 1 : nearestY));
+
 
     switch (player.getStance()) {
 
@@ -376,7 +377,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       case PlayerStance::Climbing_Up1 ... PlayerStance::Climbing_Up2:
 
-        if (inCellY() && nearest != LevelElement::Ladder) {
+        if (inCellY() && (nearest !=  LevelElement::Ladder || isSolid(up))) { // nearest !=  LevelElement::Ladder) {
 
           moveUp = false;
           moveDown = false;

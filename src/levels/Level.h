@@ -51,7 +51,7 @@ class Level {
 
     uint8_t _levelLadderElementCount;
     LevelPoint _levelLadder[10];
-    LevelPoint _reentryPoint[10];
+    LevelPoint _reentryPoint[15];
 
 };
 
@@ -135,7 +135,7 @@ LevelPoint Level::getLevelLadderElement(const uint8_t index) {
 //
 void Level::loadLevel(Player *player, Enemy enemies[]) {
 
-  uint8_t dataOffset = 0;
+  uint16_t dataOffset = 0;
   uint8_t goldLeft = 0;
 
   const uint8_t *levelToLoad = levels[_levelNumber];
@@ -248,44 +248,6 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   }
 
 
-
-  // Load level data ..
-
-  for (uint8_t y = 0; y < _height; y++) {
-
-    for (uint8_t x = 0; x < _width; x++) {
-
-      uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
-
-      if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
-      if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
-
-      _levelData[x][y] = data;
-
-    }
-
-  }
-
-
-
-
-  // // Load level data ..
-
-  // for (uint8_t y = 0; y < _height; y++) {
-
-  //   for (uint8_t x = 0; x < _width; x++) {
-
-  //     uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
-
-  //     if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
-  //     if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
-
-  //     _levelData[x][y] = data;
-
-  //   }
-
-  // }
-
   // Load level data ..
 
   for (uint8_t y = 0; y < _height; y++) {
@@ -307,6 +269,8 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
     uint8_t block = (data & 0xE0) >> 5;
     uint8_t run = data & 0x1F;
 
+    if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+
     if (run > 0) {
 
       dataOffset++;
@@ -321,8 +285,6 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
         }
 
         cursor++;
-        if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
-
 
       }
 
@@ -336,7 +298,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   }
 
   _goldLeft = goldLeft;
-
+Serial.println(_goldLeft);
 }
 
 
