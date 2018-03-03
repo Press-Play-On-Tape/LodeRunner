@@ -22,15 +22,15 @@ void renderScreen() {
           switch (element) {
 
             case LevelElement::Brick ... LevelElement::Gold:
-              Sprites::drawOverwrite(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], 0);
+              Sprites::drawOverwrite(tx, ty, levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             case LevelElement::Brick_1 ... LevelElement::Brick_4:
-              Sprites::drawOverwrite(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE) - GRID_SIZE, levelElements[static_cast<uint8_t>(element)], 0);
+              Sprites::drawOverwrite(tx, ty - GRID_SIZE, levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             case LevelElement::Brick_Transition ... LevelElement::Brick_Close_4:
-              Sprites::drawOverwrite(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], 0);
+              Sprites::drawOverwrite(tx, ty, levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             default:
