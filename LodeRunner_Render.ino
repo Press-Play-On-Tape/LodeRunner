@@ -5,7 +5,7 @@
 void renderScreen() {
 
 
-  if (arduboy.everyXFrames(6)) flashPlayer = !flashPlayer;
+  if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
 
   if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
       
@@ -20,15 +20,15 @@ void renderScreen() {
           switch (element) {
 
             case LevelElement::Brick ... LevelElement::Gold:
-              arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], WHITE, false);
+              Sprites::drawOverwrite(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             case LevelElement::Brick_1 ... LevelElement::Brick_4:
-              arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE) - GRID_SIZE, levelElements[static_cast<uint8_t>(element)], WHITE, false);
+              Sprites::drawOverwrite(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE) - GRID_SIZE, levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             case LevelElement::Brick_Transition ... LevelElement::Brick_Close_4:
-              arduboy.drawCompressedMirror(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], WHITE, false);
+              Sprites::drawOverwrite(level.getXOffset() + (x * GRID_SIZE), level.getYOffset() + (y * GRID_SIZE), levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             default:

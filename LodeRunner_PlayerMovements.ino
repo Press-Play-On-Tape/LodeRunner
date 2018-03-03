@@ -377,7 +377,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       case PlayerStance::Climbing_Up1 ... PlayerStance::Climbing_Up2:
 
-        if (inCellY() && (nearest !=  LevelElement::Ladder || isSolid(up))) { // nearest !=  LevelElement::Ladder) {
+        if (inCellY() && (nearest != LevelElement::Ladder || isSolid(up))) { 
 
           moveUp = false;
           moveDown = false;

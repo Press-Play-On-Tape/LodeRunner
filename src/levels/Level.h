@@ -315,7 +315,9 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 //
 LevelElement Level::getLevelData(const uint8_t x, const uint8_t y) {
 
-  if ((x / 2) >= _width || y >= _height) return LevelElement::Brick;
+  if ((x / 2) >= _width) return LevelElement::Brick;
+  if (y == 255) return LevelElement::Blank;
+  if (y >= _height) return LevelElement::Brick;
 
   if (x % 2 == 0) {
 

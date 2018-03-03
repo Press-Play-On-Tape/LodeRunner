@@ -50,7 +50,7 @@ void setup() {
   arduboy.flashlight();
   arduboy.systemButtons();
   arduboy.audio.begin();
-  arduboy.setFrameRate(60);
+  arduboy.setFrameRate(30);
   arduboy.initRandomSeed();
   EEPROM_Utils::initEEPROM(false);
   EEPROM_Utils::getSavedGameData(&level, &player);
@@ -190,8 +190,8 @@ void GameSelect() {
 
   for (uint8_t x = 0; x < WIDTH; x = x + 10) {
   
-    arduboy.drawCompressedMirror(x, 0, brick, WHITE, false);
-    arduboy.drawCompressedMirror(x, 55, brick, WHITE, false);
+    Sprites::drawOverwrite(x, 0, brick, 0);
+    Sprites::drawOverwrite(x, 55, brick, 0);
 
   }
 
@@ -228,8 +228,8 @@ void GameSelect() {
 
   for (uint8_t x = 0; x < WIDTH; x = x + 10) {
   
-    arduboy.drawCompressedMirror(x, 0, brick, WHITE, false);
-    arduboy.drawCompressedMirror(x, 55, brick, WHITE, false);
+    Sprites::drawOverwrite(x, 0, brick, 0);
+    Sprites::drawOverwrite(x, 55, brick, 0);
 
   }
 
