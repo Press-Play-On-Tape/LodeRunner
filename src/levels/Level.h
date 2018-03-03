@@ -266,6 +266,75 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   }
 
+
+
+
+  // // Load level data ..
+
+  // for (uint8_t y = 0; y < _height; y++) {
+
+  //   for (uint8_t x = 0; x < _width; x++) {
+
+  //     uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
+
+  //     if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+  //     if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
+
+  //     _levelData[x][y] = data;
+
+  //   }
+
+  // }
+
+  // Load level data ..
+
+  for (uint8_t y = 0; y < _height; y++) {
+
+    for (uint8_t x = 0; x < _width; x++) {
+
+      _levelData[x][y] = 0;
+
+    }
+
+  }
+
+  uint16_t cursor = 0;
+
+  while (true) {
+
+    uint8_t data = pgm_read_byte(&levelToLoad[dataOffset]);
+
+    uint8_t block = (data & 0xE0) >> 5;
+    uint8_t run = data & 0x1F;
+
+    if (run > 0) {
+
+      dataOffset++;
+
+      for (uint8_t x = 0; x < run; x++) {
+
+        if (cursor % 2 == 0) {
+          _levelData[(cursor % 28) / 2][cursor / 28] = _levelData[(cursor % 28) / 2][cursor / 28] | (block << 4);
+        }
+        else {
+          _levelData[(cursor % 28) / 2][cursor / 28] = _levelData[(cursor % 28) / 2][cursor / 28] | block;
+        }
+
+        cursor++;
+        if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+
+
+      }
+
+    }
+    else {
+    
+      break;
+    
+    }
+
+  }
+
   _goldLeft = goldLeft;
 
 }
