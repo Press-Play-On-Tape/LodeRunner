@@ -247,58 +247,66 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   }
 
+  if (pgm_read_byte(&levelToLoad[dataOffset++]) == 0) {
 
-  // Load level data ..
+    uint16_t cursor = 0;
 
-  for (uint8_t y = 0; y < _height; y++) {
+    while (true) {
 
-    for (uint8_t x = 0; x < _width; x++) {
+      uint8_t data = pgm_read_byte(&levelToLoad[dataOffset]);
+      uint8_t block = (data & 0xE0) >> 5;
+      uint8_t run = data & 0x1F;
 
-      _levelData[x][y] = 0;
+      if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+
+      if (run > 0) {
+
+        dataOffset++;
+
+        for (uint8_t x = 0; x < run; x++) {
+
+          if (cursor % 2 == 0) {
+            _levelData[(cursor % 28) / 2][cursor / 28] = (_levelData[(cursor % 28) / 2][cursor / 28] & 0x0f) | (block << 4);
+          }
+          else {
+            _levelData[(cursor % 28) / 2][cursor / 28] = (_levelData[(cursor % 28) / 2][cursor / 28] & 0xF0) | block;
+          }
+
+          cursor++;
+
+        }
+
+      }
+      else {
+      
+        break;
+      
+      }
 
     }
 
   }
+  else {
 
-  uint16_t cursor = 0;
+    for (uint8_t y = 0; y < _height; y++) {
 
-  while (true) {
+      for (uint8_t x = 0; x < _width; x++) {
 
-    uint8_t data = pgm_read_byte(&levelToLoad[dataOffset]);
+        uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
 
-    uint8_t block = (data & 0xE0) >> 5;
-    uint8_t run = data & 0x1F;
+        if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+        if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
 
-    if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
-
-    if (run > 0) {
-
-      dataOffset++;
-
-      for (uint8_t x = 0; x < run; x++) {
-
-        if (cursor % 2 == 0) {
-          _levelData[(cursor % 28) / 2][cursor / 28] = _levelData[(cursor % 28) / 2][cursor / 28] | (block << 4);
-        }
-        else {
-          _levelData[(cursor % 28) / 2][cursor / 28] = _levelData[(cursor % 28) / 2][cursor / 28] | block;
-        }
-
-        cursor++;
+        _levelData[x][y] = data;
 
       }
 
-    }
-    else {
-    
-      break;
-    
     }
 
   }
 
   _goldLeft = goldLeft;
-Serial.println(_goldLeft);
+
 }
 
 
