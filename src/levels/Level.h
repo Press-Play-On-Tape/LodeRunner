@@ -6,6 +6,10 @@
 #include "../characters/Player.h"
 #include "../characters/Enemy.h"
 
+#define ENCRYPTION_TYPE_RLE_ROW 0
+#define ENCRYPTION_TYPE_RLE_COL 1
+#define ENCRYPTION_TYPE_GRID 2
+
 class Level {
 
   public: 
@@ -247,8 +251,28 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   }
 
-  if (pgm_read_byte(&levelToLoad[dataOffset++]) == 0) {
+  uint8_t encryptionType = pgm_read_byte(&levelToLoad[dataOffset++]);
+  
+  if (encryptionType == ENCRYPTION_TYPE_GRID) {
 
+    for (uint8_t y = 0; y < _height; y++) {
+
+      for (uint8_t x = 0; x < _width; x++) {
+
+        uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
+
+        if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+        if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
+
+        _levelData[x][y] = data;
+
+      }
+
+    }
+
+  }
+  else {
+	  
     uint16_t cursor = 0;
 
     while (true) {
@@ -265,12 +289,26 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
         for (uint8_t x = 0; x < run; x++) {
 
-          if (cursor % 2 == 0) {
-            _levelData[(cursor % 28) / 2][cursor / 28] = (_levelData[(cursor % 28) / 2][cursor / 28] & 0x0f) | (block << 4);
-          }
-          else {
-            _levelData[(cursor % 28) / 2][cursor / 28] = (_levelData[(cursor % 28) / 2][cursor / 28] & 0xF0) | block;
-          }
+		  if (encryptionType == ENCRYPTION_TYPE_RLE_ROW) {
+			  
+            if (cursor % 2 == 0) {
+              _levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] = (_levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] & 0x0f) | (block << 4);
+            } 
+            else {
+              _levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] = (_levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] & 0xF0) | block;
+            }
+		  
+		  }
+		  else {
+			  
+            if (cursor % 2 == 0) {
+              _levelData[cursor / _height][(cursor % _height) / 2] = (_levelData[cursor / _height][(cursor % _height) / 2] & 0x0f) | (block << 4);
+            } 
+            else {
+              _levelData[cursor / _height][(cursor % _height) / 2] = (_levelData[cursor / _height][(cursor % _height) / 2] & 0xF0) | block;
+            }
+			  
+		  }
 
           cursor++;
 
@@ -281,24 +319,6 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
       
         break;
       
-      }
-
-    }
-
-  }
-  else {
-
-    for (uint8_t y = 0; y < _height; y++) {
-
-      for (uint8_t x = 0; x < _width; x++) {
-
-        uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
-
-        if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
-        if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
-
-        _levelData[x][y] = data;
-
       }
 
     }
