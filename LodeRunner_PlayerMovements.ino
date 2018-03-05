@@ -1,6 +1,14 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
 
+void stopPlayer() {
+
+  player.setXDelta(0);
+  level.setXOffsetDelta(0);   
+  player.setYDelta(0);
+  level.setYOffsetDelta(0); 
+
+}
 
 void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
@@ -419,10 +427,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (!moveDown) {
 
-        player.setYDelta(0);
-        level.setYOffsetDelta(0); 
-        player.setXDelta(0);          // Added to stop the player ..
-        level.setXOffsetDelta(0); 
+        stopPlayer();
 
       }
       else {
@@ -510,10 +515,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     }
     else {
 
-      player.setXDelta(0);           // Added to stop the player ..
-      level.setXOffsetDelta(0);   
-      player.setYDelta(0);
-      level.setYOffsetDelta(0);   
+      stopPlayer();
 
     }
 

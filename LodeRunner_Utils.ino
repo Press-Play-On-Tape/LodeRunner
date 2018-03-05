@@ -79,16 +79,16 @@ Direction getDirection_16Directions(int16_t xDiff, int16_t yDiff) {
   
     if (yDiff > 0) {
     
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightUp1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightUp; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightUp2; }
+      if (absT(xDiff) > absT(yDiff))    { return Direction::RightUp1; }
+      else if (absT(xDiff) < absT(yDiff))    { return Direction::RightUp2; }
+      else   { return Direction::RightUp; }
       
     }
     else if (yDiff < 0) {
     
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::RightDown1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::RightDown; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::RightDown2; }
+      if (absT(xDiff) < absT(yDiff))    { return Direction::RightDown1; }
+      else if (absT(xDiff) > absT(yDiff))    { return Direction::RightDown2; }
+      else   { return Direction::RightDown; }
     
     }
     else {
@@ -102,16 +102,16 @@ Direction getDirection_16Directions(int16_t xDiff, int16_t yDiff) {
   
     if (yDiff > 0) {
     
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftUp1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftUp; }
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftUp2; }
+      if (absT(xDiff) > absT(yDiff))    { return Direction::LeftUp1; }
+      else if (absT(xDiff) < absT(yDiff))    { return Direction::LeftUp2; }
+      else   { return Direction::LeftUp; }
       
     }
     else if (yDiff < 0) {
     
-      if (absT(xDiff) - absT(yDiff) < 0)    { return Direction::LeftDown1; }
-      if (absT(xDiff) - absT(yDiff) == 0)   { return Direction::LeftDown; }
-      if (absT(xDiff) - absT(yDiff) > 0)    { return Direction::LeftDown2; }
+      if (absT(xDiff) < absT(yDiff))    { return Direction::LeftDown1; }
+      else if (absT(xDiff) > absT(yDiff))    { return Direction::LeftDown2; }
+      else   { return Direction::LeftDown; }
     
     }
     else {
@@ -195,7 +195,7 @@ Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff) {
   else {
 
     if (yDiff < 0)                    return Direction::Down;
-    else if (yDiff > 0)               return Direction::Up;
+    //else if (yDiff > 0)               return Direction::Up;
     else                              return Direction::Up; 
 
   }
