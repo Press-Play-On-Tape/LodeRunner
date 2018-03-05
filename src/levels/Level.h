@@ -289,26 +289,32 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
         for (uint8_t x = 0; x < run; x++) {
 
-		  if (encryptionType == ENCRYPTION_TYPE_RLE_ROW) {
-			  
+          if (encryptionType == ENCRYPTION_TYPE_RLE_ROW) {
+            
+            uint8_t row = cursor / (_width * 2);
+            uint8_t col = (cursor % (_width * 2)) / 2;
+
             if (cursor % 2 == 0) {
-              _levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] = (_levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] & 0x0f) | (block << 4);
+              _levelData[col][row] = (_levelData[col][row] & 0x0f) | (block << 4);
             } 
             else {
-              _levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] = (_levelData[(cursor % (_width * 2)) / 2][cursor / (_width * 2)] & 0xF0) | block;
+              _levelData[col][row] = (_levelData[col][row] & 0xF0) | block;
             }
-		  
-		  }
-		  else {
-			  
-            if (cursor % 2 == 0) {
-              _levelData[cursor / _height][(cursor % _height) / 2] = (_levelData[cursor / _height][(cursor % _height) / 2] & 0x0f) | (block << 4);
+
+          }
+          else {
+
+            uint8_t col = cursor / _height;
+            uint8_t row = cursor % _height;
+
+            if (col % 2 == 0) {
+              _levelData[col / 2][row] = (_levelData[col / 2][row] & 0x0f) | (block << 4);
             } 
             else {
-              _levelData[cursor / _height][(cursor % _height) / 2] = (_levelData[cursor / _height][(cursor % _height) / 2] & 0xF0) | block;
+              _levelData[col / 2][row] = (_levelData[col / 2][row] & 0xF0) | block;
             }
-			  
-		  }
+
+          }
 
           cursor++;
 
