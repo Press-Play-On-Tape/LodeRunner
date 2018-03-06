@@ -35,7 +35,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (leftDown == LevelElement::Brick) {
 
-//        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
         player.setStance(PlayerStance::Burn_Left);
         player.setXDelta(0);
         level.setXOffsetDelta(0);
@@ -65,7 +64,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (rightDown == LevelElement::Brick) {
  
-//        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
         player.setStance(PlayerStance::Burn_Right);
         player.setXDelta(0);
         level.setXOffsetDelta(0);
@@ -88,7 +86,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   //  Right
   
   if ( arduboy.justPressed(RIGHT_BUTTON) || ((!arduboy.justPressed(LEFT_BUTTON) && !arduboy.justPressed(UP_BUTTON) && !arduboy.justPressed(DOWN_BUTTON)) && (player.getXDelta() == 2 || level.getXOffsetDelta() == -2)) ) {
-arduboy.setCursor(85,0);
+
     boolean moveRight = true;
     boolean moveDown = false;
 
@@ -98,11 +96,6 @@ arduboy.setCursor(85,0);
     LevelElement down = level.getLevelData((inCellX() ? nearestX : nearestX), nearestY + 1);
     
     if (player.getStance() == PlayerStance::Falling) {
-
-      // LevelElement rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY - 1);
-      // LevelElement right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
-      // LevelElement rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
-      // LevelElement down = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
 
       if (inCellY() && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
@@ -128,133 +121,137 @@ arduboy.setCursor(85,0);
 
     }
     else if (inCellY(4)) {
+      
+      if (right == LevelElement::Rail) {
 
-      if (inCellX()) {
-
-        // LevelElement rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY - 1);
-        // LevelElement right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
-        // LevelElement rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
-        // LevelElement down = level.getLevelData((inCellX() ? nearestX : nearestX - 1), nearestY + 1);
-  arduboy.print((uint8_t)down);
-        if (right == LevelElement::Rail) {
-  arduboy.print("xa");
-          if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
-          moveRight = true;
-
-        }
-        else if (right == LevelElement::Ladder) {
-  arduboy.print("xb");
-
-          if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
-          moveRight = true;
-
-        } 
-        else if (!canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
-  arduboy.print("xc");
-  arduboy.print((uint8_t)down);
-          
-          player.setStance(PlayerStance::StandingStill);
-          moveRight = false;
-
-        }
-        else if (canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
-  arduboy.print("xd");
-
-          if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
-          moveRight = true;
-
-        }
-        else if (canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
-  arduboy.print("xe<");
-
-          player.setStance(PlayerStance::Falling);
-          moveRight = false;
-          moveDown = true;
-
-        }
-        else {
-  arduboy.print("xf");
-
-          moveRight = false;
-
-        }
+        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+        moveRight = true;
 
       }
-      else { // !inCellX()
+      else if (right == LevelElement::Ladder) {
+
+        if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+        moveRight = true;
+
+      } 
+      else if (!canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
         
-        // LevelElement rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY - 1);
-        // LevelElement right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
-        // LevelElement rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
-        // LevelElement down = level.getLevelData((inCellX() ? nearestX : nearestX - 1), nearestY + 1);
+        player.setStance(PlayerStance::StandingStill);
+        moveRight = false;
 
-        if (right == LevelElement::Rail) {
-  arduboy.print("ya");
-          if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
-          moveRight = true;
-
-        }
-        else if (right == LevelElement::Ladder) {
-  arduboy.print("yb");
-
-          if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
-          moveRight = true;
-
-        } 
-        else if (!canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
-  arduboy.print("yc");
-  arduboy.print((uint8_t)down);
+      }
+      else if {
           
-          player.setStance(PlayerStance::StandingStill);
-          moveRight = false;
+        if (inCellX()) {
+  /*
+          if (right == LevelElement::Rail) {
+
+            if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+            moveRight = true;
+
+          }
+          else if (right == LevelElement::Ladder) {
+
+            if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+            moveRight = true;
+
+          } 
+          else if (!canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
+            
+            player.setStance(PlayerStance::StandingStill);
+            moveRight = false;
+
+          }
+          else */
+          if (canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+
+            if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
+            moveRight = true;
+
+          }
+          else if (canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
+
+            player.setStance(PlayerStance::Falling);
+            moveRight = false;
+            moveDown = true;
+
+          }
+          else {
+
+            moveRight = false;
+
+          }
 
         }
-        else if (canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
-  arduboy.print("yd");
+        else { // !inCellX()
+  /*
+          if (right == LevelElement::Rail) {
 
-          if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
-          moveRight = true;
+            if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+            moveRight = true;
 
+          }
+          else if (right == LevelElement::Ladder) {
+
+            if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+            moveRight = true;
+
+          } 
+          else if (!canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+            
+            player.setStance(PlayerStance::StandingStill);
+            moveRight = false;
+
+          }
+          else */
+          if (canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+
+            if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
+            moveRight = true;
+
+          }
+          else if (canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+
+            if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
+            moveRight = true;
+
+          }
+          else {
+
+            moveRight = false;
+
+          }
+          
         }
-        else if (canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
-  arduboy.print("ye");
-
-          if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
-          moveRight = true;
-
-        }
-        else {
-  arduboy.print("yf");
-
-          moveRight = false;
-
-        }
+        
       }
 
     }
     else {
-
-      // LevelElement rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
-      // LevelElement right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
-      // LevelElement rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
-      // LevelElement down = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
 
       rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
       right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
       rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
       down = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
 
-      if (inCellX()) {
+      if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+        
+        if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
+        player.setStance(PlayerStance::StandingStill);
+        moveRight = true;
 
+      }
+      else if (inCellX()) {
+/*
         if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
-  arduboy.print("xg");
           
           if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
           player.setStance(PlayerStance::StandingStill);
           moveRight = true;
 
         }
-        else if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
-  arduboy.print("xh");
+        else */
+        if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
           
           if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
           moveRight = true;
@@ -262,7 +259,6 @@ arduboy.setCursor(85,0);
 
         }
         else {
-  arduboy.print("xi");
 
           moveRight = false;
 
@@ -270,17 +266,16 @@ arduboy.setCursor(85,0);
         
       }
       else { // !inCellX()
-
+/*
         if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
-  arduboy.print("yg");
           
           if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
           player.setStance(PlayerStance::StandingStill);
           moveRight = true;
 
         }
-        else if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
-  arduboy.print("yh");
+        else */
+        if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
           
           player.setStance(PlayerStance::Falling);        
           moveRight = true;
@@ -288,7 +283,6 @@ arduboy.setCursor(85,0);
 
         }
         else {
-  arduboy.print("yi");
 
           moveRight = false;
 
@@ -298,110 +292,7 @@ arduboy.setCursor(85,0);
 
     }
 
-
-/*
-    if (inCellX()) {
-
-      if (!inCellY()) {
-
-        nearestY = getNearestY(0) + 1; // Err down a cell
-        
-      }
-
-    }
-    else {
-
-      if (!inCellX()) {
-
-        nearestX = getNearestX(0);
-        
-      }
-
-    }
-
-    LevelElement right = level.getLevelData(nearestX + 1, nearestY);
-    LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
-    LevelElement down = level.getLevelData(nearestX, nearestY + 1);
-
-    if (player.getStance() == PlayerStance::Falling) {
-
-      if (inCellY() && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
-
-        moveRight = false;
-        moveDown = false;
-        player.setStance(PlayerStance::StandingStill);
-
-      }
-      
-      else if (inCellY() && right == LevelElement::Rail && inCellY()) {
-
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
-        moveRight = true;
-
-      }
-
-      else { 
-
-        moveRight = false;
-        moveDown = true;
-
-      }     
-
-    }
-    else if (player.getStance() >= PlayerStance::Running_Right1 && player.getStance() <= PlayerStance::Running_Right4 && canBeFallenInto(down, enemies, nearestX, nearestY + 1) && right != LevelElement::Rail) {
-
-        moveRight = false;
-        moveDown = true;
-
-    }
-    else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
-
-      switch (right) {
-
-        case LevelElement::Brick:
-        case LevelElement::Solid:
-        case LevelElement::FallThrough:
-
-          moveRight = false;
-          break;
-
-        default:
-
-          if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
-          moveRight = true;
-          break;
-      
-      }
-
-    }
-    else if (nearest == LevelElement::Rail || nearest == LevelElement::Ladder) {
-
-      if (canBeOccupied(right)) {
-
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
-        moveRight = true;
-
-      }
-      else {
-
-        moveRight = false;
-
-      }
     
-    }
-    else if (canBeOccupied(right) && canBeFallenOn(rightDown)) {
-
-      moveRight = true;
-      if (!canBeStoodOn(rightDown, enemies, nearestX, nearestY + 1)) moveDown = true;
-
-    }
-    else {
-
-      moveDown = true;
-
-    }
-
-*/
     // Move player if needed ..
 
     if (moveRight) {
@@ -435,29 +326,11 @@ arduboy.setCursor(85,0);
     boolean moveLeft = true;
     boolean moveDown = false;
 
-    if (inCellX()) {
-
-      if (!inCellY()) {
-
-        nearestY = getNearestY(0) + 1; // Err down a cell
-        
-      }
-
-    }
-    else {
-
-      if (!inCellX()) {
-
-        nearestX = getNearestX(0) + 1;
-        
-      }
-
-    }
-
-    LevelElement left = level.getLevelData(nearestX - 1, nearestY);
-    LevelElement leftDown = level.getLevelData(nearestX - 1, nearestY + 1);
-    LevelElement down = level.getLevelData(nearestX, nearestY + 1);
-
+    LevelElement leftUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY - 1);
+    LevelElement left = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
+    LevelElement leftDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
+    LevelElement down = level.getLevelData((inCellX() ? nearestX : nearestX), nearestY + 1);
+    
     if (player.getStance() == PlayerStance::Falling) {
 
       if (inCellY() && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
@@ -467,70 +340,192 @@ arduboy.setCursor(85,0);
         player.setStance(PlayerStance::StandingStill);
 
       }
+      
       else if (inCellY() && left == LevelElement::Rail && inCellY()) {
 
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+        if (player.getStance() < PlayerStance::Swinging_Left4 || player.getStance() > PlayerStance::Swinging_Left1) player.setStance(PlayerStance::Swinging_Left1);
         moveLeft = true;
 
       }
+
       else { 
 
         moveLeft = false;
         moveDown = true;
 
+      }     
+
+    }
+    else if (inCellY(4)) {
+      
+      if (left == LevelElement::Rail) {
+
+        if (player.getStance() < PlayerStance::Swinging_Left4 || player.getStance() > PlayerStance::Swinging_Left1) player.setStance(PlayerStance::Swinging_Left1);
+        moveLeft = true;
+
       }
+      else if (left == LevelElement::Ladder) {
 
-    }
-    else if (player.getStance() >= PlayerStance::Running_Left4 && player.getStance() <= PlayerStance::Running_Left1 && canBeFallenInto(down, enemies, nearestX, nearestY + 1) && left != LevelElement::Rail) {
+        if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+        moveLeft = true;
 
+      } 
+      else if (!canBeOccupied(left) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
+        
+        player.setStance(PlayerStance::StandingStill);
         moveLeft = false;
-        moveDown = true;
 
-    }
-    else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+      }
+      else if {
+          
+        if (inCellX()) {
+  /*
+          if (left == LevelElement::Rail) {
 
-      switch (left) {
+            if (player.getStance() < PlayerStance::Swinging_Left4 || player.getStance() > PlayerStance::Swinging_Left1) player.setStance(PlayerStance::Swinging_Left1);
+            moveLeft = true;
 
-        case LevelElement::Brick:
-        case LevelElement::FallThrough:
-        case LevelElement::Solid:
+          }
+          else if (left == LevelElement::Ladder) {
 
-          moveLeft = false;
-          break;
+            if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+            moveLeft = true;
 
-        default:
+          } 
+          else if (!canBeOccupied(left) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
+            
+            player.setStance(PlayerStance::StandingStill);
+            moveLeft = false;
 
-          if (player.getStance() < PlayerStance::Running_Left4 || player.getStance() > PlayerStance::Running_Left1) player.setStance(PlayerStance::Running_Left1);
-          moveLeft = true;
-          break;
+          }
+          else */
+          if (canBeOccupied(left) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+
+            if (player.getStance() < PlayerStance::Running_Left4 || player.getStance() > PlayerStance::Running_Left1) player.setStance(PlayerStance::Running_Left1);
+            moveLeft = true;
+
+          }
+          else if (canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
+
+            player.setStance(PlayerStance::Falling);
+            moveLeft = false;
+            moveDown = true;
+
+          }
+          else {
+
+            moveLeft = false;
+
+          }
+
+        }
+        else { // !inCellX()
+  /*
+          if (left == LevelElement::Rail) {
+
+            if (player.getStance() < PlayerStance::Swinging_Left4 || player.getStance() > PlayerStance::Swinging_Left1) player.setStance(PlayerStance::Swinging_Left1);
+            moveLeft = true;
+
+          }
+          else if (left == LevelElement::Ladder) {
+
+            if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+            moveLeft = true;
+
+          } 
+          else if (!canBeOccupied(left) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+            
+            player.setStance(PlayerStance::StandingStill);
+            moveLeft = false;
+
+          }
+          else */
+          if (canBeOccupied(left) && canBeStoodOn(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+
+            if (player.getStance() < PlayerStance::Running_Left1 || player.getStance() > PlayerStance::Running_Left4) player.setStance(PlayerStance::Running_Left1);
+            moveLeft = true;
+
+          }
+          else if (canBeFallenInto(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+
+            if (player.getStance() < PlayerStance::Running_Left1 || player.getStance() > PlayerStance::Running_Left4) player.setStance(PlayerStance::Running_Left1);
+            moveLeft = true;
+
+          }
+          else {
+
+            moveLeft = false;
+
+          }
+          
+        }
         
       }
 
     }
-    else if (nearest == LevelElement::Rail || nearest == LevelElement::Ladder) {
+    else {
 
-      if (canBeOccupied(left)) {
+      leftUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
+      left = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
+      leftDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
+      down = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
 
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+      if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeStoodOn(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+        
+        if (player.getStance() < PlayerStance::Running_Left4 || player.getStance() > PlayerStance::Running_Left1) player.setStance(PlayerStance::Running_Left1);
+        player.setStance(PlayerStance::StandingStill);
         moveLeft = true;
 
       }
-      else {
+      else if (inCellX()) {
+/*
+        if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeStoodOn(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+          
+          if (player.getStance() < PlayerStance::Running_Left4 || player.getStance() > PlayerStance::Running_Left1) player.setStance(PlayerStance::Running_Left1);
+          player.setStance(PlayerStance::StandingStill);
+          moveLeft = true;
 
-        moveLeft = false;
+        }
+        else */
+        if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeFallenInto(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+          
+          if (player.getStance() < PlayerStance::Climbing_Up1 || player.getStance() > PlayerStance::Climbing_Up2) player.setStance(PlayerStance::Climbing_Up1);
+          moveLeft = true;
+          moveDown = false;
+
+        }
+        else {
+
+          moveLeft = false;
+
+        }
+        
+      }
+      else { // !inCellX()
+/*
+        if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeStoodOn(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+          
+          if (player.getStance() < PlayerStance::Running_Left4 || player.getStance() > PlayerStance::Running_Left1) player.setStance(PlayerStance::Running_Left1);
+          player.setStance(PlayerStance::StandingStill);
+          moveLeft = true;
+
+        }
+        else */
+        if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeFallenInto(leftDown, enemies, nearestX + 1, nearestY + 1)) {
+          
+          player.setStance(PlayerStance::Falling);        
+          moveLeft = true;
+          moveDown = false;
+
+        }
+        else {
+
+          moveLeft = false;
+
+        }
 
       }
-      
-    }
-    else if (canBeOccupied(left) && canBeFallenOn(leftDown)) {
 
-      moveLeft = true;
-      if (!canBeStoodOn(leftDown, enemies, nearestX, nearestY + 1)) moveDown = true;
-
-    }
-    else {
-
-      moveDown = true;
     }
 
 
@@ -891,3 +886,10 @@ void movePlayerUp() {
   }
 
 }
+
+void updatePlayerStance(PlayerStance lowerRange, PlayerStance upperRange, PlayerStance newStance) {
+
+  if (player.getStance() < PlayerStance::Climbing_Down2 || player.getStance() > PlayerStance::Climbing_Down1) player.setStance(PlayerStance::Climbing_Down1);
+  
+}
+  
