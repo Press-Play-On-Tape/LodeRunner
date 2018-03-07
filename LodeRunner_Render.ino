@@ -129,9 +129,69 @@ void renderEnemies()
     }
 }
 
+#ifdef INC_ARROWS
+void renderArrows()
+{
+    if (drawArrow(Direction::Up)) {
+
+      arduboy.drawCompressedMirror(62, 0, arrow_TM_mask, BLACK, false);
+      arduboy.drawCompressedMirror(62, 0, arrow_TM, WHITE, false);
+
+    }
+
+    if (drawArrow(Direction::RightUp)) {
+
+      arduboy.drawCompressedMirror(123, 0, arrow_TR_mask, BLACK, false);
+      arduboy.drawCompressedMirror(123, 0, arrow_TR, WHITE, false);
+
+    }
+
+    if (drawArrow(Direction::Right)) {
+
+      arduboy.drawCompressedMirror(124, 24, arrow_MR_mask, BLACK, false);
+      arduboy.drawCompressedMirror(124, 24, arrow_MR, WHITE, false);
+
+    }
+      
+    if (drawArrow(Direction::RightDown)) {
+
+      arduboy.drawCompressedMirror(123, 50, arrow_BR_mask, BLACK, false);
+      arduboy.drawCompressedMirror(123, 50, arrow_BR, WHITE, false);
+
+    }
+        
+    if (drawArrow(Direction::Down)) {
+
+      arduboy.drawCompressedMirror(62, 50, arrow_BM_mask, BLACK, false);
+      arduboy.drawCompressedMirror(62, 50, arrow_BM, WHITE, false);
+
+    }
+    
+    if (drawArrow(Direction::LeftDown)) {
+
+      arduboy.drawCompressedMirror(0, 50, arrow_BR_mask, BLACK, true);
+      arduboy.drawCompressedMirror(0, 50, arrow_BR, WHITE, true);
+
+    }
+
+    if (drawArrow(Direction::Left)) {
+
+      arduboy.drawCompressedMirror(0, 24, arrow_MR_mask, BLACK, true);
+      arduboy.drawCompressedMirror(0, 24, arrow_MR, WHITE, true);
+
+    }
+
+    if (drawArrow(Direction::LeftUp)) {
+
+      arduboy.drawCompressedMirror(0, 0, arrow_TR_mask, BLACK, true);
+      arduboy.drawCompressedMirror(0, 0, arrow_TR, WHITE, true);
+
+    }
+}
+#endif
+
 //void renderScreen(GameState gameState) {
 void renderScreen() {
-
 
   if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
 
@@ -151,70 +211,9 @@ void renderScreen() {
 
     renderEnemies();
 
-
     #ifdef INC_ARROWS
-
-    if (flashPlayer) {
-
-
-      if (drawArrow(Direction::Up)) {
-
-        arduboy.drawCompressedMirror(62, 0, arrow_TM_mask, BLACK, false);
-        arduboy.drawCompressedMirror(62, 0, arrow_TM, WHITE, false);
-
-      }
-
-      if (drawArrow(Direction::RightUp)) {
-
-        arduboy.drawCompressedMirror(123, 0, arrow_TR_mask, BLACK, false);
-        arduboy.drawCompressedMirror(123, 0, arrow_TR, WHITE, false);
-
-      }
-
-      if (drawArrow(Direction::Right)) {
-
-        arduboy.drawCompressedMirror(124, 24, arrow_MR_mask, BLACK, false);
-        arduboy.drawCompressedMirror(124, 24, arrow_MR, WHITE, false);
-
-      }
-      
-      if (drawArrow(Direction::RightDown)) {
-
-        arduboy.drawCompressedMirror(123, 50, arrow_BR_mask, BLACK, false);
-        arduboy.drawCompressedMirror(123, 50, arrow_BR, WHITE, false);
-
-      }
-        
-      if (drawArrow(Direction::Down)) {
-
-        arduboy.drawCompressedMirror(62, 50, arrow_BM_mask, BLACK, false);
-        arduboy.drawCompressedMirror(62, 50, arrow_BM, WHITE, false);
-
-      }
-    
-      if (drawArrow(Direction::LeftDown)) {
-
-        arduboy.drawCompressedMirror(0, 50, arrow_BR_mask, BLACK, true);
-        arduboy.drawCompressedMirror(0, 50, arrow_BR, WHITE, true);
-
-      }
-
-      if (drawArrow(Direction::Left)) {
-
-        arduboy.drawCompressedMirror(0, 24, arrow_MR_mask, BLACK, true);
-        arduboy.drawCompressedMirror(0, 24, arrow_MR, WHITE, true);
-
-      }
-
-      if (drawArrow(Direction::LeftUp)) {
-
-        arduboy.drawCompressedMirror(0, 0, arrow_TR_mask, BLACK, true);
-        arduboy.drawCompressedMirror(0, 0, arrow_TR, WHITE, true);
-
-      }
-
-    }
-
+    if(flashPlayer)
+        renderArrows();
     #endif
 
   }
