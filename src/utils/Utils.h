@@ -142,6 +142,25 @@ boolean canBeFallenOn(LevelElement levelElement) {
 
 
 // ---------------------------------------------------------------------------------
+// Can the space be climbed on by the player ?
+//
+boolean canBeClimbedOn(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Ladder:
+    case LevelElement::Rail:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
+
+
+// ---------------------------------------------------------------------------------
 // Can the space be occupied by the player ?
 //
 // Can the player enter the square - ie. is it empty or something that can be climbed on?

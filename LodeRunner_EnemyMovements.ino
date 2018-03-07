@@ -56,7 +56,6 @@ void enemyMovements(Enemy *enemy) {
         enemyY = enemy->getY() / GRID_SIZE;
 
         LevelElement current =    level.getLevelData(enemyX, enemyY);
-        //LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
 
 
         // If the enemy is in a hole, then attemt to wiggle out ..
@@ -76,13 +75,8 @@ void enemyMovements(Enemy *enemy) {
 
 
           // Check to see if the enemy can continue falling ..
-
-//          if (canBeStoodOnBasic_Enemy(down)) {
             
-            enemy->setYDelta(0);
-
-//          }
-
+          enemy->setYDelta(0);
           enemy->setEscapeHole(static_cast<EscapeHole>(static_cast<uint8_t>(enemy->getEscapeHole()) - 1));
 
         }
