@@ -40,6 +40,95 @@ void renderLevelElements()
     }
 }
 
+void renderEnemies()
+{
+    for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+      Enemy *enemy = &enemies[x];
+
+      if (enemy->getEnabled()) {
+
+        const auto ex = enemy->getX() + level.getXOffset();
+        const auto ey = enemy->getY() + level.getYOffset();
+        
+        auto dx = ex;
+        auto dy = ey;
+        uint8_t const * image = man_StandingStill;
+        bool flip = false;
+        
+        switch (enemy->getEscapeHole()) {       
+
+          case EscapeHole::None:          
+            flip = (static_cast<int8_t>(enemy->getStance()) < 0);
+            image = men[absT(static_cast<int8_t>(enemy->getStance()))];
+            break;        
+
+          case EscapeHole::Wait1 ... EscapeHole::WaitMax:
+            break;
+
+          case EscapeHole::Wiggle1:
+          case EscapeHole::Wiggle2:
+          case EscapeHole::Wiggle5:
+          case EscapeHole::Wiggle6:
+            dx = ex - 1;
+            break;
+
+          case EscapeHole::Wiggle3:
+          case EscapeHole::Wiggle4:
+          case EscapeHole::Wiggle7:
+          case EscapeHole::Wiggle8:
+            dx = ex + 1;
+            break;
+
+          case EscapeHole::MoveUp9:
+          case EscapeHole::MoveUp10:
+            dy = ey - 2;
+            image = man_LaddderLeft;
+            break;
+
+          case EscapeHole::MoveUp7:
+          case EscapeHole::MoveUp8:
+            dy = ey - 4;
+            image = man_LaddderRight;
+            break;
+
+          case EscapeHole::MoveUp5:
+          case EscapeHole::MoveUp6:
+            dy = ey - 6;
+            image = man_LaddderLeft;
+            break;
+
+          case EscapeHole::MoveUp3:
+          case EscapeHole::MoveUp4:
+            dy = ey - 8;
+            image = man_LaddderRight;
+            break;
+
+          case EscapeHole::MoveUp2:
+          case EscapeHole::MoveUp1:
+          
+            dy = ey - 10;
+            image = man_LaddderLeft;
+            
+            enemy->setY(enemy->getY() - 10);
+            enemy->setEscapeHole(EscapeHole::None);
+            setDirectionAfterHoleEscape(enemy);
+
+            break;
+
+          default:
+            // Uncomment this if man_StandingStill being default is an issue
+            // will increase code size by ~30 bytes
+            //continue;
+            break;
+
+          }
+          arduboy.drawCompressedMirror(dx, dy, image, WHITE, flip);
+      }
+
+    }
+}
+
 //void renderScreen(GameState gameState) {
 void renderScreen() {
 
@@ -60,84 +149,7 @@ void renderScreen() {
 
     }
 
-
-    // Draw enemies ..
-
-    for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
-
-      Enemy *enemy = &enemies[x];
-
-      if (enemy->getEnabled()) {
-
-        auto ex = enemy->getX() + level.getXOffset();
-        auto ey = enemy->getY() + level.getYOffset();
-        if (enemy->getEscapeHole() == EscapeHole::None) {
-
-          boolean flip = (static_cast<int8_t>(enemy->getStance()) < 0);
-          arduboy.drawCompressedMirror(ex, ey, men[absT(static_cast<int8_t>(enemy->getStance()))], WHITE, flip);
-
-        }
-        else {
-
-          switch (enemy->getEscapeHole()) {
-
-            case EscapeHole::Wait1 ... EscapeHole::WaitMax:
-              arduboy.drawCompressedMirror(ex, ey, man_StandingStill, WHITE, false);
-              break;
-
-            case EscapeHole::Wiggle1:
-            case EscapeHole::Wiggle2:
-            case EscapeHole::Wiggle5:
-            case EscapeHole::Wiggle6:
-              arduboy.drawCompressedMirror(ex - 1, ey, man_StandingStill, WHITE, false);
-              break;
-
-            case EscapeHole::Wiggle3:
-            case EscapeHole::Wiggle4:
-            case EscapeHole::Wiggle7:
-            case EscapeHole::Wiggle8:
-              arduboy.drawCompressedMirror(ex + 1, ey, man_StandingStill, WHITE, false);
-              break;
-
-            case EscapeHole::MoveUp9:
-            case EscapeHole::MoveUp10:
-              arduboy.drawCompressedMirror(ex, ey - 2, man_LaddderLeft, WHITE, false);
-              break;
-
-            case EscapeHole::MoveUp7:
-            case EscapeHole::MoveUp8:
-              arduboy.drawCompressedMirror(ex, ey - 4, man_LaddderRight, WHITE, false);
-              break;
-
-            case EscapeHole::MoveUp5:
-            case EscapeHole::MoveUp6:
-              arduboy.drawCompressedMirror(ex, ey - 6, man_LaddderLeft, WHITE, false);
-              break;
-
-            case EscapeHole::MoveUp3:
-            case EscapeHole::MoveUp4:
-              arduboy.drawCompressedMirror(ex, ey - 8, man_LaddderRight, WHITE, false);
-              break;
-
-            case EscapeHole::MoveUp2:
-            case EscapeHole::MoveUp1:
-            
-              arduboy.drawCompressedMirror(ex, ey - 10, man_LaddderLeft, WHITE, false);
-              enemy->setY(enemy->getY() - 10);
-              enemy->setEscapeHole(EscapeHole::None);
-              setDirectionAfterHoleEscape(enemy);
-
-              break;
-
-            default: break;
-
-          }
-
-        }
-
-      }
-
-    }
+    renderEnemies();
 
 
     #ifdef INC_ARROWS
