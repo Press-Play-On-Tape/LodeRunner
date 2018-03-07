@@ -1,14 +1,8 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
 
-//void renderScreen(GameState gameState) {
-void renderScreen() {
-
-
-  if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
-
-  if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
-      
+void renderLevelElements()
+{
     for (uint8_t y = 0; y < level.getHeight(); y++) {
 
       for (uint8_t x = 0; x < level.getWidth() * 2; x++) {
@@ -19,30 +13,42 @@ void renderScreen() {
 
           LevelElement element = (LevelElement)level.getLevelData(x, y);
           
+          auto dy = ty;
+          
           switch (element) {
 
             case LevelElement::Brick ... LevelElement::Gold:
-              Sprites::drawOverwrite(tx, ty, levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             case LevelElement::Brick_1 ... LevelElement::Brick_4:
-              Sprites::drawOverwrite(tx, ty - GRID_SIZE, levelElements[static_cast<uint8_t>(element)], 0);
+              dy -= GRID_SIZE;
               break;
 
             case LevelElement::Brick_Transition ... LevelElement::Brick_Close_4:
-              Sprites::drawOverwrite(tx, ty, levelElements[static_cast<uint8_t>(element)], 0);
               break;
 
             default:
               break;
 
           }
+          Sprites::drawOverwrite(tx, dy, levelElements[static_cast<uint8_t>(element)], 0);
 
         }
 
       }
 
     }
+}
+
+//void renderScreen(GameState gameState) {
+void renderScreen() {
+
+
+  if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
+
+  if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
+      
+    renderLevelElements();
 
 
     // Draw player ..
