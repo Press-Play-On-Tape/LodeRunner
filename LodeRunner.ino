@@ -200,11 +200,15 @@ void GameSelect() {
 
   arduboy.display(CLEAR_BUFFER);
 
-  if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)                     { menuSelect--; }
-  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)                   { menuSelect++; }
+  if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)                       { menuSelect--; }
+  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)                     { menuSelect++; }
 
-  if (arduboy.justPressed(LEFT_BUTTON) && menuLevelSelect > 1)              { menuLevelSelect--; }
-  if (arduboy.justPressed(RIGHT_BUTTON) && menuLevelSelect < LEVEL_COUNT)   { menuLevelSelect++; }
+  if (menuSelect == 2) {
+  
+    if (arduboy.justPressed(LEFT_BUTTON) && menuLevelSelect > 1)              { menuLevelSelect--; }
+    if (arduboy.justPressed(RIGHT_BUTTON) && menuLevelSelect < LEVEL_COUNT)   { menuLevelSelect++; }
+
+  }
 
   if (arduboy.justPressed(A_BUTTON)) {
     
@@ -452,19 +456,19 @@ void LevelPlay() {
 
           switch (hole.countDown) {
 
-            case 32:        
+            case HOLE_FILL_4:        
               level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_1);
               break;
 
-            case 24:
+            case HOLE_FILL_3:
               level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_2);
               break;
 
-            case 16:
+            case HOLE_FILL_2:
               level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_3);
               break;
 
-            case 8:
+            case HOLE_FILL_1:
               level.setLevelData(hole.x, hole.y, LevelElement::Brick_Close_4);
               break;
 
@@ -479,10 +483,8 @@ void LevelPlay() {
 
                 if (enemy->getEnabled() && (hole.x * GRID_SIZE) == enemy->getX() && (hole.y * GRID_SIZE) == enemy->getY()) {
 
-                  LevelPoint startingLocation = level.getReentryPoint(random(0, 4));
-
-                  enemy->setX(startingLocation.x * GRID_SIZE);
-                  enemy->setY(startingLocation.y * GRID_SIZE);
+                  enemy->setX(enemy->getXRebirth() * GRID_SIZE);
+                  enemy->setY(enemy->getYRebirth() * GRID_SIZE);
                   enemy->setStance( PlayerStance::Rebirth_1);
                   enemy->setEscapeHole(EscapeHole::None);
                   enemy->setXDelta(0);

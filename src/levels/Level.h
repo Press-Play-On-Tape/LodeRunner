@@ -29,7 +29,6 @@ class Level {
     uint8_t getLevelNumber();
     uint8_t getGoldLeft();
     uint8_t getLevelLadderElementCount();
-    LevelPoint getReentryPoint(const uint8_t index);
     LevelPoint getLevelLadderElement(const uint8_t index);
     
     void setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement);
@@ -54,8 +53,8 @@ class Level {
     uint8_t _goldLeft;
 
     uint8_t _levelLadderElementCount;
-    LevelPoint _levelLadder[10];
-    LevelPoint _reentryPoint[15];
+    LevelPoint _levelLadder[15];
+//    LevelPoint _reentryPoint[15];
 
 };
 
@@ -119,12 +118,6 @@ void Level::setLevelNumber(uint8_t val) {
 
 void Level::setGoldLeft(uint8_t val) {
     _goldLeft = val;
-}
-
-LevelPoint Level::getReentryPoint(const uint8_t index) {
-
-  return _reentryPoint[index];
-
 }
 
 LevelPoint Level::getLevelLadderElement(const uint8_t index) {
@@ -216,8 +209,10 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     if (x  < numberOfEnemies) {
 
-      enemy->setX(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
-      enemy->setY(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
+      enemy->setXRebirth(pgm_read_byte(&levelToLoad[dataOffset++]));
+      enemy->setYRebirth(pgm_read_byte(&levelToLoad[dataOffset++]));
+      enemy->setX(enemy->getXRebirth() * GRID_SIZE);
+      enemy->setY(enemy->getYRebirth() * GRID_SIZE);
       enemy->setEnabled(true);
 
     }
@@ -226,16 +221,6 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
       enemy->setEnabled(false);
 
     }
-
-  }
-
-
-  // Load re-entry points ..
-
-  for (uint8_t x = 0; x < 4; x++) {
-
-    _reentryPoint[x].x = pgm_read_byte(&levelToLoad[dataOffset++]);
-    _reentryPoint[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
 
   }
 

@@ -6,8 +6,13 @@
 #define _INC_ARROWS
 #define INC_LEVEL_SELECTOR
 
+#define HOLE_FILL_1                   8
+#define HOLE_FILL_2                   16
+#define HOLE_FILL_3                   24
+#define HOLE_FILL_4                   32
+
 #define HEIGHT_LESS_TOOLBAR           56
-#define NUMBER_OF_ENEMIES             10
+#define NUMBER_OF_ENEMIES             6
 #define GRID_SIZE                     10
 #define HALF_GRID_SIZE                (GRID_SIZE / 2)
 
