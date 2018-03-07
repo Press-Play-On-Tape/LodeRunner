@@ -6,8 +6,13 @@
 #define _INC_ARROWS
 #define INC_LEVEL_SELECTOR
 
+#define HOLE_FILL_1                   8
+#define HOLE_FILL_2                   16
+#define HOLE_FILL_3                   24
+#define HOLE_FILL_4                   32
+
 #define HEIGHT_LESS_TOOLBAR           56
-#define NUMBER_OF_ENEMIES             10
+#define NUMBER_OF_ENEMIES             6
 #define GRID_SIZE                     10
 #define HALF_GRID_SIZE                (GRID_SIZE / 2)
 
@@ -150,44 +155,6 @@ enum class EscapeHole : uint8_t {
   Wait10,
   Wait11,
   Wait12,
-  Wait13,
-  Wait14,
-  Wait15,
-  Wait16,
-  Wait17,
-  Wait18,
-  Wait19,
-  Wait20,
-  Wait21,
-  Wait22,
-  Wait23,
-  Wait24,
-  Wait25,
-  Wait26,
-  Wait27,
-  Wait28,
-  Wait29,
-  Wait30,
-  Wait31,
-  Wait32,
-  Wait33,
-  Wait34,
-  Wait35,
-  Wait36,
-  Wait37,
-  Wait38,
-  Wait39,
-  Wait40,
-  Wait41,
-  Wait42,
-  Wait43,
-  Wait44,
-  Wait45,
-  Wait46,
-  Wait47,
-  Wait48,
-  Wait49,
-  Wait50,
   WaitMax
 
 };

@@ -35,7 +35,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (leftDown == LevelElement::Brick) {
 
-//        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
         player.setStance(PlayerStance::Burn_Left);
         player.setXDelta(0);
         level.setXOffsetDelta(0);
@@ -65,7 +64,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (rightDown == LevelElement::Brick) {
  
-//        player.setX((nearestX * GRID_SIZE) + level.getXOffset());
         player.setStance(PlayerStance::Burn_Right);
         player.setXDelta(0);
         level.setXOffsetDelta(0);
@@ -92,28 +90,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     boolean moveRight = true;
     boolean moveDown = false;
 
-    if (inCellX()) {
-
-      if (!inCellY()) {
-
-        nearestY = getNearestY(0) + 1; // Err down a cell
-        
-      }
-
-    }
-    else {
-
-      if (!inCellX()) {
-
-        nearestX = getNearestX(0);
-        
-      }
-
-    }
-
-    LevelElement right = level.getLevelData(nearestX + 1, nearestY);
-    LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
-    LevelElement down = level.getLevelData(nearestX, nearestY + 1);
+    LevelElement current = level.getLevelData((inCellX() ? nearestX : nearestX - 1), nearestY);
+    LevelElement rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY - 1);
+    LevelElement right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
+    LevelElement rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
+    LevelElement down = level.getLevelData((inCellX() ? nearestX : nearestX - 1), nearestY + 1);
 
     if (player.getStance() == PlayerStance::Falling) {
 
@@ -127,7 +108,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       
       else if (inCellY() && right == LevelElement::Rail && inCellY()) {
 
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+        updatePlayerStance(PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right2, PlayerStance::Swinging_Right1);
         moveRight = true;
 
       }
@@ -140,64 +121,123 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       }     
 
     }
-    else if (player.getStance() >= PlayerStance::Running_Right1 && player.getStance() <= PlayerStance::Running_Right4 && canBeFallenInto(down, enemies, nearestX, nearestY + 1) && right != LevelElement::Rail) {
+    else if (inCellY(4)) {
+      
+      if (canBeClimbedOn(current)) {
 
+        moveRight = canBeOccupied(right);
+
+      }
+      else if (inCellX() && canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
+
+        player.setStance(PlayerStance::Falling);
         moveRight = false;
         moveDown = true;
 
-    }
-    else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
-
-      switch (right) {
-
-        case LevelElement::Brick:
-        case LevelElement::Solid:
-        case LevelElement::FallThrough:
-
-          moveRight = false;
-          break;
-
-        default:
-
-          if (player.getStance() < PlayerStance::Running_Right1 || player.getStance() > PlayerStance::Running_Right4) player.setStance(PlayerStance::Running_Right1);
-          moveRight = true;
-          break;
-      
       }
-
-    }
-    else if (nearest == LevelElement::Rail || nearest == LevelElement::Ladder) {
-
-      if (canBeOccupied(right)) {
-
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
-        moveRight = true;
-
-      }
-      else {
-
+      else if (!canBeOccupied(right) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
+        
+        player.setStance(PlayerStance::StandingStill);
         moveRight = false;
 
       }
-    
-    }
-    else if (canBeOccupied(right) && canBeFallenOn(rightDown)) {
+      else {
+          
+        if (inCellX()) {
 
-      moveRight = true;
-      if (!canBeStoodOn(rightDown, enemies, nearestX, nearestY + 1)) moveDown = true;
+          if (canBeOccupied(right)) {
+
+            updatePlayerStance(PlayerStance::Running_Right1, PlayerStance::Running_Right4, PlayerStance::Running_Right1);
+            moveRight = true;
+
+          }
+          else {
+
+            moveRight = false;
+
+          }
+
+        }
+        else { // !inCellX()
+
+          if (canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+
+            updatePlayerStance(PlayerStance::Running_Right1, PlayerStance::Running_Right4, PlayerStance::Running_Right1);
+            moveRight = true;
+
+          }
+          else if (canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+
+            updatePlayerStance(PlayerStance::Running_Right1, PlayerStance::Running_Right4, PlayerStance::Running_Right1);
+            moveRight = true;
+
+          }
+          else {
+
+            moveRight = false;
+
+          }
+          
+        }
+        
+      }
 
     }
     else {
 
-      moveDown = true;
+      rightUp = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY);
+      right = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 1);
+      rightDown = level.getLevelData((inCellX() ? nearestX + 1 : nearestX), nearestY + 2);
+      down = level.getLevelData((inCellX() ? nearestX : nearestX + 1), nearestY + 2);
+
+      if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeStoodOn(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+        
+        updatePlayerStance(PlayerStance::Running_Right1, PlayerStance::Running_Right4, PlayerStance::Running_Right1);
+        player.setStance(PlayerStance::StandingStill);
+        moveRight = true;
+
+      }
+      else if (inCellX()) {
+
+        if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+          
+          updatePlayerStance(PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2, PlayerStance::Climbing_Up1);
+          moveRight = true;
+          moveDown = false;
+
+        }
+        else {
+
+          moveRight = false;
+
+        }
+        
+      }
+      else { // !inCellX()
+
+        if (canBeOccupied(rightUp) && canBeOccupied(right) && canBeFallenInto(rightDown, enemies, nearestX + 1, nearestY + 1)) {
+          
+          player.setStance(PlayerStance::Falling);        
+          moveRight = true;
+          moveDown = false;
+
+        }
+        else {
+
+          moveRight = false;
+
+        }
+
+      }
 
     }
 
-
+    
     // Move player if needed ..
 
     if (moveRight) {
       
+      player.setY((nearestY * GRID_SIZE) + level.getYOffset());
       movePlayerRight();
 
     }
@@ -226,28 +266,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     boolean moveLeft = true;
     boolean moveDown = false;
 
-    if (inCellX()) {
-
-      if (!inCellY()) {
-
-        nearestY = getNearestY(0) + 1; // Err down a cell
-        
-      }
-
-    }
-    else {
-
-      if (!inCellX()) {
-
-        nearestX = getNearestX(0) + 1;
-        
-      }
-
-    }
-
-    LevelElement left = level.getLevelData(nearestX - 1, nearestY);
-    LevelElement leftDown = level.getLevelData(nearestX - 1, nearestY + 1);
-    LevelElement down = level.getLevelData(nearestX, nearestY + 1);
+    LevelElement current = level.getLevelData((inCellX() ? nearestX : nearestX + 1), nearestY);
+    LevelElement leftUp = level.getLevelData((inCellX() ? nearestX - 1 : nearestX), nearestY - 1);
+    LevelElement left = level.getLevelData((inCellX() ? nearestX - 1 : nearestX), nearestY);
+    LevelElement leftDown = level.getLevelData((inCellX() ? nearestX - 1 : nearestX), nearestY + 1);
+    LevelElement down = level.getLevelData((inCellX() ? nearestX : nearestX + 1), nearestY + 1);
 
     if (player.getStance() == PlayerStance::Falling) {
 
@@ -258,70 +281,131 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         player.setStance(PlayerStance::StandingStill);
 
       }
+      
       else if (inCellY() && left == LevelElement::Rail && inCellY()) {
 
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+        updatePlayerStance(PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1, PlayerStance::Swinging_Left1);
         moveLeft = true;
 
       }
+
       else { 
 
         moveLeft = false;
         moveDown = true;
 
-      }
+      }     
 
     }
-    else if (player.getStance() >= PlayerStance::Running_Left4 && player.getStance() <= PlayerStance::Running_Left1 && canBeFallenInto(down, enemies, nearestX, nearestY + 1) && left != LevelElement::Rail) {
+    else if (inCellY(4)) {
 
+      if (canBeClimbedOn(current)) {
+
+        moveLeft = canBeOccupied(left);
+
+      }
+      else if (inCellX() && canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
+
+        player.setStance(PlayerStance::Falling);
         moveLeft = false;
         moveDown = true;
 
-    }
-    else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+      }      
+      else if (!canBeOccupied(left) && canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {  
+        
+        player.setStance(PlayerStance::StandingStill);
+        moveLeft = false;
 
-      switch (left) {
+      }
+      else {
+          
+        if (inCellX()) {
 
-        case LevelElement::Brick:
-        case LevelElement::FallThrough:
-        case LevelElement::Solid:
+          if (canBeOccupied(left)) {
 
-          moveLeft = false;
-          break;
+            updatePlayerStance(PlayerStance::Running_Left4, PlayerStance::Running_Left1, PlayerStance::Running_Left1);
+            moveLeft = true;
 
-        default:
+          }
+          else {
 
-          if (player.getStance() < PlayerStance::Running_Left4 || player.getStance() > PlayerStance::Running_Left1) player.setStance(PlayerStance::Running_Left1);
-          moveLeft = true;
-          break;
+            moveLeft = false;
+
+          }
+
+        }
+        else { // !inCellX()
+
+          if (canBeOccupied(left) && canBeStoodOn(leftDown, enemies, nearestX - 1, nearestY + 1)) {
+
+            updatePlayerStance(PlayerStance::Running_Left4, PlayerStance::Running_Left1, PlayerStance::Running_Left1);
+            moveLeft = true;
+
+          }
+          else if (canBeFallenInto(leftDown, enemies, nearestX - 1, nearestY + 1)) {
+
+            updatePlayerStance(PlayerStance::Running_Left4, PlayerStance::Running_Left1, PlayerStance::Running_Left1);
+            moveLeft = true;
+
+          }
+          else {
+
+            moveLeft = false;
+
+          }
+          
+        }
         
       }
 
     }
-    else if (nearest == LevelElement::Rail || nearest == LevelElement::Ladder) {
+    else {
 
-      if (canBeOccupied(left)) {
+      leftUp = level.getLevelData((inCellX() ? nearestX - 1 : nearestX), nearestY);
+      left = level.getLevelData((inCellX() ? nearestX - 1 : nearestX), nearestY + 1);
+      leftDown = level.getLevelData((inCellX() ? nearestX - 1 : nearestX), nearestY + 2);
+      down = level.getLevelData((inCellX() ? nearestX : nearestX - 1), nearestY + 2);
 
-        if (player.getStance() < PlayerStance::Swinging_Right1 || player.getStance() > PlayerStance::Swinging_Right4) player.setStance(PlayerStance::Swinging_Right1);
+      if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeStoodOn(leftDown, enemies, nearestX - 1, nearestY + 1)) {
+        
+        updatePlayerStance(PlayerStance::Running_Left4, PlayerStance::Running_Left1, PlayerStance::Running_Left1);
+        player.setStance(PlayerStance::StandingStill);
         moveLeft = true;
 
       }
-      else {
+      else if (inCellX()) {
 
-        moveLeft = false;
+        if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeFallenInto(leftDown, enemies, nearestX - 1, nearestY + 1)) {
+          
+          updatePlayerStance(PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2, PlayerStance::Climbing_Up1);
+          moveLeft = true;
+          moveDown = false;
+
+        }
+        else {
+
+          moveLeft = false;
+
+        }
+        
+      }
+      else { // !inCellX()
+
+        if (canBeOccupied(leftUp) && canBeOccupied(left) && canBeFallenInto(leftDown, enemies, nearestX - 1, nearestY + 1)) {
+          
+          player.setStance(PlayerStance::Falling);        
+          moveLeft = true;
+          moveDown = false;
+
+        }
+        else {
+
+          moveLeft = false;
+
+        }
 
       }
-      
-    }
-    else if (canBeOccupied(left) && canBeFallenOn(leftDown)) {
 
-      moveLeft = true;
-      if (!canBeStoodOn(leftDown, enemies, nearestX, nearestY + 1)) moveDown = true;
-
-    }
-    else {
-
-      moveDown = true;
     }
 
 
@@ -329,6 +413,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
     if (moveLeft) {
 
+      player.setY((nearestY * GRID_SIZE) + level.getYOffset());
       movePlayerLeft();
 
     }
@@ -360,7 +445,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     nearestY = getNearestY(+8);
     LevelElement up = level.getLevelData(nearestX, (inCellY() ? nearestY - 1 : nearestY));
     LevelElement down = level.getLevelData(nearestX, (inCellY() ? nearestY + 1 : nearestY));
-
 
     switch (player.getStance()) {
 
@@ -396,12 +480,22 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       default:
 
-        if (nearest == LevelElement::Ladder) {
+        if (inCellX(4)) {
 
-          player.setX((nearestX * GRID_SIZE) + level.getXOffset());
-          player.setStance(PlayerStance::Climbing_Up1);
-          moveUp = true;
-          moveDown = false;
+          if (nearest == LevelElement::Ladder) {
+
+            player.setX((nearestX * GRID_SIZE) + level.getXOffset());
+            player.setStance(PlayerStance::Climbing_Up1);
+            moveUp = true;
+            moveDown = false;
+
+          }
+          else {
+
+            moveUp = false;
+            moveDown = false;
+
+          }
 
         }
         else {
@@ -416,10 +510,65 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     }
 
 
+    // switch (player.getStance()) {
+
+    //   case PlayerStance::Falling:
+
+    //     moveUp = false;
+
+    //     if (nearest == LevelElement::Rail && inCellY()) {
+
+    //       player.setStance(PlayerStance::Swinging_Right1);
+    //       moveDown = false;
+
+    //     }
+    //     else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
+
+    //       moveDown = false;
+    //       player.setStance(PlayerStance::StandingStill);
+          
+    //     } 
+
+    //     break;
+
+    //   case PlayerStance::Climbing_Up1 ... PlayerStance::Climbing_Up2:
+
+    //     if (inCellY() && (nearest != LevelElement::Ladder || isSolid(up))) { 
+
+    //       moveUp = false;
+    //       moveDown = false;
+
+    //     }
+
+    //     break;
+
+    //   default:
+
+    //     if (nearest == LevelElement::Ladder) {
+
+    //       player.setX((nearestX * GRID_SIZE) + level.getXOffset());
+    //       player.setStance(PlayerStance::Climbing_Up1);
+    //       moveUp = true;
+    //       moveDown = false;
+
+    //     }
+    //     else {
+
+    //       moveUp = false;
+    //       moveDown = false;
+
+    //     }
+
+    //     break;
+
+    // }
+
+
     // Move player if needed ..
 
     if (moveUp) {
 
+      player.setX((nearestX * GRID_SIZE) + level.getXOffset());
       movePlayerUp();
 
     }
@@ -682,3 +831,15 @@ void movePlayerUp() {
   }
 
 }
+
+
+// ------------------------------------------------------------------------------------------
+//  Update player stance if appropriate ..
+// ------------------------------------------------------------------------------------------
+
+void updatePlayerStance(PlayerStance lowerRange, PlayerStance upperRange, PlayerStance newStance) {
+
+  if (player.getStance() < lowerRange || player.getStance() > upperRange) player.setStance(newStance);
+  
+}
+  
