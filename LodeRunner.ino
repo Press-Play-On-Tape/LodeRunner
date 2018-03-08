@@ -60,6 +60,15 @@ void setup() {
   player.setStance(PlayerStance::StandingStill);
   player.setNextState(GameState::Intro);
 
+  uint8_t gameNumber = EEPROM_Utils::getGameNumber();
+  
+  if (gameNumber != GAME_NUMBER) {
+
+    if (gameNumber == 1) { gameState = GameState::CompleteGame1; }
+    if (gameNumber == 2) { gameState = GameState::CompleteGame2; }
+
+  }
+
 }
 
 
@@ -109,11 +118,24 @@ void loop() {
       LevelPlay();
       break;
 
-      default: break;
+    case GameState::CompleteGame1:
+      CompleteGame(1);
+      break;
+
+    case GameState::CompleteGame2:
+      CompleteGame(2);
+      break;
+
+    case GameState::NextGame:
+      NextGame();
+      break;
+
+    default: break;
 
   }
-
+  
 }
+
 
 
 // --------------------------------------------------------------------------------------
@@ -138,7 +160,7 @@ void Intro() {
 
   Pharap to here .. */
 
-  arduboy.display(CLEAR_BUFFER);
+
 
   #ifdef INC_LEVEL_SELECTOR
   if (arduboy.justPressed(A_BUTTON))  { gameState = GameState::GameSelect; }
@@ -147,6 +169,8 @@ void Intro() {
   #ifndef INC_LEVEL_SELECTOR
   if (arduboy.justPressed(A_BUTTON))  { gameState = (EEPROM_Utils::getLevelNumber() == 1 ? GameState::LevelInit : GameState::GameSelect); }
   #endif
+
+  arduboy.display(CLEAR_BUFFER);
 
 }
 
@@ -180,10 +204,11 @@ void GameSelect() {
   }
 
   uint8_t levelNumber = menuLevelSelect;
-  arduboy.drawCompressedMirror(70, 38, digits[levelNumber / 100], WHITE, false);
+  Sprites::drawOverwrite(70, 39, numbers, levelNumber / 100);
   levelNumber = levelNumber - (levelNumber / 100) * 100;
-  arduboy.drawCompressedMirror(75, 38, digits[levelNumber / 10], WHITE, false);
-  arduboy.drawCompressedMirror(80, 38, digits[levelNumber % 10], WHITE, false);
+  Sprites::drawOverwrite(75, 39, numbers, levelNumber / 10);
+  Sprites::drawOverwrite(80, 39, numbers, levelNumber % 10);
+
 
 
   // Brick borders ..
@@ -370,10 +395,19 @@ void LevelPlay() {
 
     if (player.getY() > (level.getHeight() * GRID_SIZE)) {
 
+      uint8_t levelNumber = level.getLevelNumber() + 1;
+
       gameState = GameState::LevelExitInit;
-      player.setNextState(GameState::NextLevel);
-      level.setLevelNumber(level.getLevelNumber() + 1);
+      level.setLevelNumber(levelNumber);
       EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
+
+      if (levelNumber > LEVEL_COUNT) {
+        EEPROM_Utils::setGameNumber(EEPROM_Utils::getGameNumber() + 1);
+        player.setNextState(GameState::NextGame);
+      }
+      else {
+        player.setNextState(GameState::NextLevel);
+      }
 
     } 
 
@@ -549,6 +583,9 @@ void LevelPlay() {
 
       switch (gameState) {
 
+        case GameState::NextGame:
+          break;
+
         case GameState::NextLevel:
           gameState = GameState::LevelInit;  
           break;
@@ -581,6 +618,9 @@ void LevelPlay() {
 }
 
 
+// --------------------------------------------------------------------------------------
+//  Our player is dead ..
+//
 void playerDies() {
 
   player.setMen(player.getMen() - 1);
@@ -597,5 +637,29 @@ void playerDies() {
     player.setNextState(GameState::GameOver);
 
   }
+
+}
+
+
+
+// --------------------------------------------------------------------------------------
+//  Display 'Next Game' banner ..
+//
+void NextGame() {
+
+  arduboy.drawCompressedMirror(36, 13, loadNextGame, WHITE, false);
+  arduboy.display(CLEAR_BUFFER);
+
+}
+
+
+// --------------------------------------------------------------------------------------
+//  Display 'complete game' banner ..
+//
+void CompleteGame(uint8_t level) {
+
+  arduboy.drawCompressedMirror(36, 13, completeGame, WHITE, false);
+  arduboy.drawCompressedMirror(70, 36, (level == 1 ? completeGame1 : completeGame2), WHITE, false);
+  arduboy.display(CLEAR_BUFFER);
 
 }

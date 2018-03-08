@@ -54,7 +54,6 @@ class Level {
 
     uint8_t _levelLadderElementCount;
     LevelPoint _levelLadder[15];
-//    LevelPoint _reentryPoint[15];
 
 };
 

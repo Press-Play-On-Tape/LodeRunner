@@ -6,9 +6,10 @@
 #define EEPROM_START                  EEPROM_STORAGE_SPACE_START + 175
 #define EEPROM_START_C1               EEPROM_START
 #define EEPROM_START_C2               EEPROM_START + 1
-#define EEPROM_LEVEL_NO               EEPROM_START + 2
-#define EEPROM_MEN_LEFT               EEPROM_START + 3
-#define EEPROM_SCORE                  EEPROM_START + 4
+#define EEPROM_GAME_NO                EEPROM_START + 2
+#define EEPROM_LEVEL_NO               EEPROM_START + 3
+#define EEPROM_MEN_LEFT               EEPROM_START + 4
+#define EEPROM_SCORE                  EEPROM_START + 5
 
 
 class EEPROM_Utils {
@@ -18,11 +19,13 @@ class EEPROM_Utils {
     EEPROM_Utils(){};
         
     static void initEEPROM(bool forceClear);
+    static uint8_t getGameNumber();
     static uint8_t getLevelNumber();
     static void saveLevelNumber(uint8_t levelNumber);
 
     static void getSavedGameData(Level *level, Player *player);
     static void saveGameData(Level *level, Player *player);
+    static void setGameNumber(uint8_t vale);
 
 
 };
@@ -44,12 +47,23 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
 
     const uint16_t score = 0;
     EEPROM.update(EEPROM_START_C1, 76);
-    EEPROM.update(EEPROM_START_C2, 81);
+    EEPROM.update(EEPROM_START_C1, 76);
+    EEPROM.update(EEPROM_GAME_NO, 1);
     EEPROM.update(EEPROM_LEVEL_NO, 1);
     EEPROM.update(EEPROM_MEN_LEFT, 5);
     EEPROM.put(EEPROM_SCORE, score);
 
   }
+
+}
+
+
+/* -----------------------------------------------------------------------------
+ *   Get the current level number. 
+ */
+uint8_t EEPROM_Utils::getGameNumber() {
+
+  return EEPROM.read(EEPROM_GAME_NO);
 
 }
 
@@ -97,5 +111,15 @@ void EEPROM_Utils::saveGameData(Level *level, Player *player) {
   EEPROM.update(EEPROM_LEVEL_NO, level->getLevelNumber());
   EEPROM.update(EEPROM_MEN_LEFT, player->getMen());
   EEPROM.put(EEPROM_SCORE, player->getScore());
+
+}
+
+
+/* -----------------------------------------------------------------------------
+ *   Save game number.
+ */
+void EEPROM_Utils::setGameNumber(uint8_t val) {
+
+  EEPROM.update(EEPROM_GAME_NO, val);
 
 }

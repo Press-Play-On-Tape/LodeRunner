@@ -254,10 +254,10 @@ void renderScreen() {
         arduboy.drawCompressedMirror(43, 25, levelChange, WHITE, false);
 
         uint8_t levelNumber = level.getLevelNumber();
-        arduboy.drawCompressedMirror(72, 24, digits[levelNumber / 100], WHITE, false);
+        Sprites::drawOverwrite(72, 25, numbers, levelNumber / 100);
         levelNumber = levelNumber - (levelNumber / 100) * 100;
-        arduboy.drawCompressedMirror(77, 24, digits[levelNumber / 10], WHITE, false);
-        arduboy.drawCompressedMirror(82, 24, digits[levelNumber % 10], WHITE, false);
+        Sprites::drawOverwrite(77, 25, numbers, levelNumber / 10);
+        Sprites::drawOverwrite(82, 25, numbers, levelNumber % 10);
       }
 
       break;
@@ -293,37 +293,40 @@ void renderScreen() {
 
   uint16_t score = player.getScore();
   arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
-  arduboy.drawCompressedMirror(29, 57, digit_00, WHITE, false);
-  arduboy.drawCompressedMirror(34, 57, digits[score / 10000], WHITE, false);
+  Sprites::drawOverwrite(29, 58, numbers, 0);
+  Sprites::drawOverwrite(34, 58, numbers, score / 10000);
   score = score - (score / 10000) * 10000;
-  arduboy.drawCompressedMirror(39, 57, digits[score / 1000], WHITE, false);
+  Sprites::drawOverwrite(39, 58, numbers, score / 1000);
   score = score - (score / 1000) * 1000;
-  arduboy.drawCompressedMirror(44, 57, digits[score / 100], WHITE, false);
+  Sprites::drawOverwrite(44, 58, numbers, score / 100);
   score = score - (score / 100) * 100;
-  arduboy.drawCompressedMirror(49, 57, digits[score / 10], WHITE, false);
-  arduboy.drawCompressedMirror(54, 57, digits[score % 10], WHITE, false);
+  Sprites::drawOverwrite(49, 58, numbers, score / 10);
+  Sprites::drawOverwrite(54, 58, numbers, score % 10);
+
+
 
   uint8_t menLeft = player.getMen();
   arduboy.drawCompressedMirror(64, 58, men_sc, WHITE, false);
-  arduboy.drawCompressedMirror(82, 57, digits[menLeft / 10], WHITE, false);
-  arduboy.drawCompressedMirror(87, 57, digits[menLeft % 10], WHITE, false);
+  Sprites::drawOverwrite(82, 58, numbers, menLeft / 10);
+  Sprites::drawOverwrite(87, 58, numbers, menLeft % 10);
+
 
   if (gameState == GameState::LevelPlay) {
 
     uint8_t goldLeft = level.getGoldLeft();
     arduboy.drawCompressedMirror(96, 58, gold_sc, WHITE, false);
-    arduboy.drawCompressedMirror(118, 57, digits[goldLeft / 10], WHITE, false);
-    arduboy.drawCompressedMirror(123, 57, digits[goldLeft % 10], WHITE, false);
+    Sprites::drawOverwrite(118, 58, numbers, goldLeft / 10);
+    Sprites::drawOverwrite(123, 58, numbers, goldLeft % 10);
 
   }
   else {
 
     uint8_t levelNumber = level.getLevelNumber();
     arduboy.drawCompressedMirror(96, 58, level_sc, WHITE, false);
-    arduboy.drawCompressedMirror(113, 57, digits[levelNumber / 100], WHITE, false);
+    Sprites::drawOverwrite(113, 58, numbers, levelNumber / 100);
     levelNumber = levelNumber - (levelNumber / 100) * 100;
-    arduboy.drawCompressedMirror(118, 57, digits[levelNumber / 10], WHITE, false);
-    arduboy.drawCompressedMirror(123, 57, digits[levelNumber % 10], WHITE, false);
+    Sprites::drawOverwrite(118, 58, numbers, levelNumber / 10);
+    Sprites::drawOverwrite(123, 58, numbers, levelNumber % 10);
 
   }
 

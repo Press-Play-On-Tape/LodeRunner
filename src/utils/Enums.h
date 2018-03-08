@@ -3,6 +3,18 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
+#define GAME_NUMBER                   1
+
+#if GAME_NUMBER == 1
+  #define LEVEL_COUNT                 50
+#endif
+#if GAME_NUMBER == 2
+  #define LEVEL_COUNT                 30
+#endif
+#if GAME_NUMBER == 3
+  #define LEVEL_COUNT                 30
+#endif
+
 #define _INC_ARROWS
 #define INC_LEVEL_SELECTOR
 
@@ -45,7 +57,10 @@ enum class GameState : uint8_t {
   LevelExitAnimation,
   GameOver,
   NextLevel,
-  RestartLevel
+  RestartLevel,
+  CompleteGame1,
+  CompleteGame2,
+  NextGame
 
 };
 
