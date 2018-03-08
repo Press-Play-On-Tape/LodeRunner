@@ -7,7 +7,7 @@ void renderScreen() {
   if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
 
   if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
-      
+
     renderLevelElements();
 
 
@@ -34,7 +34,7 @@ void renderScreen() {
 
   renderEntryRectangle();
 
- 
+
   // Draw footer ..
 
   arduboy.fillRect(0, 55, 128, 64, BLACK);
@@ -58,9 +58,9 @@ void renderLevelElements()
         if (tx > -GRID_SIZE && tx < 128 && ty > -GRID_SIZE && ty < 64) {
 
           LevelElement element = (LevelElement)level.getLevelData(x, y);
-          
+
           auto dy = ty;
-          
+
           switch (element) {
 
             case LevelElement::Brick ... LevelElement::Gold:
@@ -96,18 +96,18 @@ void renderEnemies()
 
         const auto ex = enemy->getX() + level.getXOffset();
         const auto ey = enemy->getY() + level.getYOffset();
-        
+
         auto dx = ex;
         auto dy = ey;
         uint8_t const * image = man_StandingStill;
         bool flip = false;
-        
-        switch (enemy->getEscapeHole()) {       
 
-          case EscapeHole::None:          
+        switch (enemy->getEscapeHole()) {
+
+          case EscapeHole::None:
             flip = (static_cast<int8_t>(enemy->getStance()) < 0);
             image = men[absT(static_cast<int8_t>(enemy->getStance()))];
-            break;        
+            break;
 
           case EscapeHole::Wait1 ... EscapeHole::WaitMax:
             break;
@@ -152,10 +152,10 @@ void renderEnemies()
 
           case EscapeHole::MoveUp2:
           case EscapeHole::MoveUp1:
-          
+
             dy = ey - 10;
             image = man_LaddderLeft;
-            
+
             enemy->setY(enemy->getY() - 10);
             enemy->setEscapeHole(EscapeHole::None);
             setDirectionAfterHoleEscape(enemy);
@@ -198,21 +198,21 @@ void renderArrows()
       arduboy.drawCompressedMirror(124, 24, arrow_MR, WHITE, false);
 
     }
-      
+
     if (drawArrow(Direction::RightDown)) {
 
       arduboy.drawCompressedMirror(123, 50, arrow_BR_mask, BLACK, false);
       arduboy.drawCompressedMirror(123, 50, arrow_BR, WHITE, false);
 
     }
-        
+
     if (drawArrow(Direction::Down)) {
 
       arduboy.drawCompressedMirror(62, 50, arrow_BM_mask, BLACK, false);
       arduboy.drawCompressedMirror(62, 50, arrow_BM, WHITE, false);
 
     }
-    
+
     if (drawArrow(Direction::LeftDown)) {
 
       arduboy.drawCompressedMirror(0, 50, arrow_BR_mask, BLACK, true);
@@ -236,61 +236,55 @@ void renderArrows()
 }
 #endif
 
-void drawEntryExitHelper(Arduboy2Ext & arduboy, uint8_t diff)
-{
-  arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
-  drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
-  drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
-  drawVerticalDottedLine(&arduboy, 0, 64, introRect);
-  drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
-}
-
-void drawHorizontalLineHelper(Arduboy2Ext & arduboy)
-{
-  drawHorizontalDottedLine(&arduboy, 41, 87, 22);
-  drawHorizontalDottedLine(&arduboy, 41, 87, 32);
-}
-
 void renderEntryRectangle()
 {
-  switch (gameState) {
+    if(gameState == GameState::LevelEntryAnimation || gameState == GameState::LevelExitAnimation)
+    {
+      arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
+      drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
+      drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
+      drawVerticalDottedLine(&arduboy, 0, 64, introRect);
+      drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
 
-    case GameState::LevelEntryAnimation:
-
-      drawEntryExitHelper(arduboy, introRect);
-
-      for (int8_t x = introRect - 1; x >= 0; x--) {
-
-        arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
-
-      }
-
-      introRect--;
-
-      if (introRect == -1) gameState = GameState::LevelFlash;
-      break;
-
-    case GameState::LevelExitAnimation:
-
-      drawEntryExitHelper(arduboy, introRect);
-
-      for (int8_t x = 0; x < introRect; x++) {
-
-        arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
-
-      }
-
-      introRect++;
-
-
-      // Game over, restart level or next level ?
-
-      if (introRect == LEVEL_ANIMATION_BANNER_WIDTH) gameState = player.getNextState();
-      break;
-
-    case GameState::NextLevel:
+      if(gameState == GameState::LevelEntryAnimation)
       {
-        drawHorizontalLineHelper(arduboy);
+          for (int8_t x = introRect - 1; x >= 0; x--) {
+
+            arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
+
+          }
+          introRect--;
+
+          if (introRect == -1) gameState = GameState::LevelFlash;
+      }
+      else
+      {
+          for (int8_t x = 0; x < introRect; x++) {
+
+            arduboy.drawRect(x, x, 127 - (x * 2) + 1, 54 - (x * 2) + 1, BLACK);
+
+          }
+          introRect++;
+
+          // Game over, restart level or next level ?
+          if (introRect == LEVEL_ANIMATION_BANNER_WIDTH) gameState = player.getNextState();
+      }
+    }
+    else if(gameState == GameState::NextLevel || gameState == GameState::RestartLevel || gameState == GameState::GameOver)
+    {
+      drawHorizontalDottedLine(&arduboy, 41, 87, 22);
+      drawHorizontalDottedLine(&arduboy, 41, 87, 32);
+
+      if(gameState == GameState::RestartLevel)
+      {
+        arduboy.drawCompressedMirror(42, 25, tryAgain, WHITE, false);
+      }
+      else if(gameState == GameState::GameOver)
+      {
+        arduboy.drawCompressedMirror(43, 25, gameOver, WHITE, false);
+      }
+      else
+      {
         arduboy.drawCompressedMirror(43, 25, levelChange, WHITE, false);
 
         uint8_t levelNumber = level.getLevelNumber();
@@ -299,26 +293,7 @@ void renderEntryRectangle()
         arduboy.drawCompressedMirror(77, 24, digits[levelNumber / 10], WHITE, false);
         arduboy.drawCompressedMirror(82, 24, digits[levelNumber % 10], WHITE, false);
       }
-
-      break;
-
-    case GameState::RestartLevel:
-
-      drawHorizontalLineHelper(arduboy);
-      arduboy.drawCompressedMirror(42, 25, tryAgain, WHITE, false);
-
-      break;
-
-    case GameState::GameOver:
-
-      drawHorizontalLineHelper(arduboy);
-      arduboy.drawCompressedMirror(43, 25, gameOver, WHITE, false);
-
-      break;
-
-    default: break;
-
-  }
+    }
 }
 
 void renderScoreboard()
@@ -366,7 +341,7 @@ bool drawArrow(Direction direction) {
   for (uint8_t y = 0; y < level.getHeight(); y++) {
 
     for (uint8_t x = 0; x < level.getWidth() * 2; x++) {
-      
+
       if (level.getLevelData(x, y) == LevelElement::Gold) {
 
         int16_t xDiff = ((player.getX() - level.getXOffset()) / GRID_SIZE) - x;
