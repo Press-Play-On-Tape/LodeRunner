@@ -1,6 +1,52 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
 
+//void renderScreen(GameState gameState) {
+void renderScreen() {
+
+  if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
+
+  if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
+      
+    renderLevelElements();
+
+
+    // Draw player ..
+
+    if (gameState == GameState::LevelPlay || flashPlayer) {
+
+      boolean flip = (static_cast<int8_t>(player.getStance()) < 0);
+      arduboy.drawCompressedMirror(player.getX(), player.getY(), men[absT(static_cast<int8_t>(player.getStance()))], WHITE, flip);
+
+    }
+
+    renderEnemies();
+
+    #ifdef INC_ARROWS
+    if(flashPlayer)
+        renderArrows();
+    #endif
+
+  }
+
+
+  // Draw entry rectangle ..
+
+  renderEntryRectangle();
+
+ 
+  // Draw footer ..
+
+  arduboy.fillRect(0, 55, 128, 64, BLACK);
+  drawHorizontalDottedLine(&arduboy, 0, 128, 56);
+
+
+  // Draw scoreboard ..
+
+  renderScoreboard();
+
+}
+
 void renderLevelElements()
 {
     for (uint8_t y = 0; y < level.getHeight(); y++) {
@@ -190,46 +236,28 @@ void renderArrows()
 }
 #endif
 
-//void renderScreen(GameState gameState) {
-void renderScreen() {
+void drawEntryExitHelper(Arduboy2Ext & arduboy, uint8_t diff)
+{
+  arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
+  drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
+  drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
+  drawVerticalDottedLine(&arduboy, 0, 64, introRect);
+  drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
+}
 
-  if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
+void drawHorizontalLineHelper(Arduboy2Ext & arduboy)
+{
+  drawHorizontalDottedLine(&arduboy, 41, 87, 22);
+  drawHorizontalDottedLine(&arduboy, 41, 87, 32);
+}
 
-  if (gameState != GameState::NextLevel && gameState != GameState::GameOver && gameState != GameState::RestartLevel) {
-      
-    renderLevelElements();
-
-
-    // Draw player ..
-
-    if (gameState == GameState::LevelPlay || flashPlayer) {
-
-      boolean flip = (static_cast<int8_t>(player.getStance()) < 0);
-      arduboy.drawCompressedMirror(player.getX(), player.getY(), men[absT(static_cast<int8_t>(player.getStance()))], WHITE, flip);
-
-    }
-
-    renderEnemies();
-
-    #ifdef INC_ARROWS
-    if(flashPlayer)
-        renderArrows();
-    #endif
-
-  }
-
-
-  // Draw entry rectangle ..
-
+void renderEntryRectangle()
+{
   switch (gameState) {
 
     case GameState::LevelEntryAnimation:
 
-      arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
-      drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
-      drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
-      drawVerticalDottedLine(&arduboy, 0, 64, introRect);
-      drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
+      drawEntryExitHelper(arduboy, introRect);
 
       for (int8_t x = introRect - 1; x >= 0; x--) {
 
@@ -244,11 +272,7 @@ void renderScreen() {
 
     case GameState::LevelExitAnimation:
 
-      arduboy.drawRect(introRect, introRect, 128 - (introRect * 2), 55 - (introRect * 2), BLACK);
-      drawHorizontalDottedLine(&arduboy, 0, 128, introRect);
-      drawHorizontalDottedLine(&arduboy, 0, 128, 54 - introRect);
-      drawVerticalDottedLine(&arduboy, 0, 64, introRect);
-      drawVerticalDottedLine(&arduboy, 0, 64, 127 - introRect);
+      drawEntryExitHelper(arduboy, introRect);
 
       for (int8_t x = 0; x < introRect; x++) {
 
@@ -266,8 +290,7 @@ void renderScreen() {
 
     case GameState::NextLevel:
       {
-        drawHorizontalDottedLine(&arduboy, 41, 87, 22);
-        drawHorizontalDottedLine(&arduboy, 41, 87, 32);
+        drawHorizontalLineHelper(arduboy);
         arduboy.drawCompressedMirror(43, 25, levelChange, WHITE, false);
 
         uint8_t levelNumber = level.getLevelNumber();
@@ -281,16 +304,14 @@ void renderScreen() {
 
     case GameState::RestartLevel:
 
-      drawHorizontalDottedLine(&arduboy, 41, 87, 22);
-      drawHorizontalDottedLine(&arduboy, 41, 87, 32);
+      drawHorizontalLineHelper(arduboy);
       arduboy.drawCompressedMirror(42, 25, tryAgain, WHITE, false);
 
       break;
 
     case GameState::GameOver:
 
-      drawHorizontalDottedLine(&arduboy, 41, 87, 22);
-      drawHorizontalDottedLine(&arduboy, 41, 87, 32);
+      drawHorizontalLineHelper(arduboy);
       arduboy.drawCompressedMirror(43, 25, gameOver, WHITE, false);
 
       break;
@@ -298,16 +319,10 @@ void renderScreen() {
     default: break;
 
   }
+}
 
- 
-  // Draw footer ..
-
-  arduboy.fillRect(0, 55, 128, 64, BLACK);
-  drawHorizontalDottedLine(&arduboy, 0, 128, 56);
-
-
-  // Draw scoreboard ..
-
+void renderScoreboard()
+{
   uint16_t score = player.getScore();
   arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
   arduboy.drawCompressedMirror(29, 57, digit_00, WHITE, false);
@@ -343,7 +358,6 @@ void renderScreen() {
     arduboy.drawCompressedMirror(123, 57, digits[levelNumber % 10], WHITE, false);
 
   }
-
 }
 
 #ifdef INC_ARROWS
