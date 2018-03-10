@@ -31,9 +31,10 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     if (inCellY()) {
 
       nearestX = getNearestX(2);
+      LevelElement left = level.getLevelData(nearestX - 1, nearestY);
       LevelElement leftDown = level.getLevelData(nearestX - 1, nearestY + 1);
 
-      if (leftDown == LevelElement::Brick) {
+      if (leftDown == LevelElement::Brick && !isSolid(left)) {
 
         player.setStance(PlayerStance::Burn_Left);
         player.setXDelta(0);
@@ -60,9 +61,10 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     if (inCellY()) {
 
       nearestX = getNearestX(2);
+      LevelElement right = level.getLevelData(nearestX + 1, nearestY);
       LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
 
-      if (rightDown == LevelElement::Brick) {
+      if (rightDown == LevelElement::Brick && !isSolid(right)) {
  
         player.setStance(PlayerStance::Burn_Right);
         player.setXDelta(0);
@@ -125,7 +127,18 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       
       if (canBeClimbedOn(current)) {
 
-        moveRight = canBeOccupied(right);
+        if (canBeOccupied(right)) {
+
+          if (current == LevelElement::Rail)   { updatePlayerStance(PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right4, PlayerStance::Swinging_Right1); }
+          if (current == LevelElement::Ladder) { updatePlayerStance(PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2, PlayerStance::Climbing_Up1); }
+          moveRight = true;
+
+        }
+        else {
+          
+          moveRight = false;
+
+        }
 
       }
       else if (inCellX() && canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
@@ -301,7 +314,18 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       if (canBeClimbedOn(current)) {
 
-        moveLeft = canBeOccupied(left);
+        if (canBeOccupied(left)) {
+
+          if (current == LevelElement::Rail)   { updatePlayerStance(PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1, PlayerStance::Swinging_Left1); }
+          if (current == LevelElement::Ladder) { updatePlayerStance(PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2, PlayerStance::Climbing_Up1); }
+          moveLeft = true;
+
+        }
+        else {
+          
+          moveLeft = false;
+
+        }
 
       }
       else if (inCellX() && canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
