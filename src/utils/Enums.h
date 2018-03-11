@@ -19,7 +19,7 @@
 #endif
 
 #define INC_ARROWS
-#define INC_LEVEL_SELECTOR
+#define _INC_LEVEL_SELECTOR
 
 #define HOLE_FILL_1                   8
 #define HOLE_FILL_2                   16

@@ -26,7 +26,7 @@ void renderScreen() {
     renderEnemies();
 
     #ifdef INC_ARROWS
-    renderArrows();
+    if (showArrows) renderArrows();
     #endif
 
   }
@@ -203,7 +203,6 @@ void renderArrows() {
       uint8_t const * mask = arrow_TL_mask;
       uint8_t const * image = arrow_TL;
       
-
       if (player.getY() - dy < -9) {
 
         if (player.getX() - dx < -1) {

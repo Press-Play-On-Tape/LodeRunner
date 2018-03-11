@@ -21,6 +21,7 @@ Level level;
 
 
 bool flashPlayer = false;
+bool showArrows = true;
 
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
@@ -95,7 +96,7 @@ void loop() {
       while (!holes.isEmpty()) holes.dequeue();
       level.loadLevel(&player, enemies); 
       introRect = 28;
-    
+      showArrows = EEPROM_Utils::getShowArrows();
       gameState = GameState::LevelEntryAnimation;
       /* break; Drop through to next case */
 
@@ -151,13 +152,13 @@ void Intro() {
 
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
 
-  #ifdef INC_LEVEL_SELECTOR
+//  #ifdef INC_LEVEL_SELECTOR
   if (arduboy.justPressed(A_BUTTON))  { gameState = GameState::GameSelect; }
-  #endif
+//  #endif
 
-  #ifndef INC_LEVEL_SELECTOR
-  if (arduboy.justPressed(A_BUTTON))  { gameState = (EEPROM_Utils::getLevelNumber() == 1 ? GameState::LevelInit : GameState::GameSelect); }
-  #endif
+//  #ifndef INC_LEVEL_SELECTOR
+//  if (arduboy.justPressed(A_BUTTON))  { gameState = (EEPROM_Utils::getLevelNumber() == 1 ? GameState::LevelInit : GameState::GameSelect); }
+//  #endif
 
   arduboy.display(CLEAR_BUFFER);
 
@@ -238,30 +239,62 @@ void GameSelect() {
 
   #ifndef INC_LEVEL_SELECTOR
 
-  arduboy.drawCompressedMirror(38, 24, menuOption, WHITE, false);
-  arduboy.drawCompressedMirror(31, (menuSelect == 0 ? 24 : 34), menuArrow, WHITE, false);
+  bool firstTime = EEPROM_Utils::getMen() == 5 && EEPROM_Utils::getLevelNumber() == 1;
+  
+  uint8_t menuOptionY = 24;
+  uint8_t selectorY = 24;
+  uint8_t arrowY = 34;
+  uint8_t const * arrowImg = (EEPROM_Utils::getShowArrows() ? arrowImg = menuOptionShow : arrowImg = menuOptionHide);
+  uint8_t const * menuOptionImg = menuOptionStart;
+
+  if (firstTime) {
+
+    arrowY = 34;
+    selectorY = 24 + (menuSelect * 5);
+
+  }
+  else {
+
+    menuOptionY = 19;
+    arrowY = 39;
+    selectorY= 19 + (menuSelect * 10);
+
+  }
+
+  arduboy.drawCompressedMirror(38, menuOptionY, menuOptionImg, WHITE, false);
+  arduboy.drawCompressedMirror(38, arrowY, arrowImg, WHITE, false);
+  arduboy.drawCompressedMirror(31, selectorY, menuArrow, WHITE, false);
 
 
   // Brick borders ..
 
   for (uint8_t x = 0; x < WIDTH; x = x + 10) {
   
-    Sprites::drawOverwrite(x, 0, brick, 0);
-    Sprites::drawOverwrite(x, 55, brick, 0);
+    Sprites::drawOverwrite(x, 0, levelElementImgs, 1);
+    Sprites::drawOverwrite(x, 55, levelElementImgs, 1);
 
   }
 
   arduboy.display(CLEAR_BUFFER);
 
-  if (arduboy.justPressed(UP_BUTTON) && menuSelect == 1)    { menuSelect = 0; }
-  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect == 0)  { menuSelect = 1; }
+  if (firstTime) {
+
+    if (arduboy.justPressed(UP_BUTTON) && menuSelect == 2)    { menuSelect = 0; }
+    if (arduboy.justPressed(DOWN_BUTTON) && menuSelect == 0)  { menuSelect = 2; }
+
+  }
+  else {
+
+    if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)     { menuSelect--; }
+    if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)   { menuSelect++; }
+
+  }
 
   if (arduboy.justPressed(A_BUTTON)) {
     
-    if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); }
-    if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); }
-
-     gameState = GameState::LevelInit; 
+    if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); gameState = GameState::LevelInit; }
+    if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); gameState = GameState::LevelInit; }
+    if (menuSelect == 2) { EEPROM_Utils::setShowArrows(!EEPROM_Utils::getShowArrows()); }
      
   }
 
