@@ -10,6 +10,10 @@
 #define EEPROM_LEVEL_NO               EEPROM_START + 3
 #define EEPROM_MEN_LEFT               EEPROM_START + 4
 #define EEPROM_SCORE                  EEPROM_START + 5
+#define EEPROM_GAME_NO_ORIG           EEPROM_START + 7
+#define EEPROM_LEVEL_NO_ORIG          EEPROM_START + 8
+#define EEPROM_MEN_LEFT_ORIG          EEPROM_START + 9
+#define EEPROM_SCORE_ORIG             EEPROM_START + 10
 
 
 class EEPROM_Utils {
@@ -43,15 +47,36 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
   byte c1 = EEPROM.read(EEPROM_START_C1);
   byte c2 = EEPROM.read(EEPROM_START_C2);
 
-  if (forceClear || c1 != 76 || c2 != 81) { // LR 76 82
+  if (forceClear || c1 != 76 || c2 != 82) { // LR 76 82
 
-    const uint16_t score = 0;
-    EEPROM.update(EEPROM_START_C1, 76);
-    EEPROM.update(EEPROM_START_C1, 76);
-    EEPROM.update(EEPROM_GAME_NO, 1);
-    EEPROM.update(EEPROM_LEVEL_NO, 1);
-    EEPROM.update(EEPROM_MEN_LEFT, 5);
-    EEPROM.put(EEPROM_SCORE, score);
+    if (GAME_NUMBER == 1) {
+
+      const uint16_t score = 0;
+      EEPROM.update(EEPROM_START_C1, 76);
+      EEPROM.update(EEPROM_START_C2, 82);
+      EEPROM.update(EEPROM_GAME_NO, 1);
+      EEPROM.update(EEPROM_LEVEL_NO, 1);
+      EEPROM.update(EEPROM_MEN_LEFT, 5);
+      EEPROM.put(EEPROM_SCORE, score);
+
+      EEPROM.update(EEPROM_GAME_NO_ORIG, 1);
+      EEPROM.update(EEPROM_LEVEL_NO_ORIG, 1);
+      EEPROM.update(EEPROM_MEN_LEFT_ORIG, 5);
+      EEPROM.put(EEPROM_SCORE_ORIG, score);
+
+    }
+    else {
+
+      uint16_t score = 0;
+      EEPROM.get(EEPROM_SCORE, score);
+      EEPROM.update(EEPROM_START_C1, 76);
+      EEPROM.update(EEPROM_START_C2, 82);
+      EEPROM.update(EEPROM_GAME_NO, EEPROM.read(EEPROM_GAME_NO_ORIG));
+      EEPROM.update(EEPROM_LEVEL_NO, EEPROM.read(EEPROM_LEVEL_NO_ORIG));
+      EEPROM.update(EEPROM_MEN_LEFT, EEPROM.read(EEPROM_MEN_LEFT_ORIG));
+      EEPROM.put(EEPROM_SCORE, score);
+
+    }
 
   }
 
@@ -112,6 +137,10 @@ void EEPROM_Utils::saveGameData(Level *level, Player *player) {
   EEPROM.update(EEPROM_MEN_LEFT, player->getMen());
   EEPROM.put(EEPROM_SCORE, player->getScore());
 
+  EEPROM.update(EEPROM_LEVEL_NO_ORIG, level->getLevelNumber());
+  EEPROM.update(EEPROM_MEN_LEFT_ORIG, player->getMen());
+  EEPROM.put(EEPROM_SCORE_ORIG, player->getScore());
+
 }
 
 
@@ -121,5 +150,6 @@ void EEPROM_Utils::saveGameData(Level *level, Player *player) {
 void EEPROM_Utils::setGameNumber(uint8_t val) {
 
   EEPROM.update(EEPROM_GAME_NO, val);
+  EEPROM.update(EEPROM_GAME_NO_ORIG, val);
 
 }

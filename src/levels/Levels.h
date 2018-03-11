@@ -6,7 +6,10 @@
 
 
 const uint8_t PROGMEM test[] = {
-0x05, 0x0E, 0x00, 0x03, 0x1B, 0x00, 0x1B, 0x01, 0x1B, 0x02, 0x00, 0x1F, 0x1F, 0x1F, 0x13, 0x27, 0x41, 0x16, 0x62, 0x21, 0x41, 0x61, 0x41, 0x14, 0x82, 0x61, 0x03, 0x61, 0x82, 0x15, 0x61, 0x03, 0x61, 0x17, 0x61, 0x03, 0x61, 0x17, 0x61, 0x23, 0x61, 0x17, 0x61, 0x03, 0x61, 0x17, 0x61, 0x23, 0x61, 0x17, 0x61, 0x03, 0x61, 0x17, 0x61, 0x43, 0x61, 0x15, 0x21, 0x01, 0x61, 0x03, 0x61, 0x01, 0x21, 0x13, 0x21, 0x41, 0x21, 0x41, 0x21, 0x41, 0x22, 0x41, 0x22, 0x11, 0x00
+
+0x03, 0x09, 0x01, 0x0E, 0x09, 0x00, 0x01, 0x1F, 0x12, 0x6F, 0x1F, 0x1F, 0x1F, 0x1F, 0x04, 0x42, 0x0C, 0x43, 0x0E, 0x41, 0x70, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x16, 0x00
+
+
 };
 
 const uint8_t PROGMEM level1[] = {
@@ -209,11 +212,33 @@ const uint8_t PROGMEM level50[] = {
 0x15, 0x01, 0x05, 0x0A, 0x01, 0x0C, 0x01, 0x0E, 0x01, 0x08, 0x0E, 0x11, 0x0E, 0x02, 0x1B, 0x00, 0x1B, 0x01, 0x00, 0x41, 0x1B, 0x41, 0x05, 0xC4, 0x12, 0x41, 0x2A, 0xA1, 0x2F, 0x61, 0x1B, 0x61, 0x04, 0x41, 0x01, 0xC1, 0x02, 0xC1, 0x07, 0xC1, 0x06, 0xC1, 0x41, 0x01, 0x61, 0x04, 0x41, 0x27, 0xA1, 0x27, 0xA1, 0x24, 0x41, 0x01, 0x61, 0x1B, 0x61, 0x06, 0x41, 0x02, 0xC1, 0x04, 0xC1, 0x05, 0xC1, 0x02, 0x41, 0x03, 0x61, 0x06, 0x41, 0x23, 0xA1, 0x26, 0xA1, 0x25, 0x41, 0x03, 0x61, 0x1B, 0x61, 0x07, 0x41, 0x02, 0xC1, 0x05, 0xC1, 0x04, 0xC1, 0x41, 0x04, 0x61, 0x06, 0x42, 0x2E, 0x41, 0x04, 0x61, 0x1B, 0x61, 0x1B, 0x61, 0xC4, 0x14, 0x61, 0x41, 0x01, 0x61, 0x2A, 0x46, 0x28, 0x42, 0x01, 0x61, 0x00
 };
 
-
-const uint8_t *levels[] =    { nullptr, test,
-                               level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, 
-                               level11, level12, level13, level14, level15, level16, level17, level18, level19, level20, 
-                               level21, level22, level23, level24, level25, level26, level27, level28, level29, level30,
-                               level31, level32, level33, level34, level35, level36, level37, level38, level39, level40,
-                               level41, level42, level43, level44, level45, level46, level47, level48, level49, level50,
+#if GAME_NUMBER == 1
+const uint8_t *levels[] =    { nullptr, /*test,*/
+                               level1,
+                               //level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, 
+                               //level11, level12, level13, level14, level15, level16, level17, level18, level19, level20, 
+                               //level21, level22, level23, level24, level25, level26, level27, level28, level29, level30,
+                               //level31, level32, level33, level34, level35, level36, level37, level38, level39, level40,
+                               //level41, level42, level43, level44, level45, level46, level47, level48, level49, level50,
                                 };
+#endif
+#if GAME_NUMBER == 2
+const uint8_t *levels[] =    { nullptr, /*test,*/
+                               level2, level3
+                               //level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, 
+                               //level11, level12, level13, level14, level15, level16, level17, level18, level19, level20, 
+                               //level21, level22, level23, level24, level25, level26, level27, level28, level29, level30,
+                               //level31, level32, level33, level34, level35, level36, level37, level38, level39, level40,
+                               //level41, level42, level43, level44, level45, level46, level47, level48, level49, level50,
+                                };
+#endif
+#if GAME_NUMBER == 3
+const uint8_t *levels[] =    { nullptr, /*test,*/
+                               level4, level5
+                               //level1, level2, level3, level4, level5, level6, level7, level8, level9, level10, 
+                               //level11, level12, level13, level14, level15, level16, level17, level18, level19, level20, 
+                               //level21, level22, level23, level24, level25, level26, level27, level28, level29, level30,
+                               //level31, level32, level33, level34, level35, level36, level37, level38, level39, level40,
+                               //level41, level42, level43, level44, level45, level46, level47, level48, level49, level50,
+                                };
+#endif

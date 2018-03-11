@@ -1,6 +1,6 @@
 #include "Arduboy2Ext.h"
 
-Arduboy2Ext::Arduboy2Ext() : Arduboy2Base() { }
+Arduboy2Ext::Arduboy2Ext() : Arduboy2/*Base*/() { }
 
 void Arduboy2Ext::clearButtonState() {
 
@@ -158,3 +158,27 @@ void Arduboy2Ext::drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bi
   }
 }
 
+
+
+/* ----------------------------------------------------------------------------
+ *  Draw a horizontal dotted line. 
+ */
+void Arduboy2Ext::drawHorizontalDottedLine(uint8_t x1, uint8_t x2, uint8_t y) {
+
+  for (uint8_t x3 = x1; x3 <= x2; x3+=2) {
+    drawPixel(x3, y, WHITE);
+  }
+  
+}
+
+
+/* ----------------------------------------------------------------------------
+ *  Draw a vertical dotted line. 
+ */
+void Arduboy2Ext::drawVerticalDottedLine(uint8_t y1, uint8_t y2, uint8_t x) {
+
+  for (uint8_t y3 = y1; y3 <= y2; y3+=2) {
+    drawPixel(x, y3, WHITE);
+  }
+  
+}

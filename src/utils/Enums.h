@@ -6,16 +6,19 @@
 #define GAME_NUMBER                   1
 
 #if GAME_NUMBER == 1
-  #define LEVEL_COUNT                 50
+  #define LEVEL_COUNT                 1
+  #define LEVEL_OFFSET                0
 #endif
 #if GAME_NUMBER == 2
-  #define LEVEL_COUNT                 30
+  #define LEVEL_COUNT                 4
+  #define LEVEL_OFFSET                1
 #endif
 #if GAME_NUMBER == 3
   #define LEVEL_COUNT                 30
+  #define LEVEL_OFFSET                100
 #endif
 
-#define _INC_ARROWS
+#define INC_ARROWS
 #define INC_LEVEL_SELECTOR
 
 #define HOLE_FILL_1                   8

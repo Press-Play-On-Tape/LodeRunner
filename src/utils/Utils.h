@@ -26,30 +26,6 @@ uint8_t rightValue(uint8_t val) {
 }
 
 
-/* ----------------------------------------------------------------------------
- *  Draw a horizontal dotted line. 
- */
-void drawHorizontalDottedLine(Arduboy2Ext *arduboy, uint8_t x1, uint8_t x2, uint8_t y) {
-
-  for (uint8_t x3 = x1; x3 <= x2; x3+=2) {
-    arduboy->drawPixel(x3, y, WHITE);
-  }
-  
-}
-
-
-/* ----------------------------------------------------------------------------
- *  Draw a vertical dotted line. 
- */
-void drawVerticalDottedLine(Arduboy2Ext *arduboy, uint8_t y1, uint8_t y2, uint8_t x) {
-
-  for (uint8_t y3 = y1; y3 <= y2; y3+=2) {
-    arduboy->drawPixel(x, y3, WHITE);
-  }
-  
-}
-
-
 // ---------------------------------------------------------------------------------
 // Can be stood on by the player ?
 //
@@ -193,6 +169,7 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
 
     case LevelElement::Blank:
     case LevelElement::FallThrough:
+    case LevelElement::Rail:
       return true;
 
     case LevelElement::Brick_1:

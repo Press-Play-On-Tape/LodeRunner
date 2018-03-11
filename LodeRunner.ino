@@ -1,5 +1,6 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
+
 #include "src/utils/Utils.h"
 #include "src/utils/Enums.h"
 #include "src/images/Images.h"
@@ -28,8 +29,9 @@ Queue<Hole, 10> holes;
 
 uint8_t menuSelect = 0;
 #ifdef INC_LEVEL_SELECTOR
-uint8_t menuLevelSelect = 1;
+uint8_t menuLevelSelect = LEVEL_OFFSET + 1;
 #endif
+
 
 // --------------------------------------------------------------------------------------
 //  Forward declarations ..
@@ -40,6 +42,7 @@ uint8_t getNearestY(int8_t margin = HALF_GRID_SIZE);
 #ifdef INC_ARROWS
 Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff);
 #endif
+
 
 // --------------------------------------------------------------------------------------
 //  Setup ..
@@ -62,7 +65,7 @@ void setup() {
 
   uint8_t gameNumber = EEPROM_Utils::getGameNumber();
   
-  if (gameNumber != GAME_NUMBER) {
+  if (gameNumber < GAME_NUMBER) {
 
     if (gameNumber == 1) { gameState = GameState::CompleteGame1; }
     if (gameNumber == 2) { gameState = GameState::CompleteGame2; }
@@ -145,22 +148,8 @@ void Intro() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
-  //arduboy.clear();
 
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
-
-  /* Pharap .. uncomment from here 
-  
-  if (bannerStripe < 52) arduboy.fillRect(0, bannerStripe, WIDTH, 2, BLACK);
-  if (bannerStripe < 48) arduboy.fillRect(0, bannerStripe + 4, WIDTH, 2, BLACK);
-  if (bannerStripe < 44) arduboy.fillRect(0, bannerStripe + 8, WIDTH, 2, BLACK);
-  if (bannerStripe < 40) arduboy.fillRect(0, bannerStripe + 12, WIDTH, 2, BLACK);
-  bannerStripe++;
-  if (bannerStripe > 66) bannerStripe = -30;
-
-  Pharap to here .. */
-
-
 
   #ifdef INC_LEVEL_SELECTOR
   if (arduboy.justPressed(A_BUTTON))  { gameState = GameState::GameSelect; }
@@ -215,23 +204,23 @@ void GameSelect() {
 
   for (uint8_t x = 0; x < WIDTH; x = x + 10) {
   
-    Sprites::drawOverwrite(x, 0, brick, 0);
-    Sprites::drawOverwrite(x, 55, brick, 0);
+    Sprites::drawOverwrite(x, 0, levelElementImgs, 1);
+    Sprites::drawOverwrite(x, 55, levelElementImgs, 1);
 
   }
 
 
-  // Seelctor control ..
+  // Selector control ..
 
   arduboy.display(CLEAR_BUFFER);
 
-  if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)                       { menuSelect--; }
-  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)                     { menuSelect++; }
+  if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)                                         { menuSelect--; }
+  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)                                       { menuSelect++; }
 
   if (menuSelect == 2) {
   
-    if (arduboy.justPressed(LEFT_BUTTON) && menuLevelSelect > 1)              { menuLevelSelect--; }
-    if (arduboy.justPressed(RIGHT_BUTTON) && menuLevelSelect < LEVEL_COUNT)   { menuLevelSelect++; }
+    if (arduboy.justPressed(LEFT_BUTTON) && menuLevelSelect > LEVEL_OFFSET + 1)                 { menuLevelSelect--; }
+    if (arduboy.justPressed(RIGHT_BUTTON) && menuLevelSelect < LEVEL_OFFSET + LEVEL_COUNT)      { menuLevelSelect++; }
 
   }
 
@@ -401,8 +390,9 @@ void LevelPlay() {
       level.setLevelNumber(levelNumber);
       EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
 
-      if (levelNumber > LEVEL_COUNT) {
+      if (levelNumber > LEVEL_OFFSET + LEVEL_COUNT) {
         EEPROM_Utils::setGameNumber(EEPROM_Utils::getGameNumber() + 1);
+        EEPROM_Utils::saveGameData(&level, &player);
         player.setNextState(GameState::NextGame);
       }
       else {
@@ -613,6 +603,7 @@ void LevelPlay() {
 
   }
 
+
   arduboy.display(CLEAR_BUFFER);
 
 }
@@ -647,7 +638,7 @@ void playerDies() {
 //
 void NextGame() {
 
-  arduboy.drawCompressedMirror(36, 13, loadNextGame, WHITE, false);
+  arduboy.drawCompressedMirror(20, 23, loadNextGame, WHITE, false);
   arduboy.display(CLEAR_BUFFER);
 
 }
@@ -658,8 +649,8 @@ void NextGame() {
 //
 void CompleteGame(uint8_t level) {
 
-  arduboy.drawCompressedMirror(36, 13, completeGame, WHITE, false);
-  arduboy.drawCompressedMirror(70, 36, (level == 1 ? completeGame1 : completeGame2), WHITE, false);
+  arduboy.drawCompressedMirror(19, 20, completeGame, WHITE, false);
+  arduboy.drawCompressedMirror(71, 35, (level == 1 ? completeGame1 : completeGame2), WHITE, false);
   arduboy.display(CLEAR_BUFFER);
 
 }

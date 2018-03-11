@@ -53,7 +53,7 @@ class Level {
     uint8_t _goldLeft;
 
     uint8_t _levelLadderElementCount;
-    LevelPoint _levelLadder[15];
+    LevelPoint _levelLadder[18];
 
 };
 
@@ -134,7 +134,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   uint16_t dataOffset = 0;
   uint8_t goldLeft = 0;
 
-  const uint8_t *levelToLoad = levels[_levelNumber];
+  const uint8_t *levelToLoad = levels[_levelNumber - LEVEL_OFFSET];
 
 
   // Load player starting position ..
