@@ -6,7 +6,7 @@
 #define GAME_NUMBER                   1
 
 #if GAME_NUMBER == 1
-  #define LEVEL_COUNT                 1
+  #define LEVEL_COUNT                 50
   #define LEVEL_OFFSET                0
 #endif
 #if GAME_NUMBER == 2
