@@ -336,9 +336,6 @@ void renderEntryRectangle() {
   }
   else if (gameState == GameState::NextLevel || gameState == GameState::RestartLevel || gameState == GameState::GameOver) {
 
-    arduboy.drawHorizontalDottedLine(41, 87, 22);
-    arduboy.drawHorizontalDottedLine(41, 87, 32);
-
     if(gameState == GameState::RestartLevel) {
 
       arduboy.drawCompressedMirror(42, 25, tryAgain, WHITE, false);
@@ -351,15 +348,18 @@ void renderEntryRectangle() {
     }
     else {
 
-      arduboy.drawCompressedMirror(43, 25, levelChange, WHITE, false);
-
       uint8_t levelNumber = level.getLevelNumber();
       Sprites::drawOverwrite(72, 25, numbers, levelNumber / 100);
       levelNumber = levelNumber - (levelNumber / 100) * 100;
       Sprites::drawOverwrite(77, 25, numbers, levelNumber / 10);
       Sprites::drawOverwrite(82, 25, numbers, levelNumber % 10);
 
+      arduboy.drawCompressedMirror(43, 25, levelChange, WHITE, false);
+
     }
+
+    arduboy.drawHorizontalDottedLine(41, 87, 22);
+    arduboy.drawHorizontalDottedLine(41, 87, 32);
   
   }
 

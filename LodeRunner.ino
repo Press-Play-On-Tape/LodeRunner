@@ -10,6 +10,7 @@
 #include "src/utils/EEPROM_Utils.h"
 #include "src/characters/Player.h"
 #include "src/characters/Enemy.h"
+#include "src/images/sounds.h"
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
@@ -26,7 +27,7 @@ bool showArrows = true;
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
 int8_t introRect = 0;
-Queue<Hole, 10> holes;
+Queue<Hole, 20> holes;
 
 uint8_t menuSelect = 0;
 #ifdef INC_LEVEL_SELECTOR
@@ -151,14 +152,7 @@ void Intro() {
   arduboy.pollButtons();
 
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
-
-//  #ifdef INC_LEVEL_SELECTOR
   if (arduboy.justPressed(A_BUTTON))  { gameState = GameState::GameSelect; }
-//  #endif
-
-//  #ifndef INC_LEVEL_SELECTOR
-//  if (arduboy.justPressed(A_BUTTON))  { gameState = (EEPROM_Utils::getLevelNumber() == 1 ? GameState::LevelInit : GameState::GameSelect); }
-//  #endif
 
   arduboy.display(CLEAR_BUFFER);
 
@@ -240,11 +234,11 @@ void GameSelect() {
   #ifndef INC_LEVEL_SELECTOR
 
   bool firstTime = EEPROM_Utils::getMen() == 5 && EEPROM_Utils::getLevelNumber() == 1;
-  
+
   uint8_t menuOptionY = 24;
   uint8_t selectorY = 24;
   uint8_t arrowY = 34;
-  uint8_t const * arrowImg = (EEPROM_Utils::getShowArrows() ? arrowImg = menuOptionShow : arrowImg = menuOptionHide);
+  uint8_t const * arrowImg = (EEPROM_Utils::getShowArrows() ? menuOptionShow : menuOptionHide);
   uint8_t const * menuOptionImg = menuOptionStart;
 
   if (firstTime) {
@@ -256,6 +250,7 @@ void GameSelect() {
   else {
 
     menuOptionY = 19;
+    menuOptionImg = menuOption;
     arrowY = 39;
     selectorY= 19 + (menuSelect * 10);
 
@@ -431,6 +426,8 @@ void LevelPlay() {
       else {
         player.setNextState(GameState::NextLevel);
       }
+
+      sound.tones(levelComplete); 
 
     } 
 
@@ -661,6 +658,8 @@ void playerDies() {
     player.setNextState(GameState::GameOver);
 
   }
+
+  sound.tones(dead); 
 
 }
 

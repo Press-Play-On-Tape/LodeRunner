@@ -21,6 +21,7 @@
 #define INC_ARROWS
 #define _INC_LEVEL_SELECTOR
 
+#define HOLE_LENGTH                   175
 #define HOLE_FILL_1                   8
 #define HOLE_FILL_2                   16
 #define HOLE_FILL_3                   24

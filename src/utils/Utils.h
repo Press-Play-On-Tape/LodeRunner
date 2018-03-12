@@ -149,6 +149,7 @@ boolean canBeOccupied(LevelElement levelElement) {
     case LevelElement::Ladder:
     case LevelElement::Rail:
     case LevelElement::Gold:
+    case LevelElement::FallThrough:
     case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
       return true;
 
@@ -170,6 +171,7 @@ boolean canBeFallenInto(LevelElement levelElement, Enemy *enemies, uint16_t posi
     case LevelElement::Blank:
     case LevelElement::FallThrough:
     case LevelElement::Rail:
+    case LevelElement::Gold:
       return true;
 
     case LevelElement::Brick_1:
