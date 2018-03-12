@@ -20,6 +20,7 @@
 
 #define INC_ARROWS
 #define _INC_LEVEL_SELECTOR
+#define INC_SOUNDS
 
 #define HOLE_LENGTH                   175
 #define HOLE_FILL_1                   8

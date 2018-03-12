@@ -1,5 +1,6 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
+#include "src/images/sounds.h"
 
 #include "src/utils/Utils.h"
 #include "src/utils/Enums.h"
@@ -10,10 +11,11 @@
 #include "src/utils/EEPROM_Utils.h"
 #include "src/characters/Player.h"
 #include "src/characters/Enemy.h"
-#include "src/images/sounds.h"
 
 Arduboy2Ext arduboy;
+#ifdef INC_SOUNDS
 ArduboyTones sound(arduboy.audio.enabled);
+#endif
 
 Player player;
 Enemy enemies[NUMBER_OF_ENEMIES];
@@ -54,9 +56,13 @@ void setup() {
   arduboy.boot();
   arduboy.flashlight();
   arduboy.systemButtons();
-  arduboy.audio.begin();
   arduboy.setFrameRate(30);
   arduboy.initRandomSeed();
+
+  #ifdef INC_SOUNDS
+  arduboy.audio.begin();
+  #endif
+
   EEPROM_Utils::initEEPROM(false);
   EEPROM_Utils::getSavedGameData(&level, &player);
 
@@ -427,7 +433,9 @@ void LevelPlay() {
         player.setNextState(GameState::NextLevel);
       }
 
+      #ifdef INC_SOUNDS
       sound.tones(levelComplete); 
+      #endif
 
     } 
 
@@ -659,7 +667,9 @@ void playerDies() {
 
   }
 
+  #ifdef INC_SOUNDS
   sound.tones(dead); 
+  #endif
 
 }
 
