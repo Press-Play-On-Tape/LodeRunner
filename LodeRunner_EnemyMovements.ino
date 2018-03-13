@@ -253,7 +253,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
 
-        else if (current == LevelElement::Rail && canBeStoodOn_RightDown && notOccupiedByAnotherEnemy_Right) {
+        else if (current == LevelElement::Rail && canBeOccupied_Right && canBeStoodOn_RightDown && notOccupiedByAnotherEnemy_Right) {
 
           updateEnemyStance(enemy, PlayerStance::Running_Right1, PlayerStance::Running_Right4);
           move(enemy, 2, 0);
@@ -261,7 +261,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
 
-        else if (right == LevelElement::Ladder && notOccupiedByAnotherEnemy_Right) {
+        else if (current == LevelElement::Ladder && canBeOccupied_Right && notOccupiedByAnotherEnemy_Right) {
 
           updateEnemyStance(enemy, PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);
           move(enemy, 2, 0);
@@ -271,16 +271,16 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         else if (canBeFallenInto_Down) {
 
-          if (right == LevelElement::Ladder && notOccupiedByAnotherEnemy_Right) {
+//           if (right == LevelElement::Ladder && notOccupiedByAnotherEnemy_Right) {
 
-            updateEnemyStance(enemy, PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right4);
-            move(enemy, 2, 0);
-            hasMoved = true;
+//             updateEnemyStance(enemy, PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right4);
+//             move(enemy, 2, 0);
+//             hasMoved = true;
 
-          }
-          else {
+//           }
+//           else {
               
-            if (notOccupiedByAnotherEnemy_Right) {
+            //if (notOccupiedByAnotherEnemy_Right) {
 
               enemy->setStance(PlayerStance::Falling);
               move(enemy, 0, 2);
@@ -293,7 +293,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
                 case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
                   enemy->setEscapeHole(EscapeHole::WaitMax);
-                  
+
                   #ifdef INC_SOUNDS
                   sound.tones(enemyFallsIn);
                   #endif
@@ -304,9 +304,9 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
               }
 
-            }
+            //}
 
-          }
+          // }
 
         }
 
@@ -318,7 +318,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
 
-        else if (canBeOccupied_Right && canBeFallenInto_RightDown) {
+        else if (canBeOccupied_Right && canBeFallenInto_RightDown && notOccupiedByAnotherEnemy_Right) {
 
           updateEnemyStance(enemy, PlayerStance::Running_Right1, PlayerStance::Running_Right4);
           move(enemy, 2, 0);
@@ -385,7 +385,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
         
-        else if (current == LevelElement::Rail && canBeStoodOn_LeftDown && notOccupiedByAnotherEnemy_Left) {
+        else if (current == LevelElement::Rail && canBeOccupied_Left && canBeStoodOn_LeftDown && notOccupiedByAnotherEnemy_Left) {
 
           updateEnemyStance(enemy, PlayerStance::Running_Left4, PlayerStance::Running_Left1);
           move(enemy, -2, 0);
@@ -393,7 +393,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
         
-        else if (left == LevelElement::Ladder && notOccupiedByAnotherEnemy_Left) {
+        else if (current == LevelElement::Ladder && canBeOccupied_Left && notOccupiedByAnotherEnemy_Left) {
 
           updateEnemyStance(enemy, PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);
           move(enemy, -2, 0);
@@ -403,16 +403,16 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         else if (canBeFallenInto_Down) {
 
-          if (left == LevelElement::Ladder && notOccupiedByAnotherEnemy_Left) {
+          // if (left == LevelElement::Ladder && notOccupiedByAnotherEnemy_Left) {
 
-            updateEnemyStance(enemy, PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
-            move(enemy, -2, 0);
-            hasMoved = true;
+          //   updateEnemyStance(enemy, PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
+          //   move(enemy, -2, 0);
+          //   hasMoved = true;
 
-          }
-          else {
+          // }
+          // else {
 
-            if (notOccupiedByAnotherEnemy_Left) {
+            //if (notOccupiedByAnotherEnemy_Left) {
 
               enemy->setStance(PlayerStance::Falling);
               move(enemy, 0, 2);
@@ -436,9 +436,9 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
               }
 
-            }
+            //}
 
-          }
+          //}
 
         }
               
@@ -450,7 +450,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
         }
 
-        else if (canBeOccupied_Left && canBeFallenInto_LeftDown) {
+        else if (canBeOccupied_Left && canBeFallenInto_LeftDown && notOccupiedByAnotherEnemy_Left) {
 
           updateEnemyStance(enemy, PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
           move(enemy, -2, 0);
