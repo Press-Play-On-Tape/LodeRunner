@@ -6,12 +6,12 @@
 #define GAME_NUMBER                   1
 
 #if GAME_NUMBER == 1
-  #define LEVEL_COUNT                 50
+  #define LEVEL_COUNT                 40
   #define LEVEL_OFFSET                0
 #endif
 #if GAME_NUMBER == 2
-  #define LEVEL_COUNT                 4
-  #define LEVEL_OFFSET                1
+  #define LEVEL_COUNT                 40
+  #define LEVEL_OFFSET                40
 #endif
 #if GAME_NUMBER == 3
   #define LEVEL_COUNT                 30
