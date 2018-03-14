@@ -18,9 +18,14 @@
   #define LEVEL_OFFSET                100
 #endif
 
-#define INC_ARROWS
+
 #define _INC_LEVEL_SELECTOR
 #define INC_SOUNDS
+
+#define ARROW_SMALL_DIST_X_LEFT       20
+#define ARROW_SMALL_DIST_X_RIGHT      10
+#define ARROW_SMALL_DIST_Y_TOP        20
+#define ARROW_SMALL_DIST_Y_BOTTOM     10
 
 #define HOLE_LENGTH                   175
 #define HOLE_FILL_1                   8

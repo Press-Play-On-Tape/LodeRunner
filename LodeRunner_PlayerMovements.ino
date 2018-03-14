@@ -642,6 +642,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           #endif
 
         }
+        else {
+
+          moveUp = true;
+
+        }
 
         break;
 

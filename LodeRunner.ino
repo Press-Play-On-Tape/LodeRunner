@@ -43,10 +43,6 @@ uint8_t menuLevelSelect = LEVEL_OFFSET + 1;
 uint8_t getNearestX(int8_t margin = HALF_GRID_SIZE);
 uint8_t getNearestY(int8_t margin = HALF_GRID_SIZE);
 
-#ifdef INC_ARROWS
-Direction getDirection_8Directions(int8_t xDiff, int8_t yDiff);
-#endif
-
 
 // --------------------------------------------------------------------------------------
 //  Setup ..
@@ -56,7 +52,7 @@ void setup() {
   arduboy.boot();
   arduboy.flashlight();
   arduboy.systemButtons();
-  arduboy.setFrameRate(30);
+  arduboy.setFrameRate(25);
   arduboy.initRandomSeed();
 
   #ifdef INC_SOUNDS
@@ -416,7 +412,9 @@ void LevelPlay() {
 
     // If the player has gone off the top of the screen .. level over!
 
-    if (player.getY() > (level.getHeight() * GRID_SIZE)) {
+    LevelElement current = level.getLevelData(getNearestX(), getNearestY());
+
+    if (player.getY() == 0 && current == LevelElement::Ladder) {
 
       uint8_t levelNumber = level.getLevelNumber() + 1;
 
