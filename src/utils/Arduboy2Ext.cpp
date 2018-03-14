@@ -1,6 +1,6 @@
 #include "Arduboy2Ext.h"
 
-Arduboy2Ext::Arduboy2Ext() : Arduboy2Base() { }
+Arduboy2Ext::Arduboy2Ext() : Arduboy2() { }
 
 void Arduboy2Ext::clearButtonState() {
 
