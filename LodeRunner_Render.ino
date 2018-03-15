@@ -24,8 +24,7 @@ void renderScreen() {
     }
 
     renderEnemies();
-
-    if (showArrows) renderArrows();
+    renderArrows();
 
   }
 
@@ -61,6 +60,7 @@ void renderLevelElements() {
       const auto ty = level.getYOffset() + (y * GRID_SIZE);
 
       if (tx > -GRID_SIZE && tx < 128 && ty > -GRID_SIZE && ty < 64) {
+
 
         LevelElement element = (LevelElement)level.getLevelData(x, y);
 
@@ -178,9 +178,21 @@ void renderEnemies() {
 
 
 // ------------------------------------------------------------------------------------------
-//  Render the arrows that indicate enemy and gold positions ..
+//  Render the arrows that indicate enemy positions ..
 //
 void renderArrows() {
+
+  renderArrows(true);
+  renderArrows(false);
+  
+}
+
+
+// ------------------------------------------------------------------------------------------
+//  Render the arrows that indicate enemy positions.  Render small arrows first followed by
+//  the larger ones.
+//
+void renderArrows(bool smallArrows) {
 
   int16_t px = player.getX() - level.getXOffset();
   int16_t py = player.getY() - level.getYOffset();
@@ -207,16 +219,19 @@ void renderArrows() {
 
         if (player.getX() - dx < -1) {
 
-          picX = 0;
-          picY = 0;
+          if (smallArrows && absDX > ARROW_SMALL_DIST_X_LEFT && absDY > ARROW_SMALL_DIST_Y_TOP) {
 
-          if (absDX > ARROW_SMALL_DIST_X_LEFT && absDY > ARROW_SMALL_DIST_Y_TOP) {
+            picX = 0;
+            picY = 0;
             
             image = arrow_TL_Sml;
             mask = arrow_TL_Sml_mask;
             
           }
-          else {
+          else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_LEFT && absDY <= ARROW_SMALL_DIST_Y_TOP) {
+
+            picX = 0;
+            picY = 0;
 
             image = arrow_TL;
             mask = arrow_TL_mask;
@@ -226,16 +241,19 @@ void renderArrows() {
         }
         else if (player.getX() - dx > 123) {
 
-          picX = 123;
-          picY = 0;
+          if (smallArrows && absDX > ARROW_SMALL_DIST_X_RIGHT && absDY > ARROW_SMALL_DIST_Y_TOP) {
 
-          if (absDX > ARROW_SMALL_DIST_X_RIGHT && absDY > ARROW_SMALL_DIST_Y_TOP) {
+            picX = 123;
+            picY = 0;
 
             image = arrow_TR_Sml;
             mask = arrow_TR_Sml_mask;
 
           }
-          else {
+          else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_RIGHT && absDY <= ARROW_SMALL_DIST_Y_TOP) {
+
+            picX = 123;
+            picY = 0;
 
             image = arrow_TR;
             mask = arrow_TR_mask;
@@ -245,16 +263,19 @@ void renderArrows() {
         }
         else {
 
-          picX = player.getX() - dx + 1;
-          picY = 0;
+          if (smallArrows && absDY > ARROW_SMALL_DIST_Y_TOP) {
 
-          if (absDY > ARROW_SMALL_DIST_Y_TOP) {
+            picX = player.getX() - dx + 1;
+            picY = 0;
 
             image = arrow_TM_Sml;
             mask = arrow_TM_Sml_mask;
 
           }
-          else {
+          else if (!smallArrows && absDY < ARROW_SMALL_DIST_Y_TOP) {
+
+            picX = player.getX() - dx + 1;
+            picY = 0;
 
             image = arrow_TM;
             mask = arrow_TM_mask;
@@ -269,16 +290,19 @@ void renderArrows() {
 
         if (player.getX() - dx < -1) {
 
-          picX = 0;
-          picY = 50;
+          if (smallArrows && absDX > ARROW_SMALL_DIST_X_LEFT && absDY > ARROW_SMALL_DIST_Y_BOTTOM) {
 
-          if (absDX > ARROW_SMALL_DIST_X_LEFT && absDY > ARROW_SMALL_DIST_Y_BOTTOM) {
+            picX = 0;
+            picY = 50;
 
             image = arrow_BL_Sml;
             mask = arrow_BL_Sml_mask;
 
           }
-          else {
+          else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_LEFT && absDY <= ARROW_SMALL_DIST_Y_BOTTOM) {
+
+            picX = 0;
+            picY = 50;
 
             image = arrow_BL;
             mask = arrow_BL_mask;
@@ -288,16 +312,19 @@ void renderArrows() {
         }
         else if (player.getX() - dx > 123) {
 
-          picX = 123;
-          picY = 50;
+          if (smallArrows && absDX > ARROW_SMALL_DIST_X_RIGHT && absDY > ARROW_SMALL_DIST_Y_BOTTOM) {
 
-          if (absDX > ARROW_SMALL_DIST_X_RIGHT && absDY > ARROW_SMALL_DIST_Y_BOTTOM) {
+            picX = 123;
+            picY = 50;
 
             image = arrow_BR_Sml;
             mask = arrow_BR_Sml_mask;
 
           }
-          else {
+          else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_RIGHT && absDY <= ARROW_SMALL_DIST_Y_BOTTOM) {
+
+            picX = 123;
+            picY = 50;
 
             image = arrow_BR;
             mask = arrow_BR_mask;
@@ -307,16 +334,19 @@ void renderArrows() {
         }
         else {
 
-          picX = player.getX() - dx + 1;
-          picY = 51;
+          if (smallArrows && absDY > ARROW_SMALL_DIST_Y_BOTTOM) {
 
-          if (absDY > ARROW_SMALL_DIST_Y_BOTTOM) {
+            picX = player.getX() - dx + 1;
+            picY = 51;
 
             image = arrow_BM_Sml;
             mask = arrow_BM_Sml_mask;
 
           }
-          else {
+          else if (!smallArrows && absDY <= ARROW_SMALL_DIST_Y_BOTTOM) {
+
+            picX = player.getX() - dx + 1;
+            picY = 51;
 
             image = arrow_BM;
             mask = arrow_BM_mask;
@@ -330,16 +360,19 @@ void renderArrows() {
 
         if (player.getX() - dx < -4) {
 
-          picX = 0;
-          picY = player.getY() - dy;
+          if (smallArrows && absDX > ARROW_SMALL_DIST_X_LEFT) {
 
-          if (absDX > ARROW_SMALL_DIST_X_LEFT) {
+            picX = 0;
+            picY = player.getY() - dy;
 
             image = arrow_ML_Sml;
             mask = arrow_ML_Sml_mask;
 
           }
-          else {
+          else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_LEFT) {
+
+            picX = 0;
+            picY = player.getY() - dy;
 
             image = arrow_ML;
             mask = arrow_ML_mask;
@@ -349,16 +382,19 @@ void renderArrows() {
         }
         else if (player.getX() - dx > 123) {
 
-          picX = 123;
-          picY = player.getY() - dy;
+          if (smallArrows && absDX > ARROW_SMALL_DIST_X_RIGHT) {
 
-          if (absDX > ARROW_SMALL_DIST_X_RIGHT) {
+            picX = 124;
+            picY = player.getY() - dy;
 
             image = arrow_MR_Sml;
             mask = arrow_MR_mask;
 
           }
-          else {           
+          else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_RIGHT) {           
+
+            picX = 124;
+            picY = player.getY() - dy;
 
             image = arrow_MR;
             mask = arrow_MR_mask;

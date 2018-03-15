@@ -13,9 +13,7 @@
 #include "src/characters/Enemy.h"
 
 Arduboy2Ext arduboy;
-#ifdef INC_SOUNDS
 ArduboyTones sound(arduboy.audio.enabled);
-#endif
 
 Player player;
 Enemy enemies[NUMBER_OF_ENEMIES];
@@ -24,13 +22,13 @@ Level level;
 
 
 bool flashPlayer = false;
-bool showArrows = true;
 
 GameState gameState = GameState::Intro;
 int8_t bannerStripe = -30;
 int8_t introRect = 0;
 Queue<Hole, 20> holes;
 
+uint8_t suicide = 0;
 uint8_t menuSelect = 0;
 #ifdef INC_LEVEL_SELECTOR
 uint8_t menuLevelSelect = LEVEL_OFFSET + 1;
@@ -54,10 +52,7 @@ void setup() {
   arduboy.systemButtons();
   arduboy.setFrameRate(25);
   arduboy.initRandomSeed();
-
-  #ifdef INC_SOUNDS
   arduboy.audio.begin();
-  #endif
 
   EEPROM_Utils::initEEPROM(false);
   EEPROM_Utils::getSavedGameData(&level, &player);
@@ -99,7 +94,6 @@ void loop() {
       while (!holes.isEmpty()) holes.dequeue();
       level.loadLevel(&player, enemies); 
       introRect = 28;
-      showArrows = EEPROM_Utils::getShowArrows();
       gameState = GameState::LevelEntryAnimation;
       /* break; Drop through to next case */
 
@@ -239,13 +233,10 @@ void GameSelect() {
 
   uint8_t menuOptionY = 24;
   uint8_t selectorY = 24;
-  uint8_t arrowY = 34;
-  uint8_t const * arrowImg = (EEPROM_Utils::getShowArrows() ? menuOptionShow : menuOptionHide);
   uint8_t const * menuOptionImg = menuOptionStart;
 
   if (firstTime) {
 
-    arrowY = 34;
     selectorY = 24 + (menuSelect * 5);
 
   }
@@ -253,13 +244,11 @@ void GameSelect() {
 
     menuOptionY = 19;
     menuOptionImg = menuOption;
-    arrowY = 39;
     selectorY= 19 + (menuSelect * 10);
 
   }
 
   arduboy.drawCompressedMirror(38, menuOptionY, menuOptionImg, WHITE, false);
-  arduboy.drawCompressedMirror(38, arrowY, arrowImg, WHITE, false);
   arduboy.drawCompressedMirror(31, selectorY, menuArrow, WHITE, false);
 
 
@@ -274,16 +263,10 @@ void GameSelect() {
 
   arduboy.display(CLEAR_BUFFER);
 
-  if (firstTime) {
-
-    if (arduboy.justPressed(UP_BUTTON) && menuSelect == 2)    { menuSelect = 0; }
-    if (arduboy.justPressed(DOWN_BUTTON) && menuSelect == 0)  { menuSelect = 2; }
-
-  }
-  else {
+  if (!firstTime) {
 
     if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)     { menuSelect--; }
-    if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)   { menuSelect++; }
+    if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 1)   { menuSelect++; }
 
   }
 
@@ -291,7 +274,6 @@ void GameSelect() {
     
     if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); gameState = GameState::LevelInit; }
     if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); gameState = GameState::LevelInit; }
-    if (menuSelect == 2) { EEPROM_Utils::setShowArrows(!EEPROM_Utils::getShowArrows()); }
      
   }
 
@@ -311,11 +293,12 @@ void LevelPlay() {
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
 
+  uint8_t nearestX = getNearestX();
+  uint8_t nearestY = getNearestY();
+
 
   if (gameState == GameState::LevelPlay) {
 
-    uint8_t nearestX = getNearestX();
-    uint8_t nearestY = getNearestY();
     LevelElement nearest = level.getLevelData(nearestX, nearestY);
 
 
@@ -431,9 +414,7 @@ void LevelPlay() {
         player.setNextState(GameState::NextLevel);
       }
 
-      #ifdef INC_SOUNDS
       sound.tones(levelComplete); 
-      #endif
 
     } 
 
@@ -557,7 +538,7 @@ void LevelPlay() {
 
               // What about the player ?
 
-              if ( (hole.x * GRID_SIZE) == (player.getX() - level.getXOffset()) && (hole.y * GRID_SIZE) == (player.getY() - level.getYOffset()) ) {
+              if ( hole.x == nearestX && hole.y == nearestY ) {
 
                   playerDies();
 
@@ -665,9 +646,7 @@ void playerDies() {
 
   }
 
-  #ifdef INC_SOUNDS
   sound.tones(dead); 
-  #endif
 
 }
 

@@ -14,7 +14,6 @@
 #define EEPROM_LEVEL_NO_ORIG          EEPROM_START + 8
 #define EEPROM_MEN_LEFT_ORIG          EEPROM_START + 9
 #define EEPROM_SCORE_ORIG             EEPROM_START + 10
-#define EEPROM_ARROWS                 EEPROM_START + 12
 
 
 class EEPROM_Utils {
@@ -27,14 +26,11 @@ class EEPROM_Utils {
     static uint8_t getGameNumber();
     static uint8_t getLevelNumber();
     static uint8_t getMen();
-    static bool getShowArrows();
     static void saveLevelNumber(uint8_t levelNumber);
 
     static void getSavedGameData(Level *level, Player *player);
     static void saveGameData(Level *level, Player *player);
     static void setGameNumber(uint8_t val);
-    static void setShowArrows(bool val);
-
 
 };
 
@@ -61,7 +57,6 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
       EEPROM.update(EEPROM_GAME_NO, 1);
       EEPROM.update(EEPROM_LEVEL_NO, 1);
       EEPROM.update(EEPROM_MEN_LEFT, 5);
-      EEPROM.update(EEPROM_ARROWS, 1);
       EEPROM.put(EEPROM_SCORE, score);
 
       EEPROM.update(EEPROM_GAME_NO_ORIG, 1);
@@ -94,16 +89,6 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
 uint8_t EEPROM_Utils::getGameNumber() {
 
   return EEPROM.read(EEPROM_GAME_NO);
-
-}
-
-
-/* -----------------------------------------------------------------------------
- *   Show enemy arrows? 
- */
-bool EEPROM_Utils::getShowArrows() {
-
-  return EEPROM.read(EEPROM_ARROWS) == 1;
 
 }
 
@@ -175,15 +160,5 @@ void EEPROM_Utils::setGameNumber(uint8_t val) {
 
   EEPROM.update(EEPROM_GAME_NO, val);
   EEPROM.update(EEPROM_GAME_NO_ORIG, val);
-
-}
-
-
-/* -----------------------------------------------------------------------------
- *   Save 'show arrows' setting.
- */
-void EEPROM_Utils::setShowArrows(bool val) {
-
-  EEPROM.update(EEPROM_ARROWS, (val ? 1 : 0));
 
 }

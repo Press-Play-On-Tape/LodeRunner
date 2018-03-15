@@ -35,10 +35,30 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     player.setScore(player.getScore() + 25);
     level.setLevelData(nearestX, nearestY, LevelElement::Blank);
     level.pickupGold();
-
-    #ifdef INC_SOUNDS
     sound.tones(pickUpGold);
-    #endif
+
+  }
+
+
+  // Commit suicide?
+
+  if (arduboy.pressed(A_BUTTON) && arduboy.pressed(B_BUTTON)) {
+
+    suicide++;
+
+    switch (suicide) {
+
+      case 21 ... 60:
+        arduboy.digitalWriteRGB(RED_LED, suicide % 6 < 3 ? RGB_ON : RGB_OFF);
+        break;
+
+      case 61:
+        arduboy.digitalWriteRGB(RED_LED, RGB_OFF);
+        playerDies();
+        suicide = 0;
+        return;
+
+    }
 
   }
 
@@ -64,11 +84,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         holes.enqueue(hole);
 
         arduboy.pollButtons();
-
-        #ifdef INC_SOUNDS
         sound.tones(digAHole);
-        #endif
-
         return;
 
       }
@@ -99,11 +115,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         holes.enqueue(hole);
 
         arduboy.pollButtons();
-
-        #ifdef INC_SOUNDS
         sound.tones(digAHole);
-        #endif
-
         return;
 
       }
@@ -141,10 +153,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         moveRight = false;
         moveDown = false;
         player.setStance(PlayerStance::StandingStill);
-
-        #ifdef INC_SOUNDS
         sound.noTone();
-        #endif
 
       }
       
@@ -196,10 +205,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         player.setStance(PlayerStance::Falling);
         moveRight = false;
         moveDown = true;
-
-        #ifdef INC_SOUNDS
         sound.tones(freeFalling);   
-        #endif
 
       }
       else if (!canBeOccupied(right) && canBeStoodOn_XY1) {  
@@ -274,10 +280,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           updatePlayerStance(PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);
           moveRight = true;
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         else {
@@ -302,10 +305,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           player.setStance(PlayerStance::Falling);        
           moveRight = true;
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         else {
@@ -378,10 +378,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         moveLeft = false;
         moveDown = false;
         player.setStance(PlayerStance::StandingStill);
-
-        #ifdef INC_SOUNDS
         sound.noTone();
-        #endif
 
       }
       
@@ -430,11 +427,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       else if (inCell_X && canBeFallenInto(down, enemies, nearestX, nearestY + 1)) {
 
         player.setStance(PlayerStance::Falling);
-
-        #ifdef INC_SOUNDS
         sound.tones(freeFalling); 
-        #endif
-
         moveLeft = false;
         moveDown = true;
 
@@ -520,10 +513,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           updatePlayerStance(PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);
           moveLeft = true;
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         else {
@@ -540,10 +530,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
           player.setStance(PlayerStance::Falling);        
           moveLeft = true;
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         else {
@@ -611,20 +598,14 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
           player.setStance(PlayerStance::Swinging_Right1);
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         else if (canBeStoodOn(down, enemies, nearestX, nearestY + 1)) {
 
           moveDown = false;
           player.setStance(PlayerStance::StandingStill);
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
           
         } 
 
@@ -636,10 +617,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
           moveUp = false;
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         else {
@@ -652,6 +630,8 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       default:
 
+        sound.noTone();
+
         if (inCellX(4)) {
 
           if (nearest == LevelElement::Ladder && !isSolid(up)) {
@@ -661,19 +641,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
             moveUp = true;
             moveDown = false;
 
-            #ifdef INC_SOUNDS
-            sound.noTone();
-            #endif
-
           }
           else {
 
             moveUp = false;
             moveDown = false;
-
-            #ifdef INC_SOUNDS
-            sound.noTone();
-            #endif
 
           }
 
@@ -682,10 +654,6 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
           moveUp = false;
           moveDown = false;
-
-          #ifdef INC_SOUNDS
-          sound.noTone();
-          #endif
 
         }
 
@@ -740,19 +708,14 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
           player.setStance(PlayerStance::Swinging_Right1);
           moveDown = false;
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
 
         else if (inCellY() && current >= LevelElement::Brick_Close_1 && current <= LevelElement::Brick_Close_4) {
 
           moveDown = false;
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
 
@@ -760,10 +723,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
           moveDown = false;
           player.setStance(PlayerStance::StandingStill);
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }          
 
@@ -789,10 +749,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
           moveDown = false;
           player.setStance(PlayerStance::StandingStill);
-
-          #ifdef INC_SOUNDS
           sound.noTone();
-          #endif
 
         }
         

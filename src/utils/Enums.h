@@ -20,7 +20,6 @@
 
 
 #define _INC_LEVEL_SELECTOR
-#define INC_SOUNDS
 
 #define ARROW_SMALL_DIST_X_LEFT       20
 #define ARROW_SMALL_DIST_X_RIGHT      10

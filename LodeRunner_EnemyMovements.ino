@@ -293,11 +293,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
                 case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
                   enemy->setEscapeHole(EscapeHole::WaitMax);
-
-                  #ifdef INC_SOUNDS
                   sound.tones(enemyFallsIn);
-                  #endif
-
                   break;
                 
                 default:  break;
@@ -425,11 +421,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, Direction di
 
                 case LevelElement::Brick_1 ... LevelElement::Brick_Close_4:
                   enemy->setEscapeHole(EscapeHole::WaitMax);
-
-                  #ifdef INC_SOUNDS
                   sound.tones(enemyFallsIn);
-                  #endif
-
                   break;
                 
                 default:  break;
