@@ -290,17 +290,17 @@ inline Direction operator--( Direction & c, int ) {
 
 inline bool operator<(const Direction  lhs, const Direction  rhs)  { 
 
-  return (abs((uint8_t)lhs - (uint8_t)rhs) < 8 ? (uint8_t)lhs - (uint8_t)rhs : (uint8_t)lhs - (16 + (uint8_t)rhs)) < 0; 
+  return (abs(static_cast<uint8_t>(lhs) - static_cast<uint8_t>(rhs)) < 8 ? static_cast<uint8_t>(lhs) - static_cast<uint8_t>(rhs) : static_cast<uint8_t>(lhs) - (16 + static_cast<uint8_t>(rhs))) < 0; 
   
 } 
 
 inline bool operator>(const Direction  lhs, const Direction  rhs)  { 
     
-  return (abs((uint8_t)lhs - (uint8_t)rhs) < 8 ? (uint8_t)lhs - (uint8_t)rhs : (16 + (uint8_t)lhs) - (uint8_t)rhs) > 0;
+  return (abs(static_cast<uint8_t>(lhs) - static_cast<uint8_t>(rhs)) < 8 ? static_cast<uint8_t>(lhs) - static_cast<uint8_t>(rhs) : (16 + static_cast<uint8_t>(lhs)) - static_cast<uint8_t>(rhs)) > 0;
  
 } 
 
-inline bool operator==(const Direction lhs, const Direction rhs)   { return (uint8_t)lhs == (uint8_t)rhs; }
+inline bool operator==(const Direction lhs, const Direction rhs)   { return static_cast<uint8_t>(lhs) == static_cast<uint8_t>(rhs); }
 inline bool operator!=(const Direction lhs, const Direction rhs)   { return !operator == (lhs,rhs); }
 inline bool operator<=(const Direction lhs, const Direction rhs)   { return !operator >  (lhs,rhs); }
 inline bool operator>=(const Direction lhs, const Direction rhs)   { return !operator <  (lhs,rhs); }
