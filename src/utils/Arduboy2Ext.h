@@ -2,7 +2,7 @@
 
 #include <Arduboy2.h>
 
-class Arduboy2Ext : public Arduboy2Base {
+class Arduboy2Ext : public Arduboy2/*Base*/ {
 
   public:
 

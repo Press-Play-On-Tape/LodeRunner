@@ -314,6 +314,26 @@ boolean canBeOccupied_Enemy(LevelElement levelElement) {
 
 }
 
+
+// ---------------------------------------------------------------------------------
+// Can a falling enemy continue to fall ?  Should stop if they have fallen into a dug hole.
+//
+boolean canContinueToFall_Enemy(LevelElement levelElement) {
+
+  switch (levelElement) {
+
+    case LevelElement::Blank:
+    case LevelElement::FallThrough:
+      return true;
+
+    default:
+      return false;
+
+  }
+
+}
+
+
 // ---------------------------------------------------------------------------------
 // Can the space be fallen into by the enemy ?
 //

@@ -229,26 +229,27 @@ void GameSelect() {
 
   #ifndef INC_LEVEL_SELECTOR
 
-  bool firstTime = EEPROM_Utils::getMen() == 5 && EEPROM_Utils::getLevelNumber() == 1;
+  //bool firstTime = EEPROM_Utils::getMen() == 5 && EEPROM_Utils::getLevelNumber() == 1;
 
   uint8_t menuOptionY = 24;
   uint8_t selectorY = 24;
-  uint8_t const * menuOptionImg = menuOptionStart;
+  //uint8_t const * menuOptionImg = menuOptionStart;
 
-  if (firstTime) {
+  // if (firstTime) {
 
-    selectorY = 24 + (menuSelect * 5);
+  //   selectorY = 24 + (menuSelect * 5);
 
-  }
-  else {
+  // }
+  // else {
 
     menuOptionY = 19;
-    menuOptionImg = menuOption;
+//    menuOptionImg = menuOption;
     selectorY= 19 + (menuSelect * 10);
 
-  }
+  //}
 
-  arduboy.drawCompressedMirror(38, menuOptionY, menuOptionImg, WHITE, false);
+//  arduboy.drawCompressedMirror(38, menuOptionY, menuOptionImg, WHITE, false);
+  arduboy.drawCompressedMirror(38, menuOptionY, menuOption, WHITE, false);
   arduboy.drawCompressedMirror(31, selectorY, menuArrow, WHITE, false);
 
 
@@ -263,12 +264,12 @@ void GameSelect() {
 
   arduboy.display(CLEAR_BUFFER);
 
-  if (!firstTime) {
+  // if (!firstTime) {
 
     if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)     { menuSelect--; }
     if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 1)   { menuSelect++; }
 
-  }
+  // }
 
   if (arduboy.justPressed(A_BUTTON)) {
     
