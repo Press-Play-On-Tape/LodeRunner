@@ -338,6 +338,7 @@ void LevelPlay() {
   if (gameState == GameState::LevelPlay) {
 
 
+
     // Update player stance ..
 
     if (arduboy.everyXFrames(2)) {
@@ -357,21 +358,22 @@ void LevelPlay() {
       for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
         Enemy *enemy = &enemies[x];
+        PlayerStance stance = enemy->getStance();
 
         if (enemy->getEnabled() && enemy->getEscapeHole() == EscapeHole::None) {
 
-          switch (enemy->getStance()) {
+          switch (stance) {
 
             case PlayerStance::Rebirth_1 ... PlayerStance::Rebirth_3:
               
-              enemy->setStance(getNextStance(enemy->getStance()));
+              enemy->setStance(getNextStance(stance));
               break;
 
             default:
               
               if (enemy->getXDelta() != 0 || enemy->getYDelta() != 0) {
 
-                enemy->setStance(getNextStance(enemy->getStance()));
+                enemy->setStance(getNextStance(stance));
 
               }
 
