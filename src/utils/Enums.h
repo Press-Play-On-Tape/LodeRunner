@@ -26,7 +26,7 @@
 #define ARROW_SMALL_DIST_Y_TOP        20
 #define ARROW_SMALL_DIST_Y_BOTTOM     10
 
-#define HOLE_LENGTH                   175
+#define HOLE_REFILL_TIME              220
 #define HOLE_FILL_1                   8
 #define HOLE_FILL_2                   16
 #define HOLE_FILL_3                   24
@@ -34,6 +34,7 @@
 
 #define HEIGHT_LESS_TOOLBAR           56
 #define NUMBER_OF_ENEMIES             6
+#define NUMBER_OF_REENTRY_POINTS      4
 #define GRID_SIZE                     10
 #define HALF_GRID_SIZE                (GRID_SIZE / 2)
 

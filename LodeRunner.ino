@@ -524,8 +524,9 @@ void LevelPlay() {
 
                 if (enemy->getEnabled() && (hole.x * GRID_SIZE) == enemy->getX() && (hole.y * GRID_SIZE) == enemy->getY()) {
 
-                  enemy->setX(enemy->getXRebirth() * GRID_SIZE);
-                  enemy->setY(enemy->getYRebirth() * GRID_SIZE);
+                  LevelPoint reentryPoint = level.getNextReentryPoint();
+                  enemy->setX(reentryPoint.x * GRID_SIZE);
+                  enemy->setY(reentryPoint.y * GRID_SIZE);
                   enemy->setStance( PlayerStance::Rebirth_1);
                   enemy->setEscapeHole(EscapeHole::None);
                   enemy->setXDelta(0);

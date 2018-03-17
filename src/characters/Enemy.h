@@ -17,8 +17,6 @@ class Enemy {
     int8_t getYDelta();
     int8_t getXFuturePosition();
     int8_t getYFuturePosition();
-    uint8_t getXRebirth();
-    uint8_t getYRebirth();
     bool getEnabled();
     uint8_t getHasGold();
     PlayerStance getStance();
@@ -31,8 +29,6 @@ class Enemy {
     void setYDelta(int8_t val);
     void setXFuturePosition(int8_t val);
     void setYFuturePosition(int8_t val);
-    void setXRebirth(uint8_t val);
-    void setYRebirth(uint8_t val);
     void setEnabled(bool val);
     void setHasGold(uint8_t val);
     void setStance(const PlayerStance val);
@@ -47,8 +43,6 @@ class Enemy {
   int8_t _xDelta;
   int8_t _yDelta;
   uint8_t _hasGold;
-  uint8_t _xRebirth;
-  uint8_t _yRebirth;
 
   PlayerStance _stance;
   EscapeHole _escapeHole;
@@ -85,13 +79,6 @@ int8_t Enemy::getYFuturePosition() {
   return (_futurePosition & 0xF0) >> 4;
 }
 
-uint8_t Enemy::getXRebirth() {
-  return _xRebirth;
-}
-
-uint8_t Enemy::getYRebirth() {
-  return _yRebirth;
-}
 bool Enemy::getEnabled() {
   return (_flags & 0x10) == 0x10;
 }
@@ -134,14 +121,6 @@ void Enemy::setXFuturePosition(int8_t val) {
 
 void Enemy::setYFuturePosition(int8_t val) {
   _futurePosition = (_futurePosition & 0x0f) | (val << 4);
-}
-
-void Enemy::setXRebirth(uint8_t val) {
-  _xRebirth = val;
-}
-
-void Enemy::setYRebirth(uint8_t val) {
-  _yRebirth = val;
 }
 
 void Enemy::setEnabled(bool val) {

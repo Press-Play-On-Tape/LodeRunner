@@ -80,7 +80,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         level.setXOffsetDelta(0);
 
         level.setLevelData(nearestX - 1, nearestY + 1, LevelElement::Brick_1);
-        Hole hole = {static_cast<uint8_t>(nearestX - 1), static_cast<uint8_t>(nearestY + 1), HOLE_LENGTH};
+        Hole hole = {static_cast<uint8_t>(nearestX - 1), static_cast<uint8_t>(nearestY + 1), HOLE_REFILL_TIME};
         holes.enqueue(hole);
 
         arduboy.pollButtons();
@@ -111,7 +111,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         level.setXOffsetDelta(0);
 
         level.setLevelData(nearestX + 1, nearestY + 1, LevelElement::Brick_1);
-        Hole hole = {static_cast<uint8_t>(nearestX + 1), static_cast<uint8_t>(nearestY + 1), 100};
+        Hole hole = {static_cast<uint8_t>(nearestX + 1), static_cast<uint8_t>(nearestY + 1), HOLE_REFILL_TIME};
         holes.enqueue(hole);
 
         arduboy.pollButtons();

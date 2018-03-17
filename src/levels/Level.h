@@ -30,6 +30,7 @@ class Level {
     uint8_t getGoldLeft();
     uint8_t getLevelLadderElementCount();
     LevelPoint getLevelLadderElement(const uint8_t index);
+    LevelPoint getNextReentryPoint();
     
     void setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement);
     void setXOffset(int16_t val);
@@ -53,7 +54,10 @@ class Level {
     uint8_t _goldLeft;
 
     uint8_t _levelLadderElementCount;
+    uint8_t _reentryPointIndex;
+
     LevelPoint _levelLadder[18];
+    LevelPoint _reentryPoint[4];
 
 };
 
@@ -120,9 +124,12 @@ void Level::setGoldLeft(uint8_t val) {
 }
 
 LevelPoint Level::getLevelLadderElement(const uint8_t index) {
-
   return _levelLadder[index];
+}
 
+LevelPoint Level::getNextReentryPoint() {
+  return _reentryPoint[_reentryPointIndex];
+  _reentryPointIndex = (_reentryPointIndex == 3 ? 0 : _reentryPointIndex + 1);
 }
 
 
@@ -208,10 +215,8 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     if (x  < numberOfEnemies) {
 
-      enemy->setXRebirth(pgm_read_byte(&levelToLoad[dataOffset++]));
-      enemy->setYRebirth(pgm_read_byte(&levelToLoad[dataOffset++]));
-      enemy->setX(enemy->getXRebirth() * GRID_SIZE);
-      enemy->setY(enemy->getYRebirth() * GRID_SIZE);
+      enemy->setX(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
+      enemy->setY(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
       enemy->setEnabled(true);
 
     }
@@ -234,6 +239,19 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
     _levelLadder[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
 
   }
+
+
+  // Load level ladder points ..
+
+  for (uint8_t x = 0; x < NUMBER_OF_REENTRY_POINTS; x++) {
+
+    _reentryPoint[x].x = pgm_read_byte(&levelToLoad[dataOffset++]);
+    _reentryPoint[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
+
+  }
+
+
+  // Load level data .. 
 
   uint8_t encryptionType = pgm_read_byte(&levelToLoad[dataOffset++]);
   
@@ -327,7 +345,7 @@ LevelElement Level::getLevelData(const uint8_t x, const uint8_t y) {
 
   if ((x / 2) >= _width) return LevelElement::Brick;
   if (y == 255) return LevelElement::Blank;
-  if (y >= _height) return LevelElement::Brick;
+  if (y >= _height) return LevelElement::Solid;
 
   if (x % 2 == 0) {
 
