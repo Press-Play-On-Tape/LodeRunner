@@ -388,7 +388,7 @@ void renderArrows(bool smallArrows) {
             picY = player.getY() - dy;
 
             image = arrow_MR_Sml;
-            mask = arrow_MR_mask;
+            mask = arrow_MR_Sml_mask;
 
           }
           else if (!smallArrows && absDX <= ARROW_SMALL_DIST_X_RIGHT) {           
