@@ -49,11 +49,11 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
     switch (suicide) {
 
       case 21 ... 60:
-        arduboy.digitalWriteRGB(RED_LED, suicide % 6 < 3 ? RGB_ON : RGB_OFF);
+        arduboy.setRGBled(128 - (suicide * 2), 0, 0);
         break;
 
       case 61:
-        arduboy.digitalWriteRGB(RED_LED, RGB_OFF);
+        arduboy.setRGBled(0, 0, 0);
         playerDies();
         suicide = 0;
         return;
