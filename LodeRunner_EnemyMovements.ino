@@ -270,7 +270,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
         bool canBeFallenInto_Down = canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1);
         bool canBeFallenInto_RightDown = canBeFallenInto_Enemy(rightDown, enemies, enemyX + 1, enemyY + 1);
         bool canBeOccupied_Right = canBeOccupied_Enemy(right);
-        bool canBeStoodOn_RightDown = canBeStoodOnBasic_Enemy(rightDown);
+        bool canBeStoodOn_RightDown = canBeStoodOn_Enemy(rightDown);
 
         if (right == LevelElement::Rail && notOccupiedByAnotherEnemy_Right) {
 
@@ -383,7 +383,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
         bool canBeFallenInto_Down = canBeFallenInto_Enemy(down, enemies, enemyX, enemyY + 1);
         bool canBeFallenInto_LeftDown = canBeFallenInto_Enemy(leftDown, enemies, enemyX - 1, enemyY + 1);
         bool canBeOccupied_Left = canBeOccupied_Enemy(left);
-        bool canBeStoodOn_LeftDown = canBeStoodOnBasic_Enemy(leftDown);
+        bool canBeStoodOn_LeftDown = canBeStoodOn_Enemy(leftDown);
 
         if (left == LevelElement::Rail && notOccupiedByAnotherEnemy_Left) {
 

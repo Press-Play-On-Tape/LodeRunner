@@ -598,9 +598,6 @@ void LevelPlay() {
           break;
 
         case GameState::NextLevel:
-          gameState = GameState::LevelInit;  
-          break;
-
         case GameState::RestartLevel:
           gameState = GameState::LevelInit;  
           break;
@@ -625,6 +622,10 @@ void LevelPlay() {
   }
 
 
+  // Show level clear indicator?
+
+  arduboy.setRGBled(0, (flashPlayer && level.getGoldLeft() == 0 && gameState == GameState::LevelPlay ? 32 : 0), 0);
+
   arduboy.display(CLEAR_BUFFER);
 
 }
@@ -636,16 +637,15 @@ void LevelPlay() {
 void playerDies() {
 
   player.setMen(player.getMen() - 1);
+  gameState = GameState::LevelExitInit;
 
   if (player.getMen() > 0) {
 
-    gameState = GameState::LevelExitInit;
     player.setNextState(GameState::RestartLevel);
 
   }
   else {
 
-    gameState = GameState::LevelExitInit;
     player.setNextState(GameState::GameOver);
 
   }
