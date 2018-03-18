@@ -172,6 +172,8 @@ void renderEnemies() {
 }
 
 
+#ifdef TWO_ARROW_SIZES
+
 // ------------------------------------------------------------------------------------------
 //  Render the arrows that indicate enemy positions ..
 //
@@ -413,6 +415,130 @@ void renderArrows(bool smallArrows) {
 
 }
 
+#endif
+
+#ifndef TWO_ARROW_SIZES
+
+void renderArrows() {
+
+  int16_t px = player.getX() - level.getXOffset();
+  int16_t py = player.getY() - level.getYOffset();
+
+  for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+    Enemy *enemy = &enemies[x];
+
+    if (enemy->getEnabled()) {
+
+      int16_t dx = px - enemy->getX();
+      int16_t dy = py - enemy->getY();
+
+      uint8_t picX = 255;
+      uint8_t picY = 155;
+
+      uint8_t const * mask = arrow_TL_mask;
+      uint8_t const * image = arrow_TL;
+      
+      if (player.getY() - dy < -9) {
+
+        if (player.getX() - dx < -1) {
+
+          picX = 0;
+          picY = 0;
+          
+          image = arrow_TL_Sml;
+          mask = arrow_TL_Sml_mask;
+          
+        }
+        else if (player.getX() - dx > 123) {
+
+          picX = 123;
+          picY = 0;
+
+          image = arrow_TR_Sml;
+          mask = arrow_TR_Sml_mask;
+
+        }
+        else {
+
+          picX = player.getX() - dx + 1;
+          picY = 0;
+
+          image = arrow_TM_Sml;
+          mask = arrow_TM_Sml_mask;
+
+        }
+
+      }
+
+      else if (player.getY() - dy > 52) { 
+
+        if (player.getX() - dx < -1) {
+
+          picX = 0;
+          picY = 50;
+
+          image = arrow_BL_Sml;
+          mask = arrow_BL_Sml_mask;
+          
+        }
+        else if (player.getX() - dx > 123) {
+
+          picX = 123;
+          picY = 50;
+
+          image = arrow_BR_Sml;
+          mask = arrow_BR_Sml_mask;
+
+        }
+        else {
+
+          picX = player.getX() - dx + 1;
+          picY = 51;
+
+          image = arrow_BM_Sml;
+          mask = arrow_BM_Sml_mask;
+
+        }
+
+      }
+      else {
+
+        if (player.getX() - dx < -4) {
+
+          picX = 0;
+          picY = player.getY() - dy;
+
+          image = arrow_ML_Sml;
+          mask = arrow_ML_Sml_mask;
+          
+        }
+        else if (player.getX() - dx > 123) {
+
+          picX = 124;
+          picY = player.getY() - dy;
+
+          image = arrow_MR_Sml;
+          mask = arrow_MR_Sml_mask;
+
+        }
+
+      }
+
+      if (picX != 255) {
+
+        arduboy.drawCompressedMirror(picX, picY, mask, BLACK, false);
+        arduboy.drawCompressedMirror(picX, picY, image, WHITE, false);
+
+      }
+
+    }
+
+  }
+
+}
+
+#endif
 
 // ------------------------------------------------------------------------------------------
 //  Render the entry / exit rectangle ..

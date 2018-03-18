@@ -18,7 +18,7 @@
   #define LEVEL_OFFSET                100
 #endif
 
-
+#define _TWO_ARROW_SIZES
 #define _INC_LEVEL_SELECTOR
 
 #define ARROW_SMALL_DIST_X_LEFT       20
