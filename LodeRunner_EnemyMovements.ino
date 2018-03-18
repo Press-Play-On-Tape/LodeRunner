@@ -2,6 +2,14 @@
 #include <ArduboyTones.h>
 #include "src/images/sounds.h"
 
+
+// ------------------------------------------------------------------------------------------
+//  Clear the 'Future Position' values for each enemy prior to mving them ..
+//
+//  The future positions are stored against the enemy to be able to plan the movement of all 
+//  enemies
+// ------------------------------------------------------------------------------------------
+
 void clearEnemyMovementPositions(Enemy *enemies) {
   
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -13,6 +21,11 @@ void clearEnemyMovementPositions(Enemy *enemies) {
   }
   
 }
+
+
+// ------------------------------------------------------------------------------------------
+//  Move an enemy ..
+// ------------------------------------------------------------------------------------------
 
 void enemyMovements(Enemy *enemy) {
 
@@ -212,6 +225,11 @@ void enemyMovements(Enemy *enemy) {
 
 }
 
+
+// ------------------------------------------------------------------------------------------
+//  Can the *enemy move into the nominated cell or is it occupied by others ?
+// ------------------------------------------------------------------------------------------
+
 boolean isOccupiedByAnotherEnemy(Enemy *enemies, Enemy *enemy, int8_t xDelta, int8_t yDelta) {
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -236,6 +254,11 @@ boolean isOccupiedByAnotherEnemy(Enemy *enemies, Enemy *enemy, int8_t xDelta, in
   return false;
 
 }
+
+
+// ------------------------------------------------------------------------------------------
+//  Attempt to move in the nominated direction ..
+// ------------------------------------------------------------------------------------------
 
 boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY, 
                       Direction direction, 
@@ -460,6 +483,10 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 }
 
 
+// ------------------------------------------------------------------------------------------
+//  If a player has just exitted a hole then try to move away from it ..
+// ------------------------------------------------------------------------------------------
+
 void setDirectionAfterHoleEscape(Enemy *enemy) {
 
   uint8_t enemyX = enemy->getX() / GRID_SIZE;
@@ -504,6 +531,11 @@ void setDirectionAfterHoleEscape(Enemy *enemy) {
   }
 
 }
+
+
+// ------------------------------------------------------------------------------------------
+//  Move the enemy .. if the randomMoves flag is set, then pick a distance to travel.
+// ------------------------------------------------------------------------------------------
 
 void move(Enemy *enemy, int8_t x, int8_t y, bool randomMoves) {
 

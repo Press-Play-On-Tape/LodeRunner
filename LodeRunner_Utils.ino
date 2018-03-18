@@ -1,6 +1,7 @@
 #include "src/utils/Arduboy2Ext.h"
 #include <ArduboyTones.h>
 
+
 uint8_t getNearestX(int8_t margin) {
 
   return (player.getX() - level.getXOffset() + margin) / GRID_SIZE;
@@ -159,6 +160,3 @@ Direction getDirection_16Directions(int16_t xDiff, int16_t yDiff) {
   return Direction::Up;       // Default, should never get here!
 
 }
-
-#define THRESHOLD 4
-
