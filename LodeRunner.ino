@@ -148,7 +148,7 @@ void Intro() {
   arduboy.pollButtons();
 
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
-  if (arduboy.justPressed(A_BUTTON))  { gameState = GameState::GameSelect; }
+  if (arduboy.justPressedButtons() & A_BUTTON)  { gameState = GameState::GameSelect; }
 
   arduboy.display(CLEAR_BUFFER);
 
@@ -204,18 +204,19 @@ void GameSelect() {
   // Selector control ..
 
   arduboy.display(CLEAR_BUFFER);
+  uint8_t buttons = arduboy.justPressedButtons();
 
-  if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)                                         { menuSelect--; }
-  if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 2)                                       { menuSelect++; }
+  if ((buttons & UP_BUTTON) && menuSelect > 0)                                         { menuSelect--; }
+  if ((buttons & DOWN_BUTTON) && menuSelect < 2)                                       { menuSelect++; }
 
   if (menuSelect == 2) {
   
-    if (arduboy.justPressed(LEFT_BUTTON) && menuLevelSelect > LEVEL_OFFSET + 1)                 { menuLevelSelect--; }
-    if (arduboy.justPressed(RIGHT_BUTTON) && menuLevelSelect < LEVEL_OFFSET + LEVEL_COUNT)      { menuLevelSelect++; }
+    if ((buttons & LEFT_BUTTON) && menuLevelSelect > LEVEL_OFFSET + 1)                 { menuLevelSelect--; }
+    if ((buttons & RIGHT_BUTTON) && menuLevelSelect < LEVEL_OFFSET + LEVEL_COUNT)      { menuLevelSelect++; }
 
   }
 
-  if (arduboy.justPressed(A_BUTTON)) {
+  if (buttons & A_BUTTON)) {
     
     if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); }
     if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); }
@@ -263,15 +264,16 @@ void GameSelect() {
   }
 
   arduboy.display(CLEAR_BUFFER);
+  uint8_t buttons = arduboy.justPressedButtons();
 
   // if (!firstTime) {
 
-    if (arduboy.justPressed(UP_BUTTON) && menuSelect > 0)     { menuSelect--; }
-    if (arduboy.justPressed(DOWN_BUTTON) && menuSelect < 1)   { menuSelect++; }
+    if ((buttons & UP_BUTTON) && menuSelect > 0)     { menuSelect--; }
+    if ((buttons & DOWN_BUTTON) && menuSelect < 1)   { menuSelect++; }
 
   // }
 
-  if (arduboy.justPressed(A_BUTTON)) {
+  if (buttons & A_BUTTON) {
     
     if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); gameState = GameState::LevelInit; }
     if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); gameState = GameState::LevelInit; }
@@ -589,8 +591,11 @@ void LevelPlay() {
 
     // We are not playing so wait for a key press to continue the game ..
 
-    if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON) || arduboy.justPressed(UP_BUTTON) || 
-        arduboy.justPressed(RIGHT_BUTTON) || arduboy.justPressed(DOWN_BUTTON) || arduboy.justPressed(LEFT_BUTTON)) { 
+    uint8_t buttons = arduboy.justPressedButtons();
+
+//    if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON) || arduboy.justPressed(UP_BUTTON) || 
+//        arduboy.justPressed(RIGHT_BUTTON) || arduboy.justPressed(DOWN_BUTTON) || arduboy.justPressed(LEFT_BUTTON)) { 
+    if (buttons > 0) { 
 
       switch (gameState) {
 
@@ -624,7 +629,9 @@ void LevelPlay() {
 
   // Show level clear indicator?
 
-  arduboy.setRGBled(0, (flashPlayer && level.getGoldLeft() == 0 && gameState == GameState::LevelPlay ? 32 : 0), 0);
+  if (suicide == 0) {
+    arduboy.setRGBled(0, (flashPlayer && level.getGoldLeft() == 0 && gameState == GameState::LevelPlay ? 32 : 0), 0);
+  }
 
   arduboy.display(CLEAR_BUFFER);
 

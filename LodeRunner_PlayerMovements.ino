@@ -12,6 +12,9 @@ void stopPlayer() {
 }
 
 void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
+  
+  uint8_t justPressed =   arduboy.justPressedButtons();
+  uint8_t pressed =       arduboy.pressedButtons();
 
 
   // Stop the players running ahead ..
@@ -42,7 +45,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
   // Commit suicide?
 
-  if (arduboy.pressed(A_BUTTON) && arduboy.pressed(B_BUTTON)) {
+  if ((pressed & A_BUTTON) && (pressed & B_BUTTON)) {
 
     suicide++;
 
@@ -65,7 +68,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
   // Burn to the left .. 
 
-  if (arduboy.justPressed(A_BUTTON) && !arduboy.justPressed(B_BUTTON)) {
+  if ((justPressed & A_BUTTON) && !(justPressed & B_BUTTON)) {
 
     if (inCellY()) {
 
@@ -96,7 +99,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
   // Burn to the right .. 
 
-  else if (arduboy.justPressed(B_BUTTON) && !arduboy.justPressed(A_BUTTON)) {
+  else if ((justPressed & B_BUTTON) && !(justPressed & A_BUTTON)) {
 
     if (inCellY()) {
 
@@ -128,8 +131,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   // ------------------------------------------------------------------------------------------
   //  Right
   
-//  if ( arduboy.justPressed(RIGHT_BUTTON) || ((!arduboy.justPressed(LEFT_BUTTON) && !arduboy.justPressed(UP_BUTTON) && !arduboy.justPressed(DOWN_BUTTON)) && (player.getXDelta() == 2 || level.getXOffsetDelta() == -2)) ) {
-  if ( arduboy.pressed(RIGHT_BUTTON)) {
+  if (pressed & RIGHT_BUTTON) {
 
     bool moveRight = true;
     bool moveDown = false;
@@ -353,8 +355,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   // ------------------------------------------------------------------------------------------
   //  Left
   
-//  else if ( arduboy.justPressed(LEFT_BUTTON) || ((!arduboy.justPressed(RIGHT_BUTTON) && !arduboy.justPressed(UP_BUTTON) && !arduboy.justPressed(DOWN_BUTTON)) && (player.getXDelta() == -2 || level.getXOffsetDelta() == 2)) ) {
-  else if ( arduboy.pressed(LEFT_BUTTON) ) {
+  else if (pressed & LEFT_BUTTON) {
 
     boolean moveLeft = true;
     boolean moveDown = false;
@@ -578,8 +579,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   // ------------------------------------------------------------------------------------------
   //  Up
 
-//  else if ( arduboy.justPressed(UP_BUTTON) || ((!arduboy.justPressed(RIGHT_BUTTON) && !arduboy.justPressed(LEFT_BUTTON) && !arduboy.justPressed(DOWN_BUTTON)) && (player.getYDelta() == -2 || level.getYOffsetDelta() == 2)) ) {
-  else if ( arduboy.pressed(UP_BUTTON) ) {
+  else if (pressed & UP_BUTTON) {
 
     bool moveUp = true;
     bool moveDown = true;
@@ -691,8 +691,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   // ------------------------------------------------------------------------------------------
   //  Down
 
-//  else if ( arduboy.justPressed(DOWN_BUTTON) || ((!arduboy.justPressed(RIGHT_BUTTON) && !arduboy.justPressed(LEFT_BUTTON) && !arduboy.justPressed(UP_BUTTON)) && (player.getYDelta() == 2 || level.getYOffsetDelta() == -2)) ) {
-  else if ( arduboy.pressed(DOWN_BUTTON) || ((!arduboy.pressed(RIGHT_BUTTON) && !arduboy.pressed(LEFT_BUTTON) && !arduboy.pressed(UP_BUTTON)) && (player.getYDelta() == 2 || level.getYOffsetDelta() == -2)) ) {
+  else if ((pressed & DOWN_BUTTON) || ( !(pressed & RIGHT_BUTTON) && !(pressed & LEFT_BUTTON) && !(pressed & UP_BUTTON)) && (player.getYDelta() == 2 || level.getYOffsetDelta() == -2) ) {
 
     boolean moveDown = true;
 
