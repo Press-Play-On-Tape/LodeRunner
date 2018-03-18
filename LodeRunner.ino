@@ -54,6 +54,8 @@ void setup() {
   arduboy.initRandomSeed();
   arduboy.audio.begin();
 
+  sound.tones(shortVersion);
+
   EEPROM_Utils::initEEPROM(false);
   EEPROM_Utils::getSavedGameData(&level, &player);
 
@@ -82,6 +84,7 @@ void loop() {
   switch (gameState) {
 
     case GameState::Intro:
+    if (!sound.playing())     sound.tones(longVersion);
       Intro();
       break;
 
