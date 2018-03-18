@@ -124,32 +124,27 @@ void renderEnemies() {
           dx = ex + 1;
           break;
 
-        case EscapeHole::MoveUp9:
-        case EscapeHole::MoveUp10:
+        case EscapeHole::MoveUp9 ... EscapeHole::MoveUp10:
           dy = ey - 2;
           image = man_LaddderLeft;
           break;
 
-        case EscapeHole::MoveUp7:
-        case EscapeHole::MoveUp8:
+        case EscapeHole::MoveUp7 ... EscapeHole::MoveUp8:
           dy = ey - 4;
           image = man_LaddderRight;
           break;
 
-        case EscapeHole::MoveUp5:
-        case EscapeHole::MoveUp6:
+        case EscapeHole::MoveUp5 ... EscapeHole::MoveUp6:
           dy = ey - 6;
           image = man_LaddderLeft;
           break;
 
-        case EscapeHole::MoveUp3:
-        case EscapeHole::MoveUp4:
+        case EscapeHole::MoveUp3 ... EscapeHole::MoveUp4:
           dy = ey - 8;
           image = man_LaddderRight;
           break;
 
-        case EscapeHole::MoveUp2:
-        case EscapeHole::MoveUp1:
+        case EscapeHole::MoveUp2 ... EscapeHole::MoveUp1:
 
           dy = ey - 10;
           image = man_LaddderLeft;
@@ -420,7 +415,7 @@ void renderArrows(bool smallArrows) {
 
 
 // ------------------------------------------------------------------------------------------
-//  Render then entry / exit rectangle ..
+//  Render the entry / exit rectangle ..
 //
 void renderEntryRectangle() {
 

@@ -182,6 +182,7 @@ void GameSelect() {
       break;
 
   }
+ 
 
   uint8_t levelNumber = menuLevelSelect;
   Sprites::drawOverwrite(70, 39, numbers, levelNumber / 100);
@@ -439,29 +440,19 @@ void LevelPlay() {
 
         }
 
-      }
 
-    }
+        // Are any of the enemies touching the player?
 
+        if (enemy->getEnabled() && arduboy.collide(Rect {static_cast<int16_t>(enemy->getX()) + 2, static_cast<int16_t>(enemy->getY()) + 2, 6, 6}, Rect {static_cast<int16_t>(player.getX() - level.getXOffset()) + 2, static_cast<int16_t>(player.getY() - level.getYOffset()) + 2, 6, 6} )) {
 
-    // Are any of the enemies touching the player?
+          playerDies();
 
-    for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
-
-      Enemy *enemy = &enemies[x];
-
-      if (enemy->getEnabled() && arduboy.collide(Rect {static_cast<int16_t>(enemy->getX()) + 2, static_cast<int16_t>(enemy->getY()) + 2, 6, 6}, Rect {static_cast<int16_t>(player.getX() - level.getXOffset()) + 2, static_cast<int16_t>(player.getY() - level.getYOffset()) + 2, 6, 6} )) {
-
-        playerDies();
+        }
 
       }
 
-    }
 
-
-    // Update level details ..
-
-    if (arduboy.everyXFrames(2)) {
+      // Update level details ..
       
       for (uint8_t y = 0; y < level.getHeight(); y++) {
 
