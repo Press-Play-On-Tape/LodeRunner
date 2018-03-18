@@ -691,7 +691,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   // ------------------------------------------------------------------------------------------
   //  Down
 
-  else if ((pressed & DOWN_BUTTON) || ( !(pressed & RIGHT_BUTTON) && !(pressed & LEFT_BUTTON) && !(pressed & UP_BUTTON)) && (player.getYDelta() == 2 || level.getYOffsetDelta() == -2) ) {
+  else if ((pressed & DOWN_BUTTON) || ( !(pressed & RIGHT_BUTTON) && !(pressed & LEFT_BUTTON) && !(pressed & UP_BUTTON) && (player.getYDelta() == 2 || level.getYOffsetDelta() == -2) )) {
 
     boolean moveDown = true;
 

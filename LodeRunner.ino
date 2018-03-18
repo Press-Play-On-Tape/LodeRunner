@@ -593,8 +593,6 @@ void LevelPlay() {
 
     uint8_t buttons = arduboy.justPressedButtons();
 
-//    if (arduboy.justPressed(A_BUTTON) || arduboy.justPressed(B_BUTTON) || arduboy.justPressed(UP_BUTTON) || 
-//        arduboy.justPressed(RIGHT_BUTTON) || arduboy.justPressed(DOWN_BUTTON) || arduboy.justPressed(LEFT_BUTTON)) { 
     if (buttons > 0) { 
 
       switch (gameState) {
