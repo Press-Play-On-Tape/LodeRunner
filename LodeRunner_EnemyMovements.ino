@@ -37,7 +37,6 @@ void enemyMovements(Enemy *enemy) {
 
   // Check to see if the enemy has touched gold!
 
-//  if (level.getLevelData(enemyX, enemyY) == LevelElement::Gold && enemy->getHasGold() == 0) {
   if (current == LevelElement::Gold && enemy->getHasGold() == 0) {
 
     if (random(0, ENEMY_GOLD_PICKUP_THRESHOLD) == 0) {
@@ -65,10 +64,9 @@ void enemyMovements(Enemy *enemy) {
 
     case PlayerStance::Falling:
       {
-        // LevelElement current = level.getLevelData(enemyX, enemyY);
         LevelElement down = level.getLevelData(enemyX, enemyY + 1);
 
-        if (current != LevelElement::Brick_Transition && canContinueToFall_Enemy(down)) {
+        if (current < LevelElement::Brick_1 && current > LevelElement::Brick_Close_4 && canContinueToFall_Enemy(down)) {
           break;
         }
 
@@ -81,12 +79,7 @@ void enemyMovements(Enemy *enemy) {
 
       if (enemy->getX() % GRID_SIZE == 0 && enemy->getY() % GRID_SIZE == 0) {
 
-
         bool hasMoved = false;
-        // enemyX = enemy->getX() / GRID_SIZE;
-        // enemyY = enemy->getY() / GRID_SIZE;
-
-        // LevelElement current =    level.getLevelData(enemyX, enemyY);
 
 
         // If the enemy is in a hole, then attemt to wiggle out ..
@@ -151,7 +144,6 @@ void enemyMovements(Enemy *enemy) {
 
           Direction direction1 = direction;
           Direction direction2 = direction;
-
 
 
           // Drop the gold?

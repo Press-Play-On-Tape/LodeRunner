@@ -3,8 +3,9 @@
 
 
 // ------------------------------------------------------------------------------------------
-//  Render the screen, players and scorboard ..
-//
+//  Render the screen, players and scoreboard ..
+// ------------------------------------------------------------------------------------------
+
 void renderScreen() {
 
   if (arduboy.everyXFrames(12)) flashPlayer = !flashPlayer;
@@ -49,7 +50,8 @@ void renderScreen() {
 
 // ------------------------------------------------------------------------------------------
 //  Render the level elements (bricks, ladders, rails, etc) ..
-//
+// ------------------------------------------------------------------------------------------
+
 void renderLevelElements() {
 
   for (uint8_t y = 0; y < level.getHeight(); y++) {
@@ -83,7 +85,8 @@ void renderLevelElements() {
 
 // ------------------------------------------------------------------------------------------
 //  Render the enemies ..
-//
+// ------------------------------------------------------------------------------------------
+
 void renderEnemies() {
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
@@ -171,6 +174,10 @@ void renderEnemies() {
 
 }
 
+
+// ------------------------------------------------------------------------------------------
+//  Render arrows that point to the enemies ..
+// ------------------------------------------------------------------------------------------
 
 #ifdef TWO_ARROW_SIZES
 
@@ -540,9 +547,11 @@ void renderArrows() {
 
 #endif
 
+
 // ------------------------------------------------------------------------------------------
 //  Render the entry / exit rectangle ..
-//
+// ------------------------------------------------------------------------------------------
+
 void renderEntryRectangle() {
 
   if (gameState == GameState::LevelEntryAnimation || gameState == GameState::LevelExitAnimation) {
@@ -617,6 +626,9 @@ void renderEntryRectangle() {
 //
 void renderScoreboard() {
 
+
+  // Score ..
+
   uint16_t score = player.getScore();
   arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
   Sprites::drawOverwrite(29, 58, numbers, 0);
@@ -629,11 +641,17 @@ void renderScoreboard() {
   Sprites::drawOverwrite(49, 58, numbers, score / 10);
   Sprites::drawOverwrite(54, 58, numbers, score % 10);
 
+
+  // Men left ..
+
   uint8_t menLeft = player.getMen();
   arduboy.drawCompressedMirror(64, 58, men_sc, WHITE, false);
   Sprites::drawOverwrite(82, 58, numbers, menLeft / 10);
   Sprites::drawOverwrite(87, 58, numbers, menLeft % 10);
 
+
+  // Gold or level ..
+  
   if (gameState == GameState::LevelPlay) {
 
     uint8_t goldLeft = level.getGoldLeft();

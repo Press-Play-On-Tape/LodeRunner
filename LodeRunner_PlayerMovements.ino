@@ -2,6 +2,10 @@
 #include <ArduboyTones.h>
 #include "src/images/sounds.h"
 
+// ------------------------------------------------------------------------------------------
+//  Stop player movement ..
+// ------------------------------------------------------------------------------------------
+
 void stopPlayer() {
 
   player.setXDelta(0);
@@ -10,6 +14,11 @@ void stopPlayer() {
   level.setYOffsetDelta(0); 
 
 }
+
+
+// ------------------------------------------------------------------------------------------
+//  If the player is exactly within a grid 'cell', attemp to move them ..
+// ------------------------------------------------------------------------------------------
 
 void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   

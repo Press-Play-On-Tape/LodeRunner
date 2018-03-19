@@ -27,6 +27,7 @@ class Player {
     void setMen(uint8_t val);
     void setStance(const PlayerStance val);
     void setNextState(const GameState val);
+    void incrementMen();
 
   private:
 
@@ -105,4 +106,8 @@ void Player::setStance(const PlayerStance val) {
 
 void Player::setNextState(const GameState val) {
   _nextState = val;
+}
+
+void Player::incrementMen() {
+  if (_men < 10)  _men++;
 }
