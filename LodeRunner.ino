@@ -11,9 +11,11 @@
 #include "src/utils/EEPROM_Utils.h"
 #include "src/characters/Player.h"
 #include "src/characters/Enemy.h"
+#include "src/fonts/Font3x5.h"
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
+Font3x5 font3x5 = Font3x5();
 
 Player player;
 Enemy enemies[NUMBER_OF_ENEMIES];
@@ -166,7 +168,10 @@ void GameSelect() {
 
   #ifdef INC_LEVEL_SELECTOR
 
-  arduboy.drawCompressedMirror(38, 19, menuOption2, WHITE, false);
+  // font  arduboy.drawCompressedMirror(38, 19, menuOption2, WHITE, false);
+  font3x5.setCursor(38, 19);
+  font3x5.print(F("RESUME GAME\nRESTART GAME\nLEVEL:"));   
+
   switch (menuSelect) {
 
     case 0:
@@ -185,11 +190,16 @@ void GameSelect() {
  
 
   uint8_t levelNumber = menuLevelSelect;
+  /* font
   Sprites::drawOverwrite(70, 39, numbers, levelNumber / 100);
   levelNumber = levelNumber - (levelNumber / 100) * 100;
   Sprites::drawOverwrite(75, 39, numbers, levelNumber / 10);
   Sprites::drawOverwrite(80, 39, numbers, levelNumber % 10);
-
+  */
+  font3x5.setCursor(70, 39);
+  if (levelNumber < 100)    font3x5.print(F("0"));      
+  if (levelNumber < 10)     font3x5.print(F("0"));      
+  font3x5.print(levelNumber);
 
 
   // Brick borders ..
@@ -217,7 +227,7 @@ void GameSelect() {
 
   }
 
-  if (buttons & A_BUTTON)) {
+  if (buttons & A_BUTTON) {
     
     if (menuSelect == 0) { EEPROM_Utils::getSavedGameData(&level, &player); }
     if (menuSelect == 1) { EEPROM_Utils::initEEPROM(true); EEPROM_Utils::getSavedGameData(&level, &player); }
@@ -231,28 +241,33 @@ void GameSelect() {
 
   #ifndef INC_LEVEL_SELECTOR
 
-  //bool firstTime = EEPROM_Utils::getMen() == 5 && EEPROM_Utils::getLevelNumber() == 1;
+  bool firstTime = EEPROM_Utils::getMen() == 5 && EEPROM_Utils::getLevelNumber() == 1;
 
-  uint8_t menuOptionY = 24;
-  uint8_t selectorY = 24;
+  // uint8_t menuOptionY = 24;
+  // uint8_t selectorY = 24;
   //uint8_t const * menuOptionImg = menuOptionStart;
 
-  // if (firstTime) {
+  if (firstTime) {
 
-  //   selectorY = 24 + (menuSelect * 5);
+    // selectorY = 24 + (menuSelect * 5);
+    font3x5.setCursor(22, 22);
+    font3x5.print(F("START GAME"));
 
-  // }
-  // else {
+  }
+  else {
 
-    menuOptionY = 19;
-//    menuOptionImg = menuOption;
-    selectorY= 19 + (menuSelect * 10);
+//     menuOptionY = 19;
+// //    menuOptionImg = menuOption;
+//     selectorY= 19 + (menuSelect * 10);
+    
+    font3x5.setCursor(22, 22);
+    font3x5.print(F("RESUME GAME\nRESTART GAME"));
 
-  //}
+  }
 
 //  arduboy.drawCompressedMirror(38, menuOptionY, menuOptionImg, WHITE, false);
-  arduboy.drawCompressedMirror(38, menuOptionY, menuOption, WHITE, false);
-  arduboy.drawCompressedMirror(31, selectorY, menuArrow, WHITE, false);
+//font  arduboy.drawCompressedMirror(38, menuOptionY, menuOption, WHITE, false);
+  arduboy.drawCompressedMirror(31, 24 + (menuSelect * 8), menuArrow, WHITE, false);
 
 
   // Brick borders ..
@@ -267,12 +282,12 @@ void GameSelect() {
   arduboy.display(CLEAR_BUFFER);
   uint8_t buttons = arduboy.justPressedButtons();
 
-  // if (!firstTime) {
+  if (!firstTime) {
 
     if ((buttons & UP_BUTTON) && menuSelect > 0)     { menuSelect--; }
     if ((buttons & DOWN_BUTTON) && menuSelect < 1)   { menuSelect++; }
 
-  // }
+  }
 
   if (buttons & A_BUTTON) {
     
@@ -657,7 +672,12 @@ void playerDies() {
 //
 void NextGame() {
 
-  arduboy.drawCompressedMirror(20, 23, loadNextGame, WHITE, false);
+// font  arduboy.drawCompressedMirror(20, 23, loadNextGame, WHITE, false);
+  font3x5.setCursor(22, 22);
+  font3x5.print(F("LOAD NEXT GAME !"));
+  arduboy.drawHorizontalDottedLine(18, 80, 16);
+  arduboy.drawHorizontalDottedLine(18, 80, 24);
+  
   arduboy.display(CLEAR_BUFFER);
 
 }
@@ -668,8 +688,28 @@ void NextGame() {
 //
 void CompleteGame(uint8_t level) {
 
+/* font
   arduboy.drawCompressedMirror(19, 20, completeGame, WHITE, false);
   arduboy.drawCompressedMirror(71, 35, (level == 1 ? completeGame1 : completeGame2), WHITE, false);
+  */
+
+  font3x5.setCursor(22, 22);
+  font3x5.print(F(" PLEASE\nCOMPLETE\nGAME "));
+
+  switch (level) {
+
+    case 1:
+      font3x5.print(F("ONE"));
+      break;
+
+    case 2:
+      font3x5.print(F("TWO"));
+      break;
+    
+  }
+
+  arduboy.drawHorizontalDottedLine(18, 80, 16);
+  arduboy.drawHorizontalDottedLine(18, 80, 24);
   arduboy.display(CLEAR_BUFFER);
 
 }

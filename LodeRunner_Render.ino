@@ -540,6 +540,7 @@ void renderArrows() {
 
 #endif
 
+
 // ------------------------------------------------------------------------------------------
 //  Render the entry / exit rectangle ..
 //
@@ -582,31 +583,51 @@ void renderEntryRectangle() {
   }
   else if (gameState == GameState::NextLevel || gameState == GameState::RestartLevel || gameState == GameState::GameOver) {
 
-    if(gameState == GameState::RestartLevel) {
+    uint8_t x1 = 0;
+    uint8_t x2 = 0;
+    uint8_t y1 = 0;
+    uint8_t y2 = 0;
+    
+    if (gameState == GameState::RestartLevel) {
 
-      arduboy.drawCompressedMirror(42, 25, tryAgain, WHITE, false);
+      //font arduboy.drawCompressedMirror(42, 25, tryAgain, WHITE, false);
+      font3x5.setCursor(43, 25);
+      font3x5.print(F("TRY AGAIN !"));
+      x1 = 8; x2 = 8; y1 = 16; y2 = 32;
 
     }
     else if(gameState == GameState::GameOver) {
 
-      arduboy.drawCompressedMirror(43, 25, gameOver, WHITE, false);
+// font      arduboy.drawCompressedMirror(43, 25, gameOver, WHITE, false);
+      font3x5.setCursor(43, 25);
+      font3x5.print(F("GAME OVER"));
+      x1 = 8; x2 = 8; y1 = 16; y2 = 32;
 
     }
     else {
 
       uint8_t levelNumber = level.getLevelNumber();
+      /* font
       Sprites::drawOverwrite(72, 25, numbers, levelNumber / 100);
       levelNumber = levelNumber - (levelNumber / 100) * 100;
       Sprites::drawOverwrite(77, 25, numbers, levelNumber / 10);
       Sprites::drawOverwrite(82, 25, numbers, levelNumber % 10);
 
       arduboy.drawCompressedMirror(43, 25, levelChange, WHITE, false);
+      */
+      font3x5.setCursor(43, 25);
+      font3x5.print(F("LEVEL: "));
+      if (levelNumber < 100)  font3x5.print(F("0"));      
+      if (levelNumber < 10)   font3x5.print(F("0"));      
+      font3x5.print(levelNumber);
+
+      x1 = 41; x2 = 87; y1 = 16; y2 = 32;
 
     }
 
-    arduboy.drawHorizontalDottedLine(41, 87, 22);
-    arduboy.drawHorizontalDottedLine(41, 87, 32);
-  
+    arduboy.drawHorizontalDottedLine(x1, x2, y1);
+    arduboy.drawHorizontalDottedLine(x1, x2, y2);
+
   }
 
 }
@@ -618,6 +639,7 @@ void renderEntryRectangle() {
 void renderScoreboard() {
 
   uint16_t score = player.getScore();
+  /* font
   arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
   Sprites::drawOverwrite(29, 58, numbers, 0);
   Sprites::drawOverwrite(34, 58, numbers, score / 10000);
@@ -628,28 +650,56 @@ void renderScoreboard() {
   score = score - (score / 100) * 100;
   Sprites::drawOverwrite(49, 58, numbers, score / 10);
   Sprites::drawOverwrite(54, 58, numbers, score % 10);
+  */
+
+  font3x5.setCursor(0, 58);
+  font3x5.print(F("SCORE: 0"));
+  if (score < 10000)  font3x5.print(F("0"));      
+  if (score < 1000)   font3x5.print(F("0"));      
+  if (score < 100)    font3x5.print(F("0"));      
+  if (score < 10)     font3x5.print(F("0"));      
+  font3x5.print(score);
 
   uint8_t menLeft = player.getMen();
+/* font
   arduboy.drawCompressedMirror(64, 58, men_sc, WHITE, false);
   Sprites::drawOverwrite(82, 58, numbers, menLeft / 10);
   Sprites::drawOverwrite(87, 58, numbers, menLeft % 10);
+  */
+  font3x5.setCursor(64, 58);
+  font3x5.print(F("MEN: "));
+  if (menLeft < 10)     font3x5.print(F("0"));      
+  font3x5.print(menLeft);
 
   if (gameState == GameState::LevelPlay) {
 
     uint8_t goldLeft = level.getGoldLeft();
+    /* font
     arduboy.drawCompressedMirror(96, 58, gold_sc, WHITE, false);
     Sprites::drawOverwrite(118, 58, numbers, goldLeft / 10);
     Sprites::drawOverwrite(123, 58, numbers, goldLeft % 10);
+    */
+    font3x5.setCursor(64, 58);
+    font3x5.print(F("GOLD: "));
+    if (goldLeft < 10)     font3x5.print(F("0"));      
+    font3x5.print(goldLeft);
 
   }
   else {
 
     uint8_t levelNumber = level.getLevelNumber();
+    /*
     arduboy.drawCompressedMirror(96, 58, level_sc, WHITE, false);
     Sprites::drawOverwrite(113, 58, numbers, levelNumber / 100);
     levelNumber = levelNumber - (levelNumber / 100) * 100;
     Sprites::drawOverwrite(118, 58, numbers, levelNumber / 10);
     Sprites::drawOverwrite(123, 58, numbers, levelNumber % 10);
+    */
+    font3x5.setCursor(96, 58);
+    font3x5.print(F("LEVEL: "));
+    if (levelNumber < 100)    font3x5.print(F("0"));      
+    if (levelNumber < 10)     font3x5.print(F("0"));      
+    font3x5.print(levelNumber);
 
   }
 
