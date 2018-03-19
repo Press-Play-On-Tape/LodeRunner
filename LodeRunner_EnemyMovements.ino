@@ -32,10 +32,13 @@ void enemyMovements(Enemy *enemy) {
   uint8_t enemyX = enemy->getX() / GRID_SIZE;
   uint8_t enemyY = enemy->getY() / GRID_SIZE;
 
+  LevelElement current = level.getLevelData(enemyX, enemyY);
+
 
   // Check to see if the enemy has touched gold!
 
-  if (level.getLevelData(enemyX, enemyY) == LevelElement::Gold && enemy->getHasGold() == 0) {
+//  if (level.getLevelData(enemyX, enemyY) == LevelElement::Gold && enemy->getHasGold() == 0) {
+  if (current == LevelElement::Gold && enemy->getHasGold() == 0) {
 
     if (random(0, ENEMY_GOLD_PICKUP_THRESHOLD) == 0) {
 
@@ -62,7 +65,7 @@ void enemyMovements(Enemy *enemy) {
 
     case PlayerStance::Falling:
       {
-        LevelElement current = level.getLevelData(enemyX, enemyY);
+        // LevelElement current = level.getLevelData(enemyX, enemyY);
         LevelElement down = level.getLevelData(enemyX, enemyY + 1);
 
         if (current != LevelElement::Brick_Transition && canContinueToFall_Enemy(down)) {
@@ -80,10 +83,10 @@ void enemyMovements(Enemy *enemy) {
 
 
         bool hasMoved = false;
-        enemyX = enemy->getX() / GRID_SIZE;
-        enemyY = enemy->getY() / GRID_SIZE;
+        // enemyX = enemy->getX() / GRID_SIZE;
+        // enemyY = enemy->getY() / GRID_SIZE;
 
-        LevelElement current =    level.getLevelData(enemyX, enemyY);
+        // LevelElement current =    level.getLevelData(enemyX, enemyY);
 
 
         // If the enemy is in a hole, then attemt to wiggle out ..
@@ -93,17 +96,13 @@ void enemyMovements(Enemy *enemy) {
 
           // If the enemy has gold, then make it available to pickup ..
 
-          if (enemy->getHasGold() > ENEMY_GOLD_DROP_VALUE) {
+          if (enemy->getHasGold() > ENEMY_GOLD_DROP_VALUE && level.getLevelData(enemyX, enemyY - 1) == LevelElement::Blank) {
 
             enemy->setHasGold(0);
             level.setLevelData(enemyX, enemyY - 1, LevelElement::Gold);
 
           }
-
-
-
-          // Check to see if the enemy can continue falling ..
-            
+           
           enemy->setYDelta(0);
           enemy->setEscapeHole(static_cast<EscapeHole>(static_cast<uint8_t>(enemy->getEscapeHole()) - 1));
 
