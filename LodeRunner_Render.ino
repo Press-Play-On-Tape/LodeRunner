@@ -144,7 +144,7 @@ void renderEnemies() {
           image = man_LaddderRight;
           break;
 
-        case EscapeHole::MoveUp2 ... EscapeHole::MoveUp1:
+        case EscapeHole::MoveUp1 ... EscapeHole::MoveUp2:
 
           dy = ey - 10;
           image = man_LaddderLeft;

@@ -387,7 +387,7 @@ void Level::setLevelData(const uint8_t x, const uint8_t y, const LevelElement le
 //
 void Level::pickupGold() {
 
-  _goldLeft--;
+  if (_goldLeft > 0) _goldLeft--;
 
   if (_goldLeft == 0) {
 
