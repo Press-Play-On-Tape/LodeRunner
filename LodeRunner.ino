@@ -62,6 +62,8 @@ void setup() {
   player.setStance(PlayerStance::StandingStill);
   player.setNextState(GameState::Intro);
 
+  sound.tones(score);
+
   uint8_t gameNumber = EEPROM_Utils::getGameNumber();
   
   if (gameNumber < GAME_NUMBER) {
