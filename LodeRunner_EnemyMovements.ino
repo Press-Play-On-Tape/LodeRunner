@@ -540,7 +540,59 @@ void move(Enemy *enemy, int8_t x, int8_t y, bool randomMoves) {
   if (y < 0) { enemy->setDirection(Direction::Up); }
   if (y > 0) { enemy->setDirection(Direction::Down); }
   
-  if (randomMoves && enemy->getDirectionCount() == 0) { enemy->setDirectionCount(random(0, 6)); }
+  if (randomMoves && enemy->getDirectionCount() == 0) { 
+
+
+    // If we are about to climb up a ladder, then we need to climb to the top !
+    
+    if (enemy->getDirection() == Direction::Up) {
+    
+      enemy->setPreferredDirection(Direction::Up);
+      
+      const uint8_t enemyX = enemy->getX() / GRID_SIZE;
+      uint8_t enemyY = (enemy->getY() / GRID_SIZE) - 1;
+      uint8_t howHigh = 0;
+        
+      while (true) {
+
+        LevelElement up = level.getLevelData(enemyX, enemyY);
+    
+        if (up == LevelElement::Ladder) {
+      
+          LevelElement upLeft = level.getLevelData(enemyX - 1, enemyY);
+          LevelElement upRight = level.getLevelData(enemyX + 1, enemyY);
+          LevelElement left = level.getLevelData(enemyX - 1, enemyY);
+          LevelElement right = level.getLevelData(enemyX + 1, enemyY);
+          howHigh++;
+
+
+          // Have we reached a spot on the ladder that we can move left or right ?
+
+          if (canBeClimbedOn(upLeft) || canBeClimbedOn(upRight)) break;
+          if ((canBeOccupiedBasic_Enemy(upLeft) && canBeStoodOnBasic_Enemy(left)) || 
+          (canBeOccupiedBasic_Enemy(upRight) && canBeStoodOnBasic_Enemy(right))) break;
+
+          enemyY--;
+                
+        }
+        else {
+      
+          break;
+        
+        }
+      
+      }
+
+      enemy->setDirectionCount(howHigh); 
+      
+    }
+    else {
+    
+      enemy->setDirectionCount(random(0, 6)); 
+      
+    }
+
+  }
 
 }
 

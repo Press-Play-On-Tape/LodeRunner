@@ -40,6 +40,7 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
     case LevelElement::Ladder:
       return true;
 
+	  /* not needed as test below covers the same scenario 
     case LevelElement::Brick_1:
     case LevelElement::Brick_2:
     case LevelElement::Brick_3:
@@ -66,10 +67,30 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
 
       }
 
-      return false;
+      return false; */
 
     default:
-      return false;
+
+
+	  // Is the player standing on top of an enemy?
+
+      for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
+
+        Enemy *enemy = &enemies[x];
+
+        if (enemy->getEnabled()) {
+
+          if (enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
+
+            return true; 
+
+          }
+
+        }
+
+      }
+
+	    return false;
 
   }
 
