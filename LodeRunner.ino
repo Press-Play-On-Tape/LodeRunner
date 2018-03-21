@@ -62,8 +62,6 @@ void setup() {
   player.setStance(PlayerStance::StandingStill);
   player.setNextState(GameState::Intro);
 
-  sound.tones(score);
-
   uint8_t gameNumber = EEPROM_Utils::getGameNumber();
   
   if (gameNumber < GAME_NUMBER) {
@@ -84,6 +82,7 @@ void loop() {
   switch (gameState) {
 
     case GameState::Intro:
+      if (!sound.playing()) sound.tones(score);
       Intro();
       break;
 
@@ -92,7 +91,7 @@ void loop() {
       break;
 
     case GameState::LevelInit:
-
+      sound.noTone();
       while (!holes.isEmpty()) holes.dequeue();
       level.loadLevel(&player, enemies); 
       introRect = 28;
