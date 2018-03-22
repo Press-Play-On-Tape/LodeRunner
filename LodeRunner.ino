@@ -118,6 +118,7 @@ void loop() {
     case GameState::NextLevel:
       player.incrementMen();
       EEPROM_Utils::saveGameData(&level, &player);
+      gameState = GameState::LevelEntryAnimation;
       LevelPlay();
       break;
 

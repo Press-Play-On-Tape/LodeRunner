@@ -172,6 +172,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         updatePlayerStance(PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right2);
         moveRight = true;
+        sound.noTone();
 
       }
 
@@ -396,6 +397,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
         updatePlayerStance(PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
         moveLeft = true;
+        sound.noTone();
 
       }
 
