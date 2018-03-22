@@ -142,6 +142,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   uint8_t goldLeft = 0;
 
   const uint8_t *levelToLoad = levels[_levelNumber - LEVEL_OFFSET];
+  player->setStance(PlayerStance::Running_Right1);
 
 
   // Load player starting position ..
@@ -212,6 +213,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
     Enemy *enemy = &enemies[x];
 
     enemy->setId(x);
+    enemy->setHasGold(0);
 
     if (x  < numberOfEnemies) {
 

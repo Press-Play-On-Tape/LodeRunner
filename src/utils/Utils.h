@@ -374,7 +374,7 @@ boolean canBeFallenInto_Enemy(LevelElement levelElement, Enemy *enemies, uint16_
     case LevelElement::Brick_Close_1:
     case LevelElement::Brick_Close_2:
     case LevelElement::Brick_Close_3:
-    case LevelElement::Brick_Close_4:
+//  case LevelElement::Brick_Close_4:
 
 
       // Is another enemy in the position already ?

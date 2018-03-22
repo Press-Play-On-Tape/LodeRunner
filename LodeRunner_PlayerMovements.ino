@@ -85,7 +85,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       LevelElement left = level.getLevelData(nearestX - 1, nearestY);
       LevelElement leftDown = level.getLevelData(nearestX - 1, nearestY + 1);
 
-      if (leftDown == LevelElement::Brick && !isSolid(left)) {
+      if (leftDown == LevelElement::Brick && !isSolid(left) && left != LevelElement::Ladder) {
 
         player.setStance(PlayerStance::Burn_Left);
         player.setXDelta(0);
@@ -116,7 +116,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
       LevelElement right = level.getLevelData(nearestX + 1, nearestY);
       LevelElement rightDown = level.getLevelData(nearestX + 1, nearestY + 1);
 
-      if (rightDown == LevelElement::Brick && !isSolid(right)) {
+      if (rightDown == LevelElement::Brick && !isSolid(right) && right != LevelElement::Ladder) {
  
         player.setStance(PlayerStance::Burn_Right);
         player.setXDelta(0);
