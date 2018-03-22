@@ -116,9 +116,7 @@ void loop() {
       break;
 
     case GameState::NextLevel:
-      player.incrementMen();
       EEPROM_Utils::saveGameData(&level, &player);
-      gameState = GameState::LevelEntryAnimation;
       LevelPlay();
       break;
 
@@ -408,6 +406,7 @@ void LevelPlay() {
     if (player.getY() == 0 && current == LevelElement::Ladder) {
 
       uint8_t levelNumber = level.getLevelNumber() + 1;
+      player.incrementMen();
 
       gameState = GameState::LevelExitInit;
       level.setLevelNumber(levelNumber);
