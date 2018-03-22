@@ -413,7 +413,6 @@ void LevelPlay() {
       EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
 
       if (levelNumber > LEVEL_OFFSET + LEVEL_COUNT) {
-        player.incrementMen();
         EEPROM_Utils::setGameNumber(EEPROM_Utils::getGameNumber() + 1);
         EEPROM_Utils::saveGameData(&level, &player);
         player.setNextState(GameState::NextGame);
