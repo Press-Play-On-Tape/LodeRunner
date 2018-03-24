@@ -29,6 +29,7 @@ int8_t introRect = 0;
 Queue<Hole, 20> holes;
 
 uint8_t suicide = 0;
+uint8_t levelCount = 0;
 uint8_t menuSelect = 0;
 #ifdef INC_LEVEL_SELECTOR
 uint8_t menuLevelSelect = LEVEL_OFFSET + 1;
@@ -580,12 +581,98 @@ void LevelPlay() {
   }
   else {
 
+    uint8_t justPressed = arduboy.justPressedButtons();
+    uint8_t pressed = arduboy.pressedButtons();
+
+
+    // Change level?
+
+    if (gameState == GameState::LevelFlash) {
+
+      if (pressed & B_BUTTON) {
+  
+        //if (arduboy.everyXFrames(2)) {
+
+          switch (levelCount) {
+
+            case 0 ... 40:
+            
+              levelCount++;
+              break;
+
+            case 41 ... 45:
+
+              arduboy.setRGBled(0,0,64);
+              levelCount++;
+              break;
+
+            case 46 ... 50:
+
+              arduboy.setRGBled(0,0,0);
+              levelCount++;
+              break;
+                    
+            default:
+
+              uint8_t levelNumber = level.getLevelNumber();
+
+              if (justPressed & UP_BUTTON && levelNumber < LEVEL_OFFSET + LEVEL_COUNT) {
+                level.setLevelNumber(levelNumber + 1);
+              }
+              else if ((justPressed & DOWN_BUTTON) && levelNumber > LEVEL_OFFSET + 1) {
+                level.setLevelNumber(levelNumber - 1);
+              }
+
+              break;
+
+          }
+
+          justPressed = 0;
+
+      }
+      else {
+
+        switch (levelCount) {
+
+          case 0:
+            break;
+
+          case 1 ... 50:
+            justPressed = 4;
+            break;
+
+          default:
+
+            if (levelCount >= 40) {
+
+              gameState = GameState::LevelInit;
+              levelCount = 0;
+
+            }
+            else {
+
+              levelCount = 0;
+
+            }
+
+            break;
+
+        }
+
+      }
+
+    }
+    else {
+
+      levelCount = 0;
+
+    }
+
+
 
     // We are not playing so wait for a key press to continue the game ..
 
-    uint8_t buttons = arduboy.justPressedButtons();
-
-    if (buttons > 0) { 
+    if (justPressed > 0) { 
 
       switch (gameState) {
 
@@ -619,7 +706,7 @@ void LevelPlay() {
 
   // Show level clear indicator?
 
-  if (suicide == 0) {
+  if (suicide == 0 && levelCount == 0) {
     arduboy.setRGBled(0, (flashPlayer && level.getGoldLeft() == 0 && gameState == GameState::LevelPlay ? 32 : 0), 0);
   }
 

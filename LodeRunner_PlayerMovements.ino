@@ -21,7 +21,7 @@ void stopPlayer() {
 // ------------------------------------------------------------------------------------------
 
 void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
-  
+
   uint8_t justPressed =   arduboy.justPressedButtons();
   uint8_t pressed =       arduboy.pressedButtons();
 
@@ -168,7 +168,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       }
       
-      else if (inCell_Y && right == LevelElement::Rail) {
+      else if (inCell_Y && (right == LevelElement::Rail || current == LevelElement::Rail)) {
 
         updatePlayerStance(PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right2);
         moveRight = true;
@@ -393,7 +393,7 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
 
       }
       
-      else if (inCell_Y && left == LevelElement::Rail) {
+      else if (inCell_Y && (left == LevelElement::Rail || current == LevelElement::Rail)) {
 
         updatePlayerStance(PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
         moveLeft = true;
