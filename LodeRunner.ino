@@ -403,7 +403,7 @@ void LevelPlay() {
 
     LevelElement current = level.getLevelData(getNearestX(), getNearestY());
 
-    if (player.getY() == 0 && current == LevelElement::Ladder) {
+    if (player.getY() <= 1 && current == LevelElement::Ladder) {
 
       uint8_t levelNumber = level.getLevelNumber() + 1;
       player.incrementMen();
