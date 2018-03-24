@@ -15,8 +15,5 @@ class Arduboy2Ext : public Arduboy2Base {
     void drawCompressedMirror(int16_t sx, int16_t sy, const uint8_t *bitmap, uint8_t color, bool mirror);
     void drawHorizontalDottedLine(uint8_t x1, uint8_t x2, uint8_t y);
     void drawVerticalDottedLine(uint8_t y1, uint8_t y2, uint8_t x);
-
-    void setRGBled(uint8_t red, uint8_t green, uint8_t blue);
-    void setRGBled(uint8_t color, uint8_t val);
     
 };
