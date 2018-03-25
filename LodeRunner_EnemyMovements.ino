@@ -235,8 +235,6 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
                       LevelElement right, LevelElement rightDown, LevelElement down,
                       LevelElement leftDown, LevelElement left, bool randomMoves) {
 
-  bool hasMoved = false;
-
   switch (direction) {
 
     case Direction::LeftUp ... Direction::LeftUp2:
@@ -249,7 +247,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);   
           move(enemy, 0, -2, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -268,7 +266,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Swinging_Right1, PlayerStance::Swinging_Right4);
           move(enemy, 2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -276,7 +274,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Running_Right1, PlayerStance::Running_Right4);
           move(enemy, 2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -284,7 +282,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);
           move(enemy, 2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -292,8 +290,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           enemy->setStance(PlayerStance::Falling);
           move(enemy, 0, 2, randomMoves);
-          hasMoved = true;
-
+          
 
           // If we have fallen into a brick hole, start counting ..
 
@@ -308,13 +305,15 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           }
 
+          return true;
+
         }
 
         else if (canBeStoodOn_RightDown && canBeOccupied_Right && notOccupiedByAnotherEnemy_Right) {
 
           updateEnemyStance(enemy, PlayerStance::Running_Right1, PlayerStance::Running_Right4);
           move(enemy, 2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -322,7 +321,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Running_Right1, PlayerStance::Running_Right4);
           move(enemy, 2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
     
@@ -339,7 +338,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Climbing_Down2, PlayerStance::Climbing_Down1);
           move(enemy, 0, 2, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -347,7 +346,6 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           enemy->setStance(PlayerStance::Falling);
           move(enemy, 0, 2, randomMoves);
-          hasMoved = true;
 
 
           // If we have fallen into a brick hole, start counting ..
@@ -361,6 +359,8 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
             default:  break;
 
           }
+
+          return true;
 
         }
 
@@ -381,7 +381,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
           move(enemy, -2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
         
@@ -389,7 +389,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Running_Left4, PlayerStance::Running_Left1);
           move(enemy, -2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
         
@@ -397,7 +397,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Climbing_Up1, PlayerStance::Climbing_Up2);
           move(enemy, -2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -405,8 +405,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           enemy->setStance(PlayerStance::Falling);
           move(enemy, 0, 2, randomMoves);
-          hasMoved = true;
-
+          
 
           // If we have fallen into a brick hole, start counting ..
 
@@ -421,13 +420,15 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           }
 
+          return true;
+
         }
               
         else if (canBeStoodOn_LeftDown && canBeOccupied_Left && notOccupiedByAnotherEnemy_Left) {
 
           updateEnemyStance(enemy, PlayerStance::Running_Left4, PlayerStance::Running_Left1);
           move(enemy, -2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -435,7 +436,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
           updateEnemyStance(enemy, PlayerStance::Swinging_Left4, PlayerStance::Swinging_Left1);
           move(enemy, -2, 0, randomMoves);
-          hasMoved = true;
+          return true;
 
         }
 
@@ -447,7 +448,7 @@ boolean attemptToMove(Enemy *enemy, uint8_t enemyX, uint8_t enemyY,
 
   }
 
-  return hasMoved;
+  return false;
   
 }
 
