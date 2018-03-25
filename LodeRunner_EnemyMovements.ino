@@ -33,6 +33,7 @@ void enemyMovements(Enemy *enemy) {
   uint8_t enemyY = enemy->getY() / GRID_SIZE;
 
   LevelElement current = level.getLevelData(enemyX, enemyY);
+  LevelElement down = level.getLevelData(enemyX, enemyY + 1);
 
 
   // Check to see if the enemy has touched gold!
@@ -51,166 +52,144 @@ void enemyMovements(Enemy *enemy) {
 
   // Move enemy ..
 
-  switch (enemy->getStance()) {
+  const auto stance = enemy->getStance();
 
 
-    // If the enemy is being reborn, return without moving ..
+  // If the enemy is being reborn, return without moving ..
 
-    case PlayerStance::Rebirth_1 ... PlayerStance::Rebirth_3:
-      break;
+  if (stance >= PlayerStance::Rebirth_1) return;
 
 
-    // If the enemy is falling, then continue falling ..
+  // If the enemy is falling, then continue falling ..
+  
+  if (stance == PlayerStance::Falling) {
 
-    case PlayerStance::Falling:
-      {
-        LevelElement down = level.getLevelData(enemyX, enemyY + 1);
+    if (current < LevelElement::Brick_1 && current > LevelElement::Brick_Close_4 && canContinueToFall_Enemy(down)) return;
+  
+  }
 
-        if (current < LevelElement::Brick_1 && current > LevelElement::Brick_Close_4 && canContinueToFall_Enemy(down)) {
-          break;
-        }
+
+  if (enemy->getX() % GRID_SIZE == 0 && enemy->getY() % GRID_SIZE == 0) {
+
+    bool hasMoved = false;
+
+
+    // If the enemy is in a hole, then attemt to wiggle out ..
+
+    if (enemy->getEscapeHole() > EscapeHole::None) {
+
+
+      // If the enemy has gold, then make it available to pickup ..
+
+      if (enemy->getHasGold() > ENEMY_GOLD_DROP_VALUE && level.getLevelData(enemyX, enemyY - 1) == LevelElement::Blank) {
+
+        enemy->setHasGold(0);
+        level.setLevelData(enemyX, enemyY - 1, LevelElement::Gold);
 
       }
+        
+      enemy->setYDelta(0);
+      enemy->setEscapeHole(static_cast<EscapeHole>(static_cast<uint8_t>(enemy->getEscapeHole()) - 1));
+
+    }
 
 
     // Otherwise move the enemy towards the player ..
 
-    default:
+    else {
 
-      if (enemy->getX() % GRID_SIZE == 0 && enemy->getY() % GRID_SIZE == 0) {
+      Direction direction = Direction::Up;
 
-        bool hasMoved = false;
+      LevelElement up =         level.getLevelData(enemyX, enemyY - 1);
+      LevelElement right =      level.getLevelData(enemyX + 1, enemyY);
+      LevelElement rightDown =  level.getLevelData(enemyX + 1, enemyY + 1);
+      LevelElement leftDown =   level.getLevelData(enemyX - 1, enemyY + 1);
+      LevelElement left =       level.getLevelData(enemyX - 1, enemyY);
+//      LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
 
-
-        // If the enemy is in a hole, then attemt to wiggle out ..
-
-        if (enemy->getEscapeHole() > EscapeHole::None) {
-
-
-          // If the enemy has gold, then make it available to pickup ..
-
-          if (enemy->getHasGold() > ENEMY_GOLD_DROP_VALUE && level.getLevelData(enemyX, enemyY - 1) == LevelElement::Blank) {
-
-            enemy->setHasGold(0);
-            level.setLevelData(enemyX, enemyY - 1, LevelElement::Gold);
-
-          }
-           
-          enemy->setYDelta(0);
-          enemy->setEscapeHole(static_cast<EscapeHole>(static_cast<uint8_t>(enemy->getEscapeHole()) - 1));
-
-        }
+      int16_t xDiff = enemy->getX() - (player.getX() - level.getXOffset());
+      int16_t yDiff = enemy->getY() - (player.getY() - level.getYOffset());
 
 
-        // Otherwise move the enemy towards the player ..
-
-        else {
-
-          Direction direction = Direction::Up;
-
-          LevelElement up =         level.getLevelData(enemyX, enemyY - 1);
-          LevelElement right =      level.getLevelData(enemyX + 1, enemyY);
-          LevelElement rightDown =  level.getLevelData(enemyX + 1, enemyY + 1);
-          LevelElement leftDown =   level.getLevelData(enemyX - 1, enemyY + 1);
-          LevelElement left =       level.getLevelData(enemyX - 1, enemyY);
-          LevelElement down =       level.getLevelData(enemyX, enemyY + 1);
-
-          int16_t xDiff = enemy->getX() - (player.getX() - level.getXOffset());
-          int16_t yDiff = enemy->getY() - (player.getY() - level.getYOffset());
+      if (enemy->getDirectionCount() > 0) {
 
 
-          if (enemy->getDirectionCount() > 0) {
+        // Can the enemy move in the preferred direction ?
 
+        bool preferredHasMoved = attemptToMove(enemy, enemyX, enemyY, enemy->getPreferredDirection(), current, up, right, rightDown, down, leftDown, left, false);
+        enemy->decrementDirectionCount();
+        if (preferredHasMoved) return;
+        direction = enemy->getDirection();
 
-            // Can the enemy move in the preferred direction ?
+      }
+      else {
 
-            hasMoved = attemptToMove(enemy, enemyX, enemyY, enemy->getPreferredDirection(), current, up, right, rightDown, down, leftDown, left, false);
-            enemy->setDirectionCount(enemy->getDirectionCount() - 1);
-
-            if (hasMoved) {
-              return;
-            }
-            else {  
-              direction = enemy->getDirection();
-            }
-
-          }
-          else {
-
-            direction = getDirection_16Directions(xDiff, yDiff);
-            enemy->setPreferredDirection(getDirection_4Directions(direction));
-
-          }
-
-          Direction direction1 = direction;
-          Direction direction2 = direction;
-
-
-          // Drop the gold?
-
-          if (enemy->getHasGold() > 0 && isSolid(down) && current == LevelElement::Blank) {
-
-            enemy->setHasGold(enemy->getHasGold() - 1);
-
-            if (enemy->getHasGold() == ENEMY_GOLD_DROP_VALUE) {
-
-              level.setLevelData(enemyX, enemyY, LevelElement::Gold);
-
-            }
-
-          }
- 
-
-
-          // Can the enemy move in the first direction ?
-
-          hasMoved = attemptToMove(enemy, enemyX, enemyY, direction, current, up, right, rightDown, down, leftDown, left, true);
-
-
-          // If not, try to move in the closest possible direction to the preferred ..
-
-          if (!hasMoved) {
-
-            for (uint8_t x = 0; x < 8; x++) {
-
-              if (!hasMoved) { 
-                
-                direction1--; 
-                hasMoved = attemptToMove(enemy, enemyX, enemyY, direction1, current, up, right, rightDown, down, leftDown, left, true); 
-                if (hasMoved) break;
-                
-              }
-          
-              if (!hasMoved) { 
-                
-                direction2++; 
-                hasMoved = attemptToMove(enemy, enemyX, enemyY, direction2, current, up, right, rightDown, down, leftDown, left, true); 
-                if (hasMoved) break;
-
-              }
-
-            }
-
-          }
-
-
-          // If no movement and we are falling, check to see if we have hit the bottom ..
-
-          if (!hasMoved && enemy->getStance() == PlayerStance::Falling) {
-
-            if (canBeStoodOn_Enemy(down)) {
-
-               enemy->setYDelta(0);
-
-            }
-
-          }
-
-        }  
+        direction = getDirection_16Directions(xDiff, yDiff);
+        enemy->setPreferredDirection(getDirection_4Directions(direction));
 
       }
 
-      break;
+
+      // Drop the gold?
+
+      if (enemy->getHasGold() > 0 && isSolid(down) && current == LevelElement::Blank) {
+
+            enemy->decrementGoldCount();
+
+        if (enemy->getHasGold() == ENEMY_GOLD_DROP_VALUE) {
+
+          level.setLevelData(enemyX, enemyY, LevelElement::Gold);
+
+        }
+
+      }
+
+
+      Direction direction1 = direction;
+      Direction direction2 = direction;
+
+
+      // Can the enemy move in the first direction ?
+
+      if (attemptToMove(enemy, enemyX, enemyY, direction, current, up, right, rightDown, down, leftDown, left, true)) return;
+
+
+      // If not, try to move in the closest possible direction to the preferred ..
+
+      for (uint8_t x = 0; x < 8; x++) {
+
+        if (!hasMoved) { 
+          
+          direction1--; 
+          hasMoved = attemptToMove(enemy, enemyX, enemyY, direction1, current, up, right, rightDown, down, leftDown, left, true); 
+          if (hasMoved) break;
+          
+        }
+    
+        if (!hasMoved) { 
+          
+          direction2++; 
+          hasMoved = attemptToMove(enemy, enemyX, enemyY, direction2, current, up, right, rightDown, down, leftDown, left, true); 
+          if (hasMoved) break;
+
+        }
+
+      }
+
+
+      // If no movement and we are falling, check to see if we have hit the bottom ..
+
+      if (enemy->getStance() == PlayerStance::Falling) {
+
+        if (canBeStoodOn_Enemy(down)) {
+
+            enemy->setYDelta(0);
+
+        }
+
+      }
+
+    }  
 
   }
 
