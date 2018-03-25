@@ -14,9 +14,9 @@ void clearEnemyMovementPositions(Enemy *enemies) {
   
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
-    Enemy *enemy = &enemies[x];
-    enemy->setXFuturePosition(0);
-    enemy->setYFuturePosition(0);
+    Enemy &enemy = enemies[x];
+    enemy.setXFuturePosition(0);
+    enemy.setYFuturePosition(0);
 
   }
   
@@ -225,20 +225,19 @@ boolean isOccupiedByAnotherEnemy(Enemy *enemies, Enemy *enemy, int8_t xDelta, in
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
-    Enemy *testEnemy = &enemies[x];
+    const Enemy & testEnemy = enemies[x];
 
-    if (testEnemy->getEnabled() && testEnemy->getId() != enemy->getId()) {
+    if (!testEnemy.getEnabled() || testEnemy.getId() == enemy->getId()) continue;
 
-      Rect testRect = { static_cast<int16_t>(testEnemy->getX() + testEnemy->getXFuturePosition()), static_cast<int16_t>(testEnemy->getY() + testEnemy->getYFuturePosition()), GRID_SIZE, GRID_SIZE };
-      Rect enemyRect = { static_cast<int16_t>(enemy->getX() + xDelta), static_cast<int16_t>(enemy->getY() + yDelta), GRID_SIZE, GRID_SIZE };
+    const int16_t targetX = static_cast<int16_t>(testEnemy.getX() + testEnemy.getXFuturePosition());
+    const int16_t targetY = static_cast<int16_t>(testEnemy.getY() + testEnemy.getYFuturePosition());
+    const Rect testRect = { targetX, targetY, GRID_SIZE, GRID_SIZE };
 
-      if (arduboy.collide(testRect, enemyRect)) {
+    const int16_t enemyX = static_cast<int16_t>(enemy->getX()) + xDelta;
+    const int16_t enemyY = static_cast<int16_t>(enemy->getY()) + yDelta;
+    const Rect enemyRect = { enemyX, enemyY, GRID_SIZE, GRID_SIZE };
 
-        return true;
-
-      }
-
-    }
+    if (arduboy.collide(testRect, enemyRect)) return true;
 
   }
 
