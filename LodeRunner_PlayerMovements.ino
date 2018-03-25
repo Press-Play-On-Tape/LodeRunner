@@ -65,19 +65,13 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
         break;
 
       case 61:
-        suicide = 0;
         arduboy.setRGBled(0, 0, 0);
         playerDies();
+        suicide = 0;
         return;
 
     }
 
-  }
-  else {
-
-    arduboy.setRGBled(0, 0, 0);
-    suicide = 0;
-    
   }
 
 
