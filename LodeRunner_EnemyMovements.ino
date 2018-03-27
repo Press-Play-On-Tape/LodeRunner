@@ -38,11 +38,11 @@ void enemyMovements(Enemy *enemy) {
 
   // Check to see if the enemy has touched gold!
 
-  if (current == LevelElement::Gold && enemy->getHasGold() == 0) {
+  if (current == LevelElement::Gold && enemy->getGoldCountdown() == 0) {
 
     if (random(0, ENEMY_GOLD_PICKUP_THRESHOLD) == 0) {
 
-      enemy->setHasGold(random(ENEMY_GOLD_HOLD_MINIMUM, ENEMY_GOLD_HOLD_MAXIMUM));
+      enemy->setGoldCountdown(random(ENEMY_GOLD_HOLD_MINIMUM, ENEMY_GOLD_HOLD_MAXIMUM));
       level.setLevelData(enemyX, enemyY, LevelElement::Blank);
 
     }
@@ -81,9 +81,9 @@ void enemyMovements(Enemy *enemy) {
 
       // If the enemy has gold, then make it available to pickup ..
 
-      if (enemy->getHasGold() > ENEMY_GOLD_DROP_VALUE && level.getLevelData(enemyX, enemyY - 1) == LevelElement::Blank) {
+      if (enemy->getGoldCountdown() > 0 && level.getLevelData(enemyX, enemyY - 1) == LevelElement::Blank) {
 
-        enemy->setHasGold(0);
+        enemy->setGoldCountdown(0);
         level.setLevelData(enemyX, enemyY - 1, LevelElement::Gold);
 
       }
@@ -111,13 +111,13 @@ void enemyMovements(Enemy *enemy) {
       int16_t yDiff = enemy->getY() - (player.getY() - level.getYOffset());
 
 
-      if (enemy->getDirectionCount() > 0) {
+      if (enemy->getDirectionCountdown() > 0) {
 
 
         // Can the enemy move in the preferred direction ?
 
         bool preferredHasMoved = attemptToMove(enemy, enemyX, enemyY, enemy->getPreferredDirection(), current, up, right, rightDown, down, leftDown, left, false);
-        enemy->decrementDirectionCount();
+        enemy->decrementDirectionCountdown();
         if (preferredHasMoved) return;
         direction = enemy->getDirection();
 
@@ -132,11 +132,11 @@ void enemyMovements(Enemy *enemy) {
 
       // Drop the gold?
 
-      if (enemy->getHasGold() > 0 && isSolid(down) && current == LevelElement::Blank) {
+      if (enemy->getGoldCountdown() > 0 && isSolid(down) && current == LevelElement::Blank) {
 
-            enemy->decrementGoldCount();
+        enemy->decrementGoldCountdown();
 
-        if (enemy->getHasGold() == ENEMY_GOLD_DROP_VALUE) {
+        if (enemy->getGoldCountdown() == 0) {
 
           level.setLevelData(enemyX, enemyY, LevelElement::Gold);
 
@@ -519,7 +519,7 @@ void move(Enemy *enemy, int8_t x, int8_t y, bool randomMoves) {
   if (y < 0) { enemy->setDirection(Direction::Up); }
   if (y > 0) { enemy->setDirection(Direction::Down); }
   
-  if (randomMoves && enemy->getDirectionCount() == 0) { 
+  if (randomMoves && enemy->getDirectionCountdown() == 0) { 
 
 
     // If we are about to climb up a ladder, then we need to climb to the top !
@@ -562,12 +562,12 @@ void move(Enemy *enemy, int8_t x, int8_t y, bool randomMoves) {
       
       }
 
-      enemy->setDirectionCount(howHigh); 
+      enemy->setDirectionCountdown(howHigh); 
       
     }
     else {
     
-      enemy->setDirectionCount(random(0, 6)); 
+      enemy->setDirectionCountdown(random(0, 6)); 
       
     }
 

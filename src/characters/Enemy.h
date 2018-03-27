@@ -18,8 +18,8 @@ class Enemy {
     int8_t getXFuturePosition() const;
     int8_t getYFuturePosition() const;
     bool getEnabled() const;
-    uint8_t getHasGold() const;
-    uint8_t getDirectionCount() const;
+    uint8_t getGoldCountdown() const;
+    uint8_t getDirectionCountdown() const;
     PlayerStance getStance() const;
     EscapeHole getEscapeHole() const;
     Direction getDirection() const;
@@ -33,14 +33,14 @@ class Enemy {
     void setXFuturePosition(int8_t val);
     void setYFuturePosition(int8_t val);
     void setEnabled(bool val);
-    void setHasGold(uint8_t val);
-    void setDirectionCount(uint8_t val);
+    void setGoldCountdown(uint8_t val);
+    void setDirectionCountdown(uint8_t val);
     void setStance(const PlayerStance &val);
     void setEscapeHole(const EscapeHole &val);
     void setDirection(const Direction &val);
     void setPreferredDirection(const Direction &val);
-    void decrementDirectionCount(void);
-    void decrementGoldCount(void);
+    void decrementDirectionCountdown(void);
+    void decrementGoldCountdown(void);
 
   private:
 
@@ -50,8 +50,8 @@ class Enemy {
   uint16_t _y;
   int8_t _xDelta;
   int8_t _yDelta;
-  uint8_t _hasGold;
-  uint8_t _directionCount;
+  uint8_t _goldCountdown;
+  uint8_t _directionCountdown;
 
   PlayerStance _stance;
   EscapeHole _escapeHole;
@@ -94,12 +94,12 @@ bool Enemy::getEnabled() const {
   return (_flags & 0x10) == 0x10;
 }
 
-uint8_t Enemy::getHasGold() const {
-  return _hasGold;
+uint8_t Enemy::getGoldCountdown() const {
+  return _goldCountdown;
 }
 
-uint8_t Enemy::getDirectionCount() const {
-  return _directionCount;
+uint8_t Enemy::getDirectionCountdown() const {
+  return _directionCountdown;
 }
 
 PlayerStance Enemy::getStance() const {
@@ -150,12 +150,12 @@ void Enemy::setEnabled(bool val) {
   _flags = (_flags | (val ? 0x10 : 0x00));
 }
 
-void Enemy::setHasGold(uint8_t val) {
-  _hasGold = val;
+void Enemy::setGoldCountdown(uint8_t val) {
+  _goldCountdown = val;
 }
 
-void Enemy::setDirectionCount(uint8_t val) {
-  _directionCount = val;
+void Enemy::setDirectionCountdown(uint8_t val) {
+  _directionCountdown = val;
 }
 
 void Enemy::setStance(const PlayerStance &val) {
@@ -174,12 +174,12 @@ void Enemy::setPreferredDirection(const Direction &val) {
   _preferredDirection = val;
 }
 
-void Enemy::decrementDirectionCount(void) {
-  --this->_directionCount;
+void Enemy::decrementDirectionCountdown(void) {
+  --this->_directionCountdown;
 }
 
-void Enemy::decrementGoldCount(void) {
-  --this->_hasGold;
+void Enemy::decrementGoldCountdown(void) {
+  --this->_goldCountdown;
 }
 
 

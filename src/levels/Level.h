@@ -213,9 +213,9 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
     Enemy *enemy = &enemies[x];
 
     enemy->setId(x);
-    enemy->setHasGold(0);
+    enemy->setGoldCountdown(0);
 
-    if (x  < numberOfEnemies) {
+    if (x < numberOfEnemies) {
 
       enemy->setX(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
       enemy->setY(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
@@ -243,7 +243,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   }
 
 
-  // Load level ladder points ..
+  // Load reentry points ..
 
   for (uint8_t x = 0; x < NUMBER_OF_REENTRY_POINTS; x++) {
 
@@ -285,7 +285,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
       uint8_t block = (data & 0xE0) >> 5;
       uint8_t run = data & 0x1F;
 
-      if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
+      if (block == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft = goldLeft + run;}
 
       if (run > 0) {
 
