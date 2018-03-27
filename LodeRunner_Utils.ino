@@ -44,39 +44,39 @@ const PlayerStance nextStances[] PROGMEM =
 {
 	PlayerStance::Burn_Left, // -12
 	static_cast<PlayerStance>(-11),
-    PlayerStance::Swinging_Left1,
-    PlayerStance::Swinging_Left4,
-    PlayerStance::Swinging_Left3,
-    PlayerStance::Swinging_Left2,
-    PlayerStance::Climbing_Down1,
-    PlayerStance::Climbing_Down2,
-    PlayerStance::Running_Left1,
-    PlayerStance::Running_Left4,
-    PlayerStance::Running_Left3,
-    PlayerStance::Running_Left2,
+  PlayerStance::Swinging_Left1,
+  PlayerStance::Swinging_Left4,
+  PlayerStance::Swinging_Left3,
+  PlayerStance::Swinging_Left2,
+  PlayerStance::Climbing_Down1,
+  PlayerStance::Climbing_Down2,
+  PlayerStance::Running_Left1,
+  PlayerStance::Running_Left4,
+  PlayerStance::Running_Left3,
+  PlayerStance::Running_Left2,
 	PlayerStance::StandingStill,	
-    PlayerStance::Running_Right2,
-    PlayerStance::Running_Right3,
-    PlayerStance::Running_Right4,
-    PlayerStance::Running_Right1,
-    PlayerStance::Climbing_Up2,
-    PlayerStance::Climbing_Up1,
-    PlayerStance::Swinging_Right2,
-    PlayerStance::Swinging_Right3,
-    PlayerStance::Swinging_Right4,
-    PlayerStance::Swinging_Right1,
-    PlayerStance::Falling,
-    PlayerStance::Burn_Right,
-    PlayerStance::Rebirth_2,
-    PlayerStance::Rebirth_3,
-    PlayerStance::StandingStill,
+  PlayerStance::Running_Right2,
+  PlayerStance::Running_Right3,
+  PlayerStance::Running_Right4,
+  PlayerStance::Running_Right1,
+  PlayerStance::Climbing_Up2,
+  PlayerStance::Climbing_Up1,
+  PlayerStance::Swinging_Right2,
+  PlayerStance::Swinging_Right3,
+  PlayerStance::Swinging_Right4,
+  PlayerStance::Swinging_Right1,
+  PlayerStance::Falling,
+  PlayerStance::Burn_Right,
+  PlayerStance::Rebirth_2,
+  PlayerStance::Rebirth_3,
+  PlayerStance::StandingStill,
 };
 
 
 PlayerStance getNextStance(PlayerStance stance) {
 
   uint8_t index = static_cast<uint8_t>(stance) + 12;
-  if(index > 27) return stance;
+  if (index > 27) return stance;
   return static_cast<PlayerStance>(pgm_read_byte(&nextStances[index]));
 
 }
