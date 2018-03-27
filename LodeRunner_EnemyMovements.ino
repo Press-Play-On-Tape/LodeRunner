@@ -71,9 +71,6 @@ void enemyMovements(Enemy *enemy) {
 
   if (enemy->getX() % GRID_SIZE == 0 && enemy->getY() % GRID_SIZE == 0) {
 
-    bool hasMoved = false;
-
-
     // If the enemy is in a hole, then attemt to wiggle out ..
 
     if (enemy->getEscapeHole() > EscapeHole::None) {
@@ -157,21 +154,15 @@ void enemyMovements(Enemy *enemy) {
       // If not, try to move in the closest possible direction to the preferred ..
 
       for (uint8_t x = 0; x < 8; x++) {
-
-        if (!hasMoved) { 
           
-          direction1--; 
-          hasMoved = attemptToMove(enemy, enemyX, enemyY, direction1, current, up, right, rightDown, down, leftDown, left, true); 
-          if (hasMoved) break;
-          
+        direction1--;
+        if(attemptToMove(enemy, enemyX, enemyY, direction1, current, up, right, rightDown, down, leftDown, left, true)) { 
+          return;
         }
     
-        if (!hasMoved) { 
-          
-          direction2++; 
-          hasMoved = attemptToMove(enemy, enemyX, enemyY, direction2, current, up, right, rightDown, down, leftDown, left, true); 
-          if (hasMoved) break;
-
+        direction2++;
+        if(attemptToMove(enemy, enemyX, enemyY, direction1, current, up, right, rightDown, down, leftDown, left, true)) { 
+          return;
         }
 
       }
