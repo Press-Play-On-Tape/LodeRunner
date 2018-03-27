@@ -40,37 +40,44 @@ boolean inCellY(uint8_t margin) {
 
 }
 
+const PlayerStance nextStances[] PROGMEM =
+{
+	PlayerStance::Burn_Left, // -12
+	static_cast<PlayerStance>(-11),
+    PlayerStance::Swinging_Left1,
+    PlayerStance::Swinging_Left4,
+    PlayerStance::Swinging_Left3,
+    PlayerStance::Swinging_Left2,
+    PlayerStance::Climbing_Down1,
+    PlayerStance::Climbing_Down2,
+    PlayerStance::Running_Left1,
+    PlayerStance::Running_Left4,
+    PlayerStance::Running_Left3,
+    PlayerStance::Running_Left2,
+	PlayerStance::StandingStill,	
+    PlayerStance::Running_Right2,
+    PlayerStance::Running_Right3,
+    PlayerStance::Running_Right4,
+    PlayerStance::Running_Right1,
+    PlayerStance::Climbing_Up2,
+    PlayerStance::Climbing_Up1,
+    PlayerStance::Swinging_Right2,
+    PlayerStance::Swinging_Right3,
+    PlayerStance::Swinging_Right4,
+    PlayerStance::Swinging_Right1,
+    PlayerStance::Falling,
+    PlayerStance::Burn_Right,
+    PlayerStance::Rebirth_2,
+    PlayerStance::Rebirth_3,
+    PlayerStance::StandingStill,
+};
+
 
 PlayerStance getNextStance(PlayerStance stance) {
 
-  switch (stance) {
-
-    case PlayerStance::Swinging_Left4:        return PlayerStance::Swinging_Left1;
-    case PlayerStance::Swinging_Left3:        return PlayerStance::Swinging_Left4;
-    case PlayerStance::Swinging_Left2:        return PlayerStance::Swinging_Left3;
-    case PlayerStance::Swinging_Left1:        return PlayerStance::Swinging_Left2;
-    case PlayerStance::Climbing_Down2:        return PlayerStance::Climbing_Down1;
-    case PlayerStance::Climbing_Down1:        return PlayerStance::Climbing_Down2;
-    case PlayerStance::Running_Left4:         return PlayerStance::Running_Left1;
-    case PlayerStance::Running_Left3:         return PlayerStance::Running_Left4;
-    case PlayerStance::Running_Left2:         return PlayerStance::Running_Left3;
-    case PlayerStance::Running_Left1:         return PlayerStance::Running_Left2;
-    case PlayerStance::Running_Right1:        return PlayerStance::Running_Right2;
-    case PlayerStance::Running_Right2:        return PlayerStance::Running_Right3;
-    case PlayerStance::Running_Right3:        return PlayerStance::Running_Right4;
-    case PlayerStance::Running_Right4:        return PlayerStance::Running_Right1;
-    case PlayerStance::Climbing_Up1:          return PlayerStance::Climbing_Up2;
-    case PlayerStance::Climbing_Up2:          return PlayerStance::Climbing_Up1;
-    case PlayerStance::Swinging_Right1:       return PlayerStance::Swinging_Right2;
-    case PlayerStance::Swinging_Right2:       return PlayerStance::Swinging_Right3;
-    case PlayerStance::Swinging_Right3:       return PlayerStance::Swinging_Right4;
-    case PlayerStance::Swinging_Right4:       return PlayerStance::Swinging_Right1;
-    case PlayerStance::Rebirth_1:             return PlayerStance::Rebirth_2;
-    case PlayerStance::Rebirth_2:             return PlayerStance::Rebirth_3;
-    case PlayerStance::Rebirth_3:             return PlayerStance::StandingStill;
-    default:                                  return stance;
-
-  }
+  uint8_t index = static_cast<uint8_t>(stance) + 12;
+  if(index > 27) return stance;
+  return static_cast<PlayerStance>(pgm_read_byte(&nextStances[index]));
 
 }
 
