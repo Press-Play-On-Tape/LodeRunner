@@ -40,8 +40,7 @@ boolean inCellY(uint8_t margin) {
 
 }
 
-const PlayerStance nextStances[] PROGMEM =
-{
+const PlayerStance nextStances[] PROGMEM = {
 	PlayerStance::Burn_Left, // -12
 	static_cast<PlayerStance>(-11),
   PlayerStance::Swinging_Left1,
