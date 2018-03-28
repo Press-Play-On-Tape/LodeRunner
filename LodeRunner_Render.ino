@@ -630,17 +630,14 @@ void renderScoreboard() {
 
   // Score ..
   {
-	  uint16_t score = player.getScore();
-	  uint8_t digits[5] = {};
-	  extractDigits(digits, score);
-	  
-	  arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
-	  Sprites::drawOverwrite(29, 58, numbers, 0);
-	  Sprites::drawOverwrite(34, 58, numbers, digits[4]);
-	  Sprites::drawOverwrite(39, 58, numbers, digits[3]);
-	  Sprites::drawOverwrite(44, 58, numbers, digits[2]);
-	  Sprites::drawOverwrite(49, 58, numbers, digits[1]);
-	  Sprites::drawOverwrite(54, 58, numbers, digits[0]);
+      uint16_t score = player.getScore();
+      uint8_t digits[6] = {};
+      extractDigits(digits, score);
+      
+      arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
+      for(uint8_t i = 0, x = 54; i < 6; ++i, x -= 5) {
+        Sprites::drawOverwrite(x, 58, numbers, digits[i]);
+      }
   }
 
 
