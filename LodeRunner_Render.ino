@@ -1,4 +1,5 @@
 #include "src/utils/Arduboy2Ext.h"
+#include "src/utils/Utils.h"
 #include <ArduboyTones.h>
 
 
@@ -628,18 +629,16 @@ void renderScoreboard() {
 
 
   // Score ..
-
-  uint16_t score = player.getScore();
-  arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
-  Sprites::drawOverwrite(29, 58, numbers, 0);
-  Sprites::drawOverwrite(34, 58, numbers, score / 10000);
-  score = score - (score / 10000) * 10000;
-  Sprites::drawOverwrite(39, 58, numbers, score / 1000);
-  score = score - (score / 1000) * 1000;
-  Sprites::drawOverwrite(44, 58, numbers, score / 100);
-  score = score - (score / 100) * 100;
-  Sprites::drawOverwrite(49, 58, numbers, score / 10);
-  Sprites::drawOverwrite(54, 58, numbers, score % 10);
+  {
+      uint16_t score = player.getScore();
+      uint8_t digits[6] = {};
+      extractDigits(digits, score);
+      
+      arduboy.drawCompressedMirror(0, 58, score_sc, WHITE, false);
+      for(uint8_t i = 0, x = 54; i < 6; ++i, x -= 5) {
+        Sprites::drawOverwrite(x, 58, numbers, digits[i]);
+      }
+  }
 
 
   // Men left ..
