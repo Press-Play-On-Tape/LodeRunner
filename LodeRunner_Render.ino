@@ -663,8 +663,10 @@ void renderScoreboard() {
 
     uint8_t levelNumber = level.getLevelNumber();
     arduboy.drawCompressedMirror(96, 58, level_sc, WHITE, false);
-    Sprites::drawOverwrite(113, 58, numbers, levelNumber / 100);
-    levelNumber = levelNumber - (levelNumber / 100) * 100;
+    
+    const auto divT = div(levelNumber, 100);
+    Sprites::drawOverwrite(113, 58, numbers, divT.quot);
+    levelNumber = divT.rem;
     Sprites::drawOverwrite(118, 58, numbers, levelNumber / 10);
     Sprites::drawOverwrite(123, 58, numbers, levelNumber % 10);
 
