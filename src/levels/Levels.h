@@ -650,9 +650,9 @@ const uint8_t *levels[] =    { nullptr,
 #endif
 #if GAME_NUMBER == 4
 const uint8_t *levels[] =    { nullptr, 
-                               level117, level118, level119, level120, level121, level122, level123, level124, level125, level126, 
+                               level116, level117, level118, level119, level120, level121, level122, level123, level124, level125, level126, 
                                level127, level128, level129, level130, level131, level132, level133, level134, level135, level136, 
                                level137, level138, level139, level140, level141, level142, level143, level144, level145, level146, 
-                               level147, level148, level149, level150, level151, level152, level153, level154,  
+                               level147, level148, level149, level150, level152, level153, level154,  
                              };
 #endif
