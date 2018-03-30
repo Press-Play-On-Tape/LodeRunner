@@ -3,23 +3,28 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define GAME_NUMBER                   1
+#define GAME_NUMBER                   4
+#define NUMBER_OF_GAMES               4
 
 #if GAME_NUMBER == 1
-  #define LEVEL_COUNT                 40
+  #define LEVEL_COUNT                 41
   #define LEVEL_OFFSET                0
 #endif
 #if GAME_NUMBER == 2
-  #define LEVEL_COUNT                 40
-  #define LEVEL_OFFSET                40
+  #define LEVEL_COUNT                 38
+  #define LEVEL_OFFSET                41
 #endif
 #if GAME_NUMBER == 3
-  #define LEVEL_COUNT                 30
-  #define LEVEL_OFFSET                100
+  #define LEVEL_COUNT                 36
+  #define LEVEL_OFFSET                79
+#endif
+#if GAME_NUMBER == 4
+  #define LEVEL_COUNT                 38
+  #define LEVEL_OFFSET                115
 #endif
 
 #define _TWO_ARROW_SIZES
-#define _INC_LEVEL_SELECTOR
+#define CHANGE_LEVELS
 
 #define ARROW_SMALL_DIST_X_LEFT       20
 #define ARROW_SMALL_DIST_X_RIGHT      10
@@ -70,7 +75,9 @@ enum class GameState : uint8_t {
   RestartLevel,
   CompleteGame1,
   CompleteGame2,
-  NextGame
+  CompleteGame3,
+  NextGame,
+  SeriesOver
 
 };
 

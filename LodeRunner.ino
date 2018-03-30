@@ -69,6 +69,22 @@ void setup() {
 
     if (gameNumber == 1) { gameState = GameState::CompleteGame1; }
     if (gameNumber == 2) { gameState = GameState::CompleteGame2; }
+    if (gameNumber == 3) { gameState = GameState::CompleteGame3; }
+
+  }
+  
+  if (gameNumber > GAME_NUMBER) {
+
+    #if GAME_NUMBER == 4
+    if (gameNumber == NUMBER_OF_GAMES) {
+      gameState = GameState::SeriesOver;
+    }
+    else {
+      gameState = GameState::NextGame;
+    }
+    #else
+    gameState = GameState::NextGame;
+    #endif
 
   }
 
@@ -128,6 +144,16 @@ void loop() {
     case GameState::CompleteGame2:
       CompleteGame(2);
       break;
+
+    case GameState::CompleteGame3:
+      CompleteGame(3);
+      break;
+
+    #if GAME_NUMBER == 4
+    case GameState::SeriesOver:
+      CompleteSeries();
+      break;
+    #endif
 
     case GameState::NextGame:
       NextGame();
@@ -414,9 +440,20 @@ void LevelPlay() {
       EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
 
       if (levelNumber > LEVEL_OFFSET + LEVEL_COUNT) {
-        EEPROM_Utils::setGameNumber(EEPROM_Utils::getGameNumber() + 1);
-        EEPROM_Utils::saveGameData(&level, &player);
-        player.setNextState(GameState::NextGame);
+
+        if (EEPROM_Utils::getGameNumber() < NUMBER_OF_GAMES) {
+
+          EEPROM_Utils::setGameNumber(EEPROM_Utils::getGameNumber() + 1);
+          EEPROM_Utils::saveGameData(&level, &player);
+          player.setNextState(GameState::NextGame);
+
+        }
+        else {
+
+          player.setNextState(GameState::SeriesOver);
+
+        }
+
       }
       else {
         player.setNextState(GameState::NextLevel);
@@ -587,6 +624,7 @@ void LevelPlay() {
 
     // Change level?
 
+    #ifdef CHANGE_LEVELS
     if (gameState == GameState::LevelFlash) {
 
       if (pressed & B_BUTTON) {
@@ -667,7 +705,7 @@ void LevelPlay() {
       levelCount = 0;
 
     }
-
+    #endif
 
 
     // We are not playing so wait for a key press to continue the game ..
@@ -707,7 +745,7 @@ void LevelPlay() {
   // Show level clear indicator?
 
   if (suicide == 0 && levelCount == 0) {
-    arduboy.setRGBled(0, (flashPlayer && level.getGoldLeft() == 0 && gameState == GameState::LevelPlay ? 32 : 0), 0);
+    arduboy.setRGBled(0, (level.getGoldLeft() == 0 && gameState == GameState::LevelPlay ? 32 : 0), 0);
   }
 
   arduboy.display(CLEAR_BUFFER);
@@ -757,7 +795,23 @@ void NextGame() {
 void CompleteGame(uint8_t level) {
 
   arduboy.drawCompressedMirror(19, 20, completeGame, WHITE, false);
-  arduboy.drawCompressedMirror(71, 35, (level == 1 ? completeGame1 : completeGame2), WHITE, false);
+  if (level == 1) arduboy.drawCompressedMirror(71, 35, completeGame1, WHITE, false);
+  if (level == 2) arduboy.drawCompressedMirror(71, 35, completeGame2, WHITE, false);
+  if (level == 3) arduboy.drawCompressedMirror(71, 35, completeGame3, WHITE, false);
   arduboy.display(CLEAR_BUFFER);
 
 }
+
+
+
+// --------------------------------------------------------------------------------------
+//  Display 'victory' banner ..
+//
+#if GAME_NUMBER == 4
+void CompleteSeries() {
+
+  arduboy.drawCompressedMirror(29, 24, victory, WHITE, false);
+  arduboy.display(CLEAR_BUFFER);
+
+}
+#endif

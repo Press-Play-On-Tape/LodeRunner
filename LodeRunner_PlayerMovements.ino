@@ -75,8 +75,12 @@ void playerMovements(uint8_t nearestX, uint8_t nearestY, LevelElement nearest) {
   }
   else {
 
-    arduboy.setRGBled(0, 0, 0);
-    suicide = 0;
+    if (suicide > 0) {
+    
+      arduboy.setRGBled(0, 0, 0);
+      suicide = 0;
+
+    }
     
   }
 
