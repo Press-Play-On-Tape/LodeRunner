@@ -23,7 +23,7 @@ Level level;
 
 bool flashPlayer = false;
 
-GameState gameState = GameState::Intro;
+GameState gameState = GameState::GameSelect;
 int8_t bannerStripe = -30;
 int8_t introRect = 0;
 Queue<Hole, 20> holes;
@@ -61,7 +61,12 @@ void setup() {
   player.setX(20);
   player.setY(35);
   player.setStance(PlayerStance::StandingStill);
+
+  #if GAME_NUMBER == 1
   player.setNextState(GameState::Intro);
+  #else
+  player.setNextState(GameState::GameSelect);
+  #endif 
 
   uint8_t gameNumber = EEPROM_Utils::getGameNumber();
   
@@ -98,6 +103,8 @@ void loop() {
 
   switch (gameState) {
 
+    #if GAME_NUMBER == 1
+
     case GameState::Intro:
       if (!sound.playing()) sound.tones(score);
       Intro();
@@ -106,6 +113,15 @@ void loop() {
     case GameState::GameSelect:
       GameSelect();
       break;
+
+    #else
+
+    case GameState::GameSelect:
+      if (!sound.playing()) sound.tones(score);
+      GameSelect();
+      break;
+
+    #endif
 
     case GameState::LevelInit:
       sound.noTone();
@@ -137,16 +153,8 @@ void loop() {
       LevelPlay();
       break;
 
-    case GameState::CompleteGame1:
-      CompleteGame(1);
-      break;
-
-    case GameState::CompleteGame2:
-      CompleteGame(2);
-      break;
-
-    case GameState::CompleteGame3:
-      CompleteGame(3);
+    case GameState::CompleteGame1 ... GameState::CompleteGame3:
+      CompleteGame();
       break;
 
     #if GAME_NUMBER == 4
@@ -723,7 +731,11 @@ void LevelPlay() {
           break;
 
         case GameState::GameOver:
+          #if GAME_NUMBER == 1
           gameState = GameState::Intro;  
+          #else
+          gameState = GameState::GameSelect;  
+          #endif
           break;
 
         case GameState::LevelExitAnimation:
@@ -758,10 +770,12 @@ void LevelPlay() {
 //
 void playerDies() {
 
-  player.setMen(player.getMen() - 1);
+  uint8_t menLeft = player.getMen() - 1;
+
+  player.setMen(menLeft);
   gameState = GameState::LevelExitInit;
 
-  if (player.getMen() > 0) {
+  if (menLeft > 0) {
 
     player.setNextState(GameState::RestartLevel);
 
@@ -792,8 +806,9 @@ void NextGame() {
 // --------------------------------------------------------------------------------------
 //  Display 'complete game' banner ..
 //
-void CompleteGame(uint8_t level) {
+void CompleteGame() {
 
+  uint8_t level = static_cast<uint8_t>(gameState) - static_cast<uint8_t>(GameState::CompleteGame1) + 1;
   arduboy.drawCompressedMirror(19, 20, completeGame, WHITE, false);
   if (level == 1) arduboy.drawCompressedMirror(71, 35, completeGame1, WHITE, false);
   if (level == 2) arduboy.drawCompressedMirror(71, 35, completeGame2, WHITE, false);

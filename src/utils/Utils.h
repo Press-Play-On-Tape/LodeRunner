@@ -29,26 +29,26 @@ uint8_t rightValue(uint8_t val) {
 // Extract individual digits of a uint8_t
 //
 template< size_t size >
-void extractDigits(uint8_t (&buffer)[size], uint8_t value)
-{
-  for(uint8_t i = 0; i < size; ++i)
-  {
+void extractDigits(uint8_t (&buffer)[size], uint8_t value) {
+
+  for (uint8_t i = 0; i < size; ++i) {
     buffer[i] = value % 10;
     value /= 10;
   }
+
 }
 
 // ---------------------------------------------------------------------------------
 // Extract individual digits of a uint16_t
 //
 template< size_t size >
-void extractDigits(uint8_t (&buffer)[size], uint16_t value)
-{
-  for(uint8_t i = 0; i < size; ++i)
-  {
+void extractDigits(uint8_t (&buffer)[size], uint16_t value) {
+
+  for(uint8_t i = 0; i < size; ++i) {
     buffer[i] = value % 10;
     value /= 10;
   }
+
 }
 
 // ---------------------------------------------------------------------------------
@@ -64,35 +64,6 @@ boolean canBeStoodOn(LevelElement levelElement, Enemy *enemies, uint16_t positio
     case LevelElement::Solid:
     case LevelElement::Ladder:
       return true;
-
-	  /* not needed as test below covers the same scenario 
-    case LevelElement::Brick_1:
-    case LevelElement::Brick_2:
-    case LevelElement::Brick_3:
-    case LevelElement::Brick_4:
-    case LevelElement::Brick_Transition:
-    case LevelElement::Brick_Close_1:
-    case LevelElement::Brick_Close_2:
-    case LevelElement::Brick_Close_3:
-    case LevelElement::Brick_Close_4:
-
-      for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
-
-        Enemy *enemy = &enemies[x];
-
-        if (enemy->getEnabled()) {
-
-          if (enemy->getStance() == PlayerStance::Falling && enemy->getX() == positionX * GRID_SIZE && enemy->getY() == positionY * GRID_SIZE) {
-
-            return true; 
-
-          }
-
-        }
-
-      }
-
-      return false; */
 
     default:
 

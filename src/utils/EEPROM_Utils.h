@@ -49,15 +49,16 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
 
   if (forceClear || c1 != 76 || c2 != 82) { // LR 76 82
 
+    const uint16_t score = 0;
+    EEPROM.update(EEPROM_START_C1, 76);
+    EEPROM.update(EEPROM_START_C2, 82);
+    EEPROM.get(EEPROM_SCORE, score);
+
     if (GAME_NUMBER == 1) {
 
-      const uint16_t score = 0;
-      EEPROM.update(EEPROM_START_C1, 76);
-      EEPROM.update(EEPROM_START_C2, 82);
       EEPROM.update(EEPROM_GAME_NO, 1);
       EEPROM.update(EEPROM_LEVEL_NO, 1);
       EEPROM.update(EEPROM_MEN_LEFT, 5);
-      EEPROM.put(EEPROM_SCORE, score);
 
       EEPROM.update(EEPROM_GAME_NO_ORIG, 1);
       EEPROM.update(EEPROM_LEVEL_NO_ORIG, 1);
@@ -67,14 +68,9 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
     }
     else {
 
-      uint16_t score = 0;
-      EEPROM.get(EEPROM_SCORE, score);
-      EEPROM.update(EEPROM_START_C1, 76);
-      EEPROM.update(EEPROM_START_C2, 82);
       EEPROM.update(EEPROM_GAME_NO, EEPROM.read(EEPROM_GAME_NO_ORIG));
       EEPROM.update(EEPROM_LEVEL_NO, EEPROM.read(EEPROM_LEVEL_NO_ORIG));
       EEPROM.update(EEPROM_MEN_LEFT, EEPROM.read(EEPROM_MEN_LEFT_ORIG));
-      EEPROM.put(EEPROM_SCORE, score);
 
     }
 
@@ -141,14 +137,18 @@ void EEPROM_Utils::getSavedGameData(Level *level, Player *player) {
  *   Save game data.
  */
 void EEPROM_Utils::saveGameData(Level *level, Player *player) {
+ 
+  uint8_t levelNumber = level->getLevelNumber();
+  EEPROM.update(EEPROM_LEVEL_NO, levelNumber);
+  EEPROM.update(EEPROM_LEVEL_NO_ORIG, levelNumber);
 
-  EEPROM.update(EEPROM_LEVEL_NO, level->getLevelNumber());
-  EEPROM.update(EEPROM_MEN_LEFT, player->getMen());
-  EEPROM.put(EEPROM_SCORE, player->getScore());
+  uint8_t menLeft = player->getMen();
+  EEPROM.update(EEPROM_MEN_LEFT, menLeft);
+  EEPROM.update(EEPROM_MEN_LEFT_ORIG, menLeft);
 
-  EEPROM.update(EEPROM_LEVEL_NO_ORIG, level->getLevelNumber());
-  EEPROM.update(EEPROM_MEN_LEFT_ORIG, player->getMen());
-  EEPROM.put(EEPROM_SCORE_ORIG, player->getScore());
+  uint16_t score = player->getScore();
+  EEPROM.put(EEPROM_SCORE, score);
+  EEPROM.put(EEPROM_SCORE_ORIG, score);
 
 }
 
