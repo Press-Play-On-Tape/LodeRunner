@@ -3,7 +3,7 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define GAME_NUMBER                   1
+#define GAME_NUMBER                   4
 #define NUMBER_OF_GAMES               4
 
 #if GAME_NUMBER == 1
