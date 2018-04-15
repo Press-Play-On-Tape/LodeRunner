@@ -3,26 +3,6 @@
 #include "Arduboy2Ext.h"
 #include "Utils.h"
 
-#define GAME_NUMBER                   4
-#define NUMBER_OF_GAMES               4
-
-#if GAME_NUMBER == 1
-  #define LEVEL_COUNT                 40
-  #define LEVEL_OFFSET                0
-#endif
-#if GAME_NUMBER == 2
-  #define LEVEL_COUNT                 40
-  #define LEVEL_OFFSET                40
-#endif
-#if GAME_NUMBER == 3
-  #define LEVEL_COUNT                 80
-  #define LEVEL_OFFSET                80
-#endif
-#if GAME_NUMBER == 4
-  #define LEVEL_COUNT                 40
-  #define LEVEL_OFFSET                120
-#endif
-
 #define _TWO_ARROW_SIZES
 #define CHANGE_LEVELS
 

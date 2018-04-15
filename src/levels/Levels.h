@@ -4,6 +4,26 @@
 #include "../utils/Utils.h"
 #include "../utils/Enums.h"
 
+#define GAME_NUMBER                   4
+#define NUMBER_OF_GAMES               4
+
+#if GAME_NUMBER == 1
+  #define LEVEL_COUNT                 40
+  #define LEVEL_OFFSET                0
+#endif
+#if GAME_NUMBER == 2
+  #define LEVEL_COUNT                 40
+  #define LEVEL_OFFSET                40
+#endif
+#if GAME_NUMBER == 3
+  #define LEVEL_COUNT                 80
+  #define LEVEL_OFFSET                80
+#endif
+#if GAME_NUMBER == 4
+  #define LEVEL_COUNT                 40
+  #define LEVEL_OFFSET                120
+#endif
+
 const uint8_t PROGMEM test[] = {
 0x0B, 0x01, 0x00, 0x01, 0x0D, 0x00, 0x00, 0x00, 0x01, 0x00, 0x1A, 0x00, 0x1B, 0x00, 0x00, 0x1F, 0x09, 0xC1, 0x61, 0x0E, 0x3C, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x17, 0x00
 };
