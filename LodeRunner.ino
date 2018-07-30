@@ -133,6 +133,7 @@ void loop() {
     case GameState::LevelInit:
       sound.noTone();
       while (!holes.isEmpty()) holes.dequeue();
+//      level.setLevelNumber(36);
       level.loadLevel(&player, enemies); 
       introRect = 28;
       gameState = GameState::LevelEntryAnimation;
