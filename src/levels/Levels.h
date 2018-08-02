@@ -1,10 +1,10 @@
 #pragma once
 
-#include "../ utils / Arduboy2Ext.h"
+#include "../utils/Arduboy2Ext.h"
 #include "../utils/Utils.h"
 #include "../utils/Enums.h"
 
-#define GAME_NUMBER 1
+#define GAME_NUMBER 2
 #define NUMBER_OF_GAMES 4
 
 #if GAME_NUMBER == 1
