@@ -4,7 +4,7 @@
 #include "../utils/Utils.h"
 #include "../utils/Enums.h"
 
-#define GAME_NUMBER 3
+#define GAME_NUMBER 1
 #define NUMBER_OF_GAMES 4
 
 #if GAME_NUMBER == 1
@@ -16,12 +16,12 @@
   #define LEVEL_OFFSET        40
 #endif
 #if GAME_NUMBER == 3
-  #define LEVEL_COUNT         39
+  #define LEVEL_COUNT         40
   #define LEVEL_OFFSET        80
 #endif
 #if GAME_NUMBER == 4
-  #define LEVEL_COUNT         36
-  #define LEVEL_OFFSET        119
+  #define LEVEL_COUNT         35
+  #define LEVEL_OFFSET        120
 #endif
 
 
@@ -666,12 +666,12 @@ const uint8_t *levels[] =    { nullptr,
                                level80, level81, level82, level83, level84, level85, level86, level87, level88, level89, 
                                level90, level91, level92, level93, level94, level95, level96, level97, level98, level99, 
                                level100, level101, level102, level103, level104, level105, level106, level107, level108, level109, 
-                               level110, level111, level112, level113, level114, level115, level116, level117, level118, 
+                               level110, level111, level112, level113, level114, level115, level116, level117, level118, level119, 
                                };
 #endif
 #if GAME_NUMBER == 4
 const uint8_t *levels[] =    { nullptr, 
-                               level119, level120, level121, level122, level123, level124, level125, level126, level127, level128, level129, 
+                               level120, level121, level122, level123, level124, level125, level126, level127, level128, level129, 
                                level130, level131, level132, level133, level134, level135, level136, level137, level138, level139, 
                                level140, level141, level142, level143, level144, level145, level146, level147, level148, level149, 
                                level150, level151, level152, level153, level154, };

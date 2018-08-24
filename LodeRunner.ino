@@ -11,6 +11,7 @@
 #include "src/utils/EEPROM_Utils.h"
 #include "src/characters/Player.h"
 #include "src/characters/Enemy.h"
+#include <avr/eeprom.h> 
 
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
