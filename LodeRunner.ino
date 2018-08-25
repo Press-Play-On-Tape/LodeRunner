@@ -107,7 +107,7 @@ void loop() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
-
+//Serial.println(EEPROM_Utils::getGameNumber());
   switch (gameState) {
 
     #if GAME_NUMBER == 1
@@ -190,7 +190,9 @@ void loop() {
 //
 void Intro() {
 
+  #ifndef DEBUG
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
+  #endif
   if (arduboy.justPressedButtons() & A_BUTTON)  { gameState = GameState::GameSelect; }
 
 }

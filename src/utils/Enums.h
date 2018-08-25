@@ -5,7 +5,7 @@
 
 #define _TWO_ARROW_SIZES
 #define CHANGE_LEVELS
-#define DEBUG
+#define _DEBUG
 
 #define ARROW_SMALL_DIST_X_LEFT       20
 #define ARROW_SMALL_DIST_X_RIGHT      10
