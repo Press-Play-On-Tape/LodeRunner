@@ -370,7 +370,7 @@ LevelElement Level::getLevelData(const uint8_t x, const uint8_t y) {
 //
 void Level::setLevelData(const uint8_t x, const uint8_t y, const LevelElement levelElement) {
 
- if (x % 2 == 0) {
+  if (x % 2 == 0) {
 
     _levelData[x / 2][y] = (_levelData[x / 2][y] & 0x0f) | (static_cast<uint8_t>(levelElement) << 4); 
 

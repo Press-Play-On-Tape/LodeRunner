@@ -3,30 +3,17 @@
 #include "Arduboy2Ext.h"
 #include "Enums.h"
 
-// #define EEPROM_START                  EEPROM_STORAGE_SPACE_START + 175
-// #define EEPROM_START_C1               EEPROM_START
-// #define EEPROM_START_C2               EEPROM_START + 1
-// #define EEPROM_GAME_NO                EEPROM_START + 2
-// #define EEPROM_LEVEL_NO               EEPROM_START + 3
-// #define EEPROM_MEN_LEFT               EEPROM_START + 4
-// #define EEPROM_SCORE                  EEPROM_START + 5
-// #define EEPROM_GAME_NO_ORIG           EEPROM_START + 7
-// #define EEPROM_LEVEL_NO_ORIG          EEPROM_START + 8
-// #define EEPROM_MEN_LEFT_ORIG          EEPROM_START + 9
-// #define EEPROM_SCORE_ORIG             EEPROM_START + 10
-
-
-#define EEPROM_START                  ((uint8_t *)175)
-#define EEPROM_START_C1               ((uint8_t *)175)
-#define EEPROM_START_C2               ((uint8_t *)176)
-#define EEPROM_GAME_NO                ((uint8_t *)177)
-#define EEPROM_LEVEL_NO               ((uint8_t *)178)
-#define EEPROM_MEN_LEFT               ((uint8_t *)179)
-#define EEPROM_SCORE                  ((uint16_t *)180)
-#define EEPROM_GAME_NO_ORIG           ((uint8_t *)181)
-#define EEPROM_LEVEL_NO_ORIG          ((uint8_t *)182)
-#define EEPROM_MEN_LEFT_ORIG          ((uint8_t *)183)
-#define EEPROM_SCORE_ORIG             ((uint16_t *)184)
+#define EEPROM_START                  EEPROM_STORAGE_SPACE_START + 175
+#define EEPROM_START_C1               EEPROM_START
+#define EEPROM_START_C2               EEPROM_START + 1
+#define EEPROM_GAME_NO                EEPROM_START + 2
+#define EEPROM_LEVEL_NO               EEPROM_START + 3
+#define EEPROM_MEN_LEFT               EEPROM_START + 4
+#define EEPROM_SCORE                  EEPROM_START + 5
+#define EEPROM_GAME_NO_ORIG           EEPROM_START + 7
+#define EEPROM_LEVEL_NO_ORIG          EEPROM_START + 8
+#define EEPROM_MEN_LEFT_ORIG          EEPROM_START + 9
+#define EEPROM_SCORE_ORIG             EEPROM_START + 10
 
 
 class EEPROM_Utils {
@@ -57,33 +44,33 @@ class EEPROM_Utils {
  */
 void EEPROM_Utils::initEEPROM(bool forceClear) {
 
-  byte c1 = eeprom_read_byte(EEPROM_START_C1);
-  byte c2 = eeprom_read_byte(EEPROM_START_C2);
+  byte c1 = EEPROM.read(EEPROM_START_C1);
+  byte c2 = EEPROM.read(EEPROM_START_C2);
 
   if (forceClear || c1 != 76 || c2 != 82) { // LR 76 82
 
     const uint16_t score = 0;
-    eeprom_update_byte(EEPROM_START_C1, 76);
-    eeprom_update_byte(EEPROM_START_C2, 82);
-    eeprom_update_word((uint16_t *)(EEPROM_SCORE), score);
+    EEPROM.update(EEPROM_START_C1, 76);
+    EEPROM.update(EEPROM_START_C2, 82);
+    EEPROM.get(EEPROM_SCORE, score);
 
     if (GAME_NUMBER == 1) {
 
-      eeprom_update_byte(EEPROM_GAME_NO, 1);
-      eeprom_update_byte(EEPROM_LEVEL_NO, 1);
-      eeprom_update_byte(EEPROM_MEN_LEFT, 5);
+      EEPROM.update(EEPROM_GAME_NO, 3);
+      EEPROM.update(EEPROM_LEVEL_NO, 81);
+      EEPROM.update(EEPROM_MEN_LEFT, 5);
 
-      eeprom_update_byte(EEPROM_GAME_NO_ORIG, 1);
-      eeprom_update_byte(EEPROM_LEVEL_NO_ORIG, 1);
-      eeprom_update_byte(EEPROM_MEN_LEFT_ORIG, 5);
-      eeprom_update_word(EEPROM_SCORE_ORIG, score);
+      EEPROM.update(EEPROM_GAME_NO_ORIG, 1);
+      EEPROM.update(EEPROM_LEVEL_NO_ORIG, 1);
+      EEPROM.update(EEPROM_MEN_LEFT_ORIG, 5);
+      EEPROM.put(EEPROM_SCORE_ORIG, score);
 
     }
     else {
 
-      eeprom_update_byte(EEPROM_GAME_NO, eeprom_read_byte(EEPROM_GAME_NO_ORIG));
-      eeprom_update_byte(EEPROM_LEVEL_NO, eeprom_read_byte(EEPROM_LEVEL_NO_ORIG));
-      eeprom_update_byte(EEPROM_MEN_LEFT, eeprom_read_byte(EEPROM_MEN_LEFT_ORIG));
+      EEPROM.update(EEPROM_GAME_NO, EEPROM.read(EEPROM_GAME_NO_ORIG));
+      EEPROM.update(EEPROM_LEVEL_NO, EEPROM.read(EEPROM_LEVEL_NO_ORIG));
+      EEPROM.update(EEPROM_MEN_LEFT, EEPROM.read(EEPROM_MEN_LEFT_ORIG));
 
     }
 
@@ -97,7 +84,7 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
  */
 uint8_t EEPROM_Utils::getGameNumber() {
 
-  return eeprom_read_byte(EEPROM_GAME_NO);
+  return EEPROM.read(EEPROM_GAME_NO);
 
 }
 
@@ -107,7 +94,7 @@ uint8_t EEPROM_Utils::getGameNumber() {
  */
 uint8_t EEPROM_Utils::getLevelNumber() {
 
-  return eeprom_read_byte(EEPROM_LEVEL_NO);
+  return EEPROM.read(EEPROM_LEVEL_NO);
 
 }
 
@@ -117,7 +104,7 @@ uint8_t EEPROM_Utils::getLevelNumber() {
  */
 uint8_t EEPROM_Utils::getMen() {
 
-  return eeprom_read_byte(EEPROM_MEN_LEFT);
+  return EEPROM.read(EEPROM_MEN_LEFT);
 
 }
 
@@ -126,7 +113,7 @@ uint8_t EEPROM_Utils::getMen() {
  */
 void EEPROM_Utils::saveLevelNumber(uint8_t levelNumber) {
 
-  eeprom_update_byte(EEPROM_LEVEL_NO, levelNumber);
+  EEPROM.update(EEPROM_LEVEL_NO, levelNumber);
 
 }
 
@@ -138,9 +125,9 @@ void EEPROM_Utils::getSavedGameData(Level *level, Player *player) {
 
   int16_t score = 0;
 
-  level->setLevelNumber(eeprom_read_byte(EEPROM_LEVEL_NO));
-  player->setMen(eeprom_read_byte(EEPROM_MEN_LEFT));
-  score = eeprom_read_word(EEPROM_SCORE);
+  level->setLevelNumber(EEPROM.read(EEPROM_LEVEL_NO));
+  player->setMen(EEPROM.read(EEPROM_MEN_LEFT));
+  EEPROM.get(EEPROM_SCORE, score);
   player->setScore(score);
 
 }
@@ -152,16 +139,16 @@ void EEPROM_Utils::getSavedGameData(Level *level, Player *player) {
 void EEPROM_Utils::saveGameData(Level *level, Player *player) {
  
   uint8_t levelNumber = level->getLevelNumber();
-  eeprom_update_byte(EEPROM_LEVEL_NO, levelNumber);
-  eeprom_update_byte(EEPROM_LEVEL_NO_ORIG, levelNumber);
+  EEPROM.update(EEPROM_LEVEL_NO, levelNumber);
+  EEPROM.update(EEPROM_LEVEL_NO_ORIG, levelNumber);
 
   uint8_t menLeft = player->getMen();
-  eeprom_update_byte(EEPROM_MEN_LEFT, menLeft);
-  eeprom_update_byte(EEPROM_MEN_LEFT_ORIG, menLeft);
+  EEPROM.update(EEPROM_MEN_LEFT, menLeft);
+  EEPROM.update(EEPROM_MEN_LEFT_ORIG, menLeft);
 
   uint16_t score = player->getScore();
-  eeprom_update_word(EEPROM_SCORE, score);
-  eeprom_update_word(EEPROM_SCORE_ORIG, score);
+  EEPROM.put(EEPROM_SCORE, score);
+  EEPROM.put(EEPROM_SCORE_ORIG, score);
 
 }
 
@@ -171,7 +158,7 @@ void EEPROM_Utils::saveGameData(Level *level, Player *player) {
  */
 void EEPROM_Utils::setGameNumber(uint8_t val) {
 
-  eeprom_update_byte(EEPROM_GAME_NO, val);
-  eeprom_update_byte(EEPROM_GAME_NO_ORIG, val);
+  EEPROM.update(EEPROM_GAME_NO, val);
+  EEPROM.update(EEPROM_GAME_NO_ORIG, val);
 
 }
