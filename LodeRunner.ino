@@ -190,9 +190,7 @@ void loop() {
 //
 void Intro() {
 
-  #ifndef DEBUG
   arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
-  #endif
   if (arduboy.justPressedButtons() & A_BUTTON)  { gameState = GameState::GameSelect; }
 
 }
