@@ -3,19 +3,6 @@
 #include "Arduboy2Ext.h"
 #include "Enums.h"
 
-// #define EEPROM_START                  EEPROM_STORAGE_SPACE_START + 175
-// #define EEPROM_START_C1               EEPROM_START
-// #define EEPROM_START_C2               EEPROM_START + 1
-// #define EEPROM_GAME_NO                EEPROM_START + 2
-// #define EEPROM_LEVEL_NO               EEPROM_START + 3
-// #define EEPROM_MEN_LEFT               EEPROM_START + 4
-// #define EEPROM_SCORE                  EEPROM_START + 5
-// #define EEPROM_GAME_NO_ORIG           EEPROM_START + 7
-// #define EEPROM_LEVEL_NO_ORIG          EEPROM_START + 8
-// #define EEPROM_MEN_LEFT_ORIG          EEPROM_START + 9
-// #define EEPROM_SCORE_ORIG             EEPROM_START + 10
-
-
 #define EEPROM_START                  ((uint8_t *)175)
 #define EEPROM_START_C1               ((uint8_t *)175)
 #define EEPROM_START_C2               ((uint8_t *)176)
@@ -23,11 +10,10 @@
 #define EEPROM_LEVEL_NO               ((uint8_t *)178)
 #define EEPROM_MEN_LEFT               ((uint8_t *)179)
 #define EEPROM_SCORE                  ((uint16_t *)180)
-#define EEPROM_GAME_NO_ORIG           ((uint8_t *)181)
-#define EEPROM_LEVEL_NO_ORIG          ((uint8_t *)182)
-#define EEPROM_MEN_LEFT_ORIG          ((uint8_t *)183)
-#define EEPROM_SCORE_ORIG             ((uint16_t *)184)
-
+#define EEPROM_GAME_NO_ORIG           ((uint8_t *)182)
+#define EEPROM_LEVEL_NO_ORIG          ((uint8_t *)183)
+#define EEPROM_MEN_LEFT_ORIG          ((uint8_t *)184)
+#define EEPROM_SCORE_ORIG             ((uint16_t *)185)
 
 class EEPROM_Utils {
 
@@ -65,7 +51,7 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
     const uint16_t score = 0;
     eeprom_update_byte(EEPROM_START_C1, 76);
     eeprom_update_byte(EEPROM_START_C2, 82);
-    eeprom_update_word((uint16_t *)(EEPROM_SCORE), score);
+    //EEPROM.get(EEPROM_SCORE, score);
 
     if (GAME_NUMBER == 1) {
 
