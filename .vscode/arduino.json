@@ -1,6 +1,6 @@
 {
     "board": "arduino:avr:leonardo",
-    "port": "/dev/cu.usbmodem1421",
+    "port": "COM5",
     "sketch": "LodeRunner.ino",
     "output": "../build"
 }
