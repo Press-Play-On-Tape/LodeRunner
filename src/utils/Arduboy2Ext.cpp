@@ -20,7 +20,7 @@ void Arduboy2Ext::clearButtonState() {
 
 }
 
-struct BitStreamReader {
+struct Arduboy2Base::BitStreamReader {
 
   const uint8_t *source;
   uint16_t sourceIndex;

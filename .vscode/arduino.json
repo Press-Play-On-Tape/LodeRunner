@@ -1,6 +1,7 @@
 {
-    "board": "arduino:avr:leonardo",
+    "board": "arduboy-homemade:avr:arduboy-homemade",
     "port": "COM5",
     "sketch": "LodeRunner.ino",
-    "output": "../build"
+    "output": "../build",
+    "configuration": "based_on=leonardo,boot=org,core=arduboy-core,display=sh1106,flashselect=sda,contrast=normal"
 }

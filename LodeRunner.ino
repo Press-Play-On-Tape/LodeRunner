@@ -24,7 +24,7 @@ Level level;
 bool flashPlayer = false;
 
 #if GAME_NUMBER == 1
-GameState gameState = GameState::Intro;
+GameState gameState = GameState::SplashScreen_Init;
 #else
 GameState gameState = GameState::GameSelect;
 #endif
@@ -112,6 +112,17 @@ void loop() {
 
     #if GAME_NUMBER == 1
 
+    case GameState::SplashScreen_Init:
+
+      splashScreen_Init();
+      splashScreen();
+      break;
+
+    case GameState::SplashScreen:
+
+      splashScreen();
+      break;
+      
     case GameState::Intro:
       if (!sound.playing()) sound.tones(score);
       Intro();

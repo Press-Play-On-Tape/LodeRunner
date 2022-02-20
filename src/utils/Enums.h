@@ -57,7 +57,9 @@ enum class GameState : uint8_t {
   CompleteGame2,
   CompleteGame3,
   NextGame,
-  SeriesOver
+  SeriesOver,
+  SplashScreen_Init,
+  SplashScreen,
 
 };
 
