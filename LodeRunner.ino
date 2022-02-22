@@ -201,7 +201,7 @@ void loop() {
 //
 void Intro() {
 
-  arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
+  Sprites::drawOverwrite(0, 0, banner, 0);
   if (arduboy.justPressedButtons() & A_BUTTON)  { gameState = GameState::GameSelect; }
 
 }
@@ -238,10 +238,10 @@ void GameSelect() {
 
   // Brick borders ..
 
-  for (uint8_t x = 0; x < WIDTH; x = x + 10) {
+  for (uint8_t x = 0; x < WIDTH + 8; x = x + 16) {
   
-    Sprites::drawOverwrite(x, 0, levelElementImgs, 1);
-    Sprites::drawOverwrite(x, 55, levelElementImgs, 1);
+    Sprites::drawOverwrite(x - 8, 0, levelSelect, 0);
+    Sprites::drawOverwrite(x, 56, levelSelect, 0);
 
   }
 

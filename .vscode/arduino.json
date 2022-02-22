@@ -3,5 +3,5 @@
     "port": "COM5",
     "sketch": "LodeRunner.ino",
     "output": "../build",
-    "configuration": "based_on=leonardo,boot=org,core=arduboy-core,display=sh1106,flashselect=sda,contrast=normal"
+    "configuration": "based_on=leonardo,boot=org,core=arduboy-core,display=ssd1306,flashselect=sda,contrast=normal"
 }
