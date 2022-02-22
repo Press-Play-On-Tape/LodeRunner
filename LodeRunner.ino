@@ -12,6 +12,9 @@
 #include "src/characters/Player.h"
 #include "src/characters/Enemy.h"
 
+#include <ArduboyFX.h>
+#include "src/levels/LevelData.h" 
+
 Arduboy2Ext arduboy;
 ArduboyTones sound(arduboy.audio.enabled);
 
@@ -23,11 +26,7 @@ Level level;
 
 bool flashPlayer = false;
 
-#if GAME_NUMBER == 1
 GameState gameState = GameState::SplashScreen_Init;
-#else
-GameState gameState = GameState::GameSelect;
-#endif
 int8_t bannerStripe = -30;
 int8_t introRect = 0;
 Queue<Hole, 20> holes;
@@ -36,7 +35,7 @@ uint8_t suicide = 0;
 uint8_t levelCount = 0;
 uint8_t menuSelect = 0;
 #ifdef INC_LEVEL_SELECTOR
-uint8_t menuLevelSelect = LEVEL_OFFSET + 1;
+uint8_t menuLevelSelect = 1;
 #endif
 
 
@@ -66,36 +65,16 @@ void setup() {
   player.setY(35);
   player.setStance(PlayerStance::StandingStill);
 
-  #if GAME_NUMBER == 1
   player.setNextState(GameState::Intro);
-  #else
-  player.setNextState(GameState::GameSelect);
-  #endif 
 
-  uint8_t gameNumber = EEPROM_Utils::getGameNumber();
-  
-  if (gameNumber < GAME_NUMBER) {
+  // uint8_t gameNumber = EEPROM_Utils::getGameNumber();
 
-    if (gameNumber == 1) { gameState = GameState::CompleteGame1; }
-    if (gameNumber == 2) { gameState = GameState::CompleteGame2; }
-    if (gameNumber == 3) { gameState = GameState::CompleteGame3; }
+  // if (gameNumber == NUMBER_OF_GAMES) {
+  //   gameState = GameState::SeriesOver;
+  // }
 
-  }
-  
-  if (gameNumber > GAME_NUMBER) {
-
-    #if GAME_NUMBER == 4
-    if (gameNumber == NUMBER_OF_GAMES) {
-      gameState = GameState::SeriesOver;
-    }
-    else {
-      gameState = GameState::NextGame;
-    }
-    #else
-    gameState = GameState::NextGame;
-    #endif
-
-  }
+  FX::disableOLED();      
+  FX::begin(FX_DATA_PAGE);
 
 }
 
@@ -107,10 +86,8 @@ void loop() {
 
   if (!(arduboy.nextFrame())) return;
   arduboy.pollButtons();
-//Serial.println(EEPROM_Utils::getGameNumber());
-  switch (gameState) {
 
-    #if GAME_NUMBER == 1
+  switch (gameState) {
 
     case GameState::SplashScreen_Init:
 
@@ -131,15 +108,6 @@ void loop() {
     case GameState::GameSelect:
       GameSelect();
       break;
-
-    #else
-
-    case GameState::GameSelect:
-      if (!sound.playing()) sound.tones(score);
-      GameSelect();
-      break;
-
-    #endif
 
     case GameState::LevelInit:
       sound.noTone();
@@ -172,25 +140,17 @@ void loop() {
       LevelPlay();
       break;
 
-    case GameState::CompleteGame1 ... GameState::CompleteGame3:
-      CompleteGame();
-      break;
-
-    #if GAME_NUMBER == 4
     case GameState::SeriesOver:
       CompleteSeries();
-      break;
-    #endif
-
-    case GameState::NextGame:
-      NextGame();
       break;
 
     default: break;
 
   }
   
+  FX::enableOLED();             
   arduboy.display(CLEAR_BUFFER);
+  FX::disableOLED(); 
 
 }
 
@@ -201,7 +161,7 @@ void loop() {
 //
 void Intro() {
 
-  arduboy.drawCompressedMirror(0, 4, banner, WHITE, false);
+  Sprites::drawOverwrite(0, 0, banner, 0);
   if (arduboy.justPressedButtons() & A_BUTTON)  { gameState = GameState::GameSelect; }
 
 }
@@ -238,10 +198,10 @@ void GameSelect() {
 
   // Brick borders ..
 
-  for (uint8_t x = 0; x < WIDTH; x = x + 10) {
+  for (uint8_t x = 0; x < WIDTH; x = x + 16) {
   
-    Sprites::drawOverwrite(x, 0, levelElementImgs, 1);
-    Sprites::drawOverwrite(x, 55, levelElementImgs, 1);
+    Sprites::drawOverwrite(x, 0, levelSelect, 0);
+    Sprites::drawOverwrite(x, 57, levelSelect, 0);
 
   }
 
@@ -389,20 +349,9 @@ void LevelPlay() {
       level.setLevelNumber(levelNumber);
       EEPROM_Utils::saveLevelNumber(level.getLevelNumber());
 
-      if (levelNumber > LEVEL_OFFSET + LEVEL_COUNT) {
+      if (levelNumber > LEVEL_COUNT) {
 
-        if (EEPROM_Utils::getGameNumber() < NUMBER_OF_GAMES) {
-
-          EEPROM_Utils::setGameNumber(EEPROM_Utils::getGameNumber() + 1);
-          EEPROM_Utils::saveGameData(&level, &player);
-          player.setNextState(GameState::NextGame);
-
-        }
-        else {
-
-          player.setNextState(GameState::SeriesOver);
-
-        }
+        player.setNextState(GameState::SeriesOver);
 
       }
       else {
@@ -604,10 +553,10 @@ void LevelPlay() {
 
               uint8_t levelNumber = level.getLevelNumber();
 
-              if (justPressed & UP_BUTTON && levelNumber < LEVEL_OFFSET + LEVEL_COUNT) {
+              if (justPressed & UP_BUTTON && levelNumber < LEVEL_COUNT) {
                 level.setLevelNumber(levelNumber + 1);
               }
-              else if ((justPressed & DOWN_BUTTON) && levelNumber > LEVEL_OFFSET + 1) {
+              else if ((justPressed & DOWN_BUTTON) && levelNumber > + 1) {
                 level.setLevelNumber(levelNumber - 1);
               }
 
@@ -664,20 +613,13 @@ void LevelPlay() {
 
       switch (gameState) {
 
-        case GameState::NextGame:
-          break;
-
         case GameState::NextLevel:
         case GameState::RestartLevel:
           gameState = GameState::LevelInit;  
           break;
 
         case GameState::GameOver:
-          #if GAME_NUMBER == 1
           gameState = GameState::Intro;  
-          #else
-          gameState = GameState::GameSelect;  
-          #endif
           break;
 
         case GameState::LevelExitAnimation:
@@ -733,42 +675,12 @@ void playerDies() {
 }
 
 
-
-// --------------------------------------------------------------------------------------
-//  Display 'Next Game' banner ..
-//
-void NextGame() {
-
-  arduboy.drawCompressedMirror(20, 23, loadNextGame, WHITE, false);
-  //arduboy.display(CLEAR_BUFFER);
-
-}
-
-
-// --------------------------------------------------------------------------------------
-//  Display 'complete game' banner ..
-//
-void CompleteGame() {
-
-  uint8_t level = static_cast<uint8_t>(gameState) - static_cast<uint8_t>(GameState::CompleteGame1) + 1;
-  arduboy.drawCompressedMirror(19, 20, completeGame, WHITE, false);
-  if (level == 1) arduboy.drawCompressedMirror(71, 35, completeGame1, WHITE, false);
-  if (level == 2) arduboy.drawCompressedMirror(71, 35, completeGame2, WHITE, false);
-  if (level == 3) arduboy.drawCompressedMirror(71, 35, completeGame3, WHITE, false);
-  //arduboy.display(CLEAR_BUFFER);
-
-}
-
-
-
 // --------------------------------------------------------------------------------------
 //  Display 'victory' banner ..
 //
-#if GAME_NUMBER == 4
 void CompleteSeries() {
 
   arduboy.drawCompressedMirror(29, 24, victory, WHITE, false);
   //arduboy.display(CLEAR_BUFFER);
 
 }
-#endif

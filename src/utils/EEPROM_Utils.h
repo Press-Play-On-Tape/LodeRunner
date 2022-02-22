@@ -51,27 +51,16 @@ void EEPROM_Utils::initEEPROM(bool forceClear) {
     const uint16_t score = 0;
     eeprom_update_byte(EEPROM_START_C1, 76);
     eeprom_update_byte(EEPROM_START_C2, 82);
-    //EEPROM.get(EEPROM_SCORE, score);
 
-    if (GAME_NUMBER == 1) {
+    eeprom_update_byte(EEPROM_GAME_NO, 1);
+    eeprom_update_byte(EEPROM_LEVEL_NO, 1);
+    eeprom_update_byte(EEPROM_MEN_LEFT, 5);
 
-      eeprom_update_byte(EEPROM_GAME_NO, 1);
-      eeprom_update_byte(EEPROM_LEVEL_NO, 1);
-      eeprom_update_byte(EEPROM_MEN_LEFT, 5);
-
-      eeprom_update_byte(EEPROM_GAME_NO_ORIG, 1);
-      eeprom_update_byte(EEPROM_LEVEL_NO_ORIG, 1);
-      eeprom_update_byte(EEPROM_MEN_LEFT_ORIG, 5);
-      eeprom_update_word(EEPROM_SCORE_ORIG, score);
-
-    }
-    else {
-
-      eeprom_update_byte(EEPROM_GAME_NO, eeprom_read_byte(EEPROM_GAME_NO_ORIG));
-      eeprom_update_byte(EEPROM_LEVEL_NO, eeprom_read_byte(EEPROM_LEVEL_NO_ORIG));
-      eeprom_update_byte(EEPROM_MEN_LEFT, eeprom_read_byte(EEPROM_MEN_LEFT_ORIG));
-
-    }
+    eeprom_update_byte(EEPROM_GAME_NO_ORIG, 1);
+    eeprom_update_byte(EEPROM_LEVEL_NO_ORIG, 1);
+    eeprom_update_byte(EEPROM_MEN_LEFT_ORIG, 5);
+    eeprom_update_word(EEPROM_SCORE, score);
+    eeprom_update_word(EEPROM_SCORE_ORIG, score);
 
   }
 

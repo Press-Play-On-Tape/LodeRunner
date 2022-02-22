@@ -6,6 +6,9 @@
 #include "../characters/Player.h"
 #include "../characters/Enemy.h"
 
+#include <ArduboyFX.h>
+#include "LevelData.h"       
+
 #define ENCRYPTION_TYPE_RLE_ROW 0
 #define ENCRYPTION_TYPE_RLE_COL 1
 #define ENCRYPTION_TYPE_GRID 2
@@ -141,14 +144,16 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   uint16_t dataOffset = 0;
   uint8_t goldLeft = 0;
 
-  const uint8_t *levelToLoad = levels[_levelNumber - LEVEL_OFFSET];
+  uint24_t levelToLoad = levels[_levelNumber];
   player->setStance(PlayerStance::Running_Right1);
 
 
+  FX::seekData(levelToLoad);
+
   // Load player starting position ..
 
-  uint16_t  playerX = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
-  uint16_t  playerY = pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE;
+  uint16_t  playerX = FX::readPendingUInt8() * GRID_SIZE;
+  uint16_t  playerY = FX::readPendingUInt8() * GRID_SIZE;
 
 
   // Determine player's X Pos and level offset ..
@@ -206,7 +211,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   // Load enemies ..
 
-  uint8_t numberOfEnemies = pgm_read_byte(&levelToLoad[dataOffset++]);
+  uint8_t numberOfEnemies = FX::readPendingUInt8();
 
   for (uint8_t x = 0; x < NUMBER_OF_ENEMIES; x++) {
 
@@ -217,8 +222,8 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     if (x < numberOfEnemies) {
 
-      enemy->setX(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
-      enemy->setY(pgm_read_byte(&levelToLoad[dataOffset++]) * GRID_SIZE);
+      enemy->setX(FX::readPendingUInt8() * GRID_SIZE);
+      enemy->setY(FX::readPendingUInt8() * GRID_SIZE);
       enemy->setEnabled(true);
 
     }
@@ -233,12 +238,12 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   // Load level ladder points ..
 
-  _levelLadderElementCount = pgm_read_byte(&levelToLoad[dataOffset++]);
+  _levelLadderElementCount = FX::readPendingUInt8();
 
   for (uint8_t x = 0; x < _levelLadderElementCount; x++) {
 
-    _levelLadder[x].x = pgm_read_byte(&levelToLoad[dataOffset++]);
-    _levelLadder[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
+    _levelLadder[x].x = FX::readPendingUInt8();
+    _levelLadder[x].y = FX::readPendingUInt8();
 
   }
 
@@ -247,15 +252,15 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
   for (uint8_t x = 0; x < NUMBER_OF_REENTRY_POINTS; x++) {
 
-    _reentryPoint[x].x = pgm_read_byte(&levelToLoad[dataOffset++]);
-    _reentryPoint[x].y = pgm_read_byte(&levelToLoad[dataOffset++]);
+    _reentryPoint[x].x = FX::readPendingUInt8();
+    _reentryPoint[x].y = FX::readPendingUInt8();
 
   }
 
 
   // Load level data .. 
 
-  uint8_t encryptionType = pgm_read_byte(&levelToLoad[dataOffset++]);
+  uint8_t encryptionType = FX::readPendingUInt8();
   
   if (encryptionType == ENCRYPTION_TYPE_GRID) {
 
@@ -263,7 +268,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
       for (uint8_t x = 0; x < _width; x++) {
 
-        uint8_t data = pgm_read_byte(&levelToLoad[(y * _width) + x + dataOffset]);
+        uint8_t data = FX::readPendingUInt8();
 
         if (leftValue(data) == static_cast<uint8_t>(LevelElement::Gold))            { goldLeft++;}
         if (rightValue(data) == static_cast<uint8_t>(LevelElement::Gold))           { goldLeft++;}
@@ -281,7 +286,7 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
 
     while (true) {
 
-      uint8_t data = pgm_read_byte(&levelToLoad[dataOffset]);
+      uint8_t data = FX::readPendingUInt8();
       uint8_t block = (data & 0xE0) >> 5;
       uint8_t run = data & 0x1F;
 
@@ -336,6 +341,8 @@ void Level::loadLevel(Player *player, Enemy enemies[]) {
   }
 
   _goldLeft = goldLeft;
+
+  FX::readEnd();
 
 }
 
